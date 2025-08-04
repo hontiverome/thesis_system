@@ -52,6 +52,25 @@
       
       <!-- Right section of the navbar containing theme selector and user menu -->
       <div class="navbar-right">
+        <!-- Theme selector -->
+        <div class="theme-selector">
+          <IconifyIcon :icon="currentThemeIcon" class="theme-icon" />
+          <select 
+            v-model="currentTheme" 
+            @change="setTheme"
+            class="theme-select"
+            aria-label="Select theme"
+          >
+            <option 
+              v-for="theme in availableThemes" 
+              :key="theme.id" 
+              :value="theme.id"
+            >
+              {{ theme.name }}
+            </option>
+          </select>
+        </div>
+
         <!-- User menu section -->
         <div class="user-menu">
           <button class="user-button" aria-label="User menu">
@@ -71,14 +90,41 @@
 /**
  * Imports Vue's composition API functions and required dependencies
  */
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { loadIcons } from '@iconify/vue';
+import { useThemeStore } from '@/stores/theme';
 
 // Define the events this component emits to parent components
 defineEmits(['toggle-sidebar']);
 
 const route = useRoute();
+const themeStore = useThemeStore();
+
+// Theme handling
+const currentTheme = ref(themeStore.currentTheme);
+const availableThemes = themeStore.availableThemes;
+
+const setTheme = () => {
+  themeStore.setTheme(currentTheme.value);
+};
+
+// Get current theme icon
+const currentThemeIcon = computed(() => {
+  const theme = availableThemes.find(t => t.id === currentTheme.value);
+  if (!theme) return 'mdi:theme-light-dark';
+  
+  const icons = {
+    'light': 'mdi:weather-sunny',
+    'dark': 'mdi:weather-night',
+    'blue': 'mdi:water',
+    'green': 'mdi:leaf',
+    'midnight': 'mdi:weather-night',
+    'dost': 'mdi:theme-light-dark'
+  };
+  
+  return icons[theme.id] || 'mdi:theme-light-dark';
+});
 
 /**
  * Computed property that generates a display-friendly title based on the current route
@@ -92,6 +138,15 @@ const currentPageTitle = computed(() => {
 });
 
 onMounted(() => {
-  loadIcons(['mdi:menu', 'mdi:account', 'mdi:chevron-down']);
+  loadIcons([
+    'mdi:menu', 
+    'mdi:account', 
+    'mdi:chevron-down',
+    'mdi:theme-light-dark',
+    'mdi:weather-sunny',
+    'mdi:weather-night',
+    'mdi:water',
+    'mdi:leaf'
+  ]);
 });
 </script>
