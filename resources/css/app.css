@@ -584,7 +584,7 @@ body {
 }
 
 .theme-select:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background-color: var(--hover-color);
 }
 
 .theme-select:focus {
