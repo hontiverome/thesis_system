@@ -54,7 +54,9 @@
       <div class="navbar-right">
         <!-- Theme selector -->
         <div class="theme-selector">
-          <IconifyIcon :icon="currentThemeIcon" class="theme-icon" />
+          <span class="theme-icon" aria-hidden="true">
+            <IconifyIcon :icon="currentThemeIcon" class="theme-icon" />
+          </span>
           <select 
             v-model="currentTheme" 
             @change="setTheme"
