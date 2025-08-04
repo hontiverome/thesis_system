@@ -62,7 +62,6 @@
           <div class="setting-option">
             <label for="theme">Select Theme:</label>
             <select 
-              id="theme"
               v-model="currentTheme"
             >
               <option 
