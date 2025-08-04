@@ -61,14 +61,13 @@
             v-model="currentTheme" 
             @change="setTheme"
             class="theme-select"
-            aria-label="Select theme"
           >
             <option 
               v-for="theme in availableThemes" 
               :key="theme.id" 
               :value="theme.id"
             >
-              {{ theme.name }}
+            {{ theme.name }}
             </option>
           </select>
         </div>
@@ -103,17 +102,22 @@ defineEmits(['toggle-sidebar']);
 const route = useRoute();
 const themeStore = useThemeStore();
 
-// Theme handling
-const currentTheme = ref(themeStore.currentTheme);
-const availableThemes = themeStore.availableThemes;
+// Theme handling using computed property for two-way binding
+const currentTheme = computed({
+  get: () => themeStore.currentTheme,
+  set: (value) => {
+    if (value) {
+      themeStore.setTheme(value);
+    }
+  }
+});
 
-const setTheme = () => {
-  themeStore.setTheme(currentTheme.value);
-};
+// Get available themes from store
+const availableThemes = computed(() => themeStore.availableThemes);
 
 // Get current theme icon
 const currentThemeIcon = computed(() => {
-  const theme = availableThemes.find(t => t.id === currentTheme.value);
+  const theme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
   if (!theme) return 'mdi:theme-light-dark';
   
   const icons = {
