@@ -52,14 +52,15 @@
       
       <!-- Right section of the navbar containing theme selector and user menu -->
       <div class="navbar-right">
-        <!-- Theme selector -->
+        <!-- Theme selector with icon and dropdown -->
         <div class="theme-selector">
-          <span class="theme-icon" aria-hidden="true">
-            <IconifyIcon :icon="currentThemeIcon" class="theme-icon" />
+          <IconifyIcon :icon="currentThemeIcon" class="theme-icon" />
+          <span class="theme-name">
+            {{ currentThemeName }}
           </span>
+          <IconifyIcon icon="mdi:chevron-down" class="dropdown-arrow" />
           <select 
             v-model="currentTheme" 
-            @change="setTheme"
             class="theme-select"
           >
             <option 
@@ -67,7 +68,7 @@
               :key="theme.id" 
               :value="theme.id"
             >
-            {{ theme.name }}
+              {{ theme.name }}
             </option>
           </select>
         </div>
@@ -130,6 +131,12 @@ const currentThemeIcon = computed(() => {
   };
   
   return icons[theme.id] || 'mdi:theme-light-dark';
+});
+
+// Get current theme name
+const currentThemeName = computed(() => {
+  const theme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
+  return theme ? theme.name : 'Theme';
 });
 
 /**
