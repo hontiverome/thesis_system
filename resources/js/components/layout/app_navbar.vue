@@ -34,23 +34,41 @@
 <template>
   <!-- Main navigation bar container -->
   <header class="navbar">
-    <!-- Container for navbar content with proper spacing and alignment -->
     <div class="navbar-content">
-      <!-- Left section of the navbar containing the menu button and page title -->
+      <!-- Left section -->
       <div class="navbar-left">
         <!-- Button to toggle the sidebar visibility -->
         <button @click="$emit('toggle-sidebar')" 
                 class="menu-button"
                 aria-label="Toggle sidebar menu">
-          <!-- TODO: Add icon for menu toggle button -->
           <IconifyIcon icon="mdi:menu" class="menu-icon" aria-hidden="true" />
         </button>
         
         <!-- Dynamic page title that shows current route information -->
         <h1 class="page-title">Theming Test | {{ currentPageTitle }}</h1>
       </div>
-      
-      <!-- Right section of the navbar containing theme selector and user menu -->
+
+      <!-- Center navigation -->
+      <nav class="navbar-nav" aria-label="Primary">
+        <ul role="menu">
+          <li v-for="item in navItems" 
+              :key="item.path" 
+              role="none">
+            <router-link :to="item.path" 
+                        class="nav-link" 
+                        :title="item.text"
+                        role="menuitem"
+                        :aria-current="$route.path === item.path ? 'page' : undefined">
+              <span class="icon" aria-hidden="true">
+                <IconifyIcon :icon="item.icon" width="20" height="20" />
+              </span>
+              <span class="text">{{ item.text }}</span>
+            </router-link>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Right section -->
       <div class="navbar-right">
         <!-- Theme selector with icon and dropdown -->
         <div class="theme-selector">
@@ -150,6 +168,14 @@ const currentPageTitle = computed(() => {
   return path.charAt(1).toUpperCase() + path.slice(2);
 });
 
+const navItems = [
+  { path: '/', icon: 'mdi:home' },
+  { path: '/dashboard', icon: 'mdi:view-dashboard' },
+  { path: '/profile', icon: 'mdi:account'},
+  { path: '/settings', icon: 'mdi:cog'},
+  { path: '/help', icon: 'mdi:help-circle' },
+];
+
 onMounted(() => {
   loadIcons([
     'mdi:menu', 
@@ -159,7 +185,13 @@ onMounted(() => {
     'mdi:weather-sunny',
     'mdi:weather-night',
     'mdi:water',
-    'mdi:leaf'
+    'mdi:leaf',
+    'mdi:home',
+    'mdi:view-dashboard',
+    'mdi:account',
+    'mdi:cog',
+    'mdi:help-circle',
+    'mdi:palette'
   ]);
 });
 </script>

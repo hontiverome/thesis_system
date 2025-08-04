@@ -57,7 +57,7 @@
             :key="item.path" 
             role="none">
           <router-link :to="item.path" 
-                      class="nav-link" 
+                      class="sidebar-nav nav-link" 
                       :title="item.text"
                       role="menuitem"
                       :aria-current="$route.path === item.path ? 'page' : undefined">
