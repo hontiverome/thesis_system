@@ -29,6 +29,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    php artisan migrate
    ```
 6. **Build assets**
+
    For production:
    ```bash
    npm run build
