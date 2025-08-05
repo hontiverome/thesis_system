@@ -41,6 +41,8 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
       ```
 
 7. **Start the development server**
+
+   Create a new terminal and run
    ```bash
    php -S 127.0.0.1:8000 -t public
    ```
