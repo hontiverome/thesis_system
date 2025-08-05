@@ -45,8 +45,11 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    php -S 127.0.0.1:8000 -t public
    ```
 
-## Installation
+## Starting the development app
 After installation, you just need to start the development server now.
+   ```bash
+   php -S 127.0.0.1:8000 -t public
+   ```
 
 ## Project Structure
 
