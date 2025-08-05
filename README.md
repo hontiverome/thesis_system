@@ -51,6 +51,11 @@ After installation, you just need to start the development server now.
    php -S 127.0.0.1:8000 -t public
    ```
 
+- If Vite did not run on startup, then run:
+   ```bash
+   npm run dev
+   ```
+
 ## Accessing the website
 - To access the website, simply go to the url " 127.0.0.1:8000 ".
 
