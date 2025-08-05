@@ -10,6 +10,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    ```
 
  Inside the terminal:
+ 
 2. **Install PHP dependencies**
    ```bash
    composer install
