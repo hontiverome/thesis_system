@@ -1,4 +1,4 @@
-# Theming and UI Framework
+# Website Template
 
 A modern web application built with Laravel, Vue.js, and Vite, featuring a responsive design with theme support.
 
