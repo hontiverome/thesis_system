@@ -33,10 +33,10 @@ For production:
    ```bash
    npm run build
    ```
-For development:
-   ```bash
-   npm run dev
-   ```
+   For development:
+      ```bash
+      npm run dev
+      ```
 
 7. **Start the development server**
    ```bash
