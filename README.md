@@ -20,70 +20,32 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 ## Installation
 
 1. **Clone the repository**
-   ```bash
    git clone [your-repository-url]
    cd project
-   ```
 
 2. **Install PHP dependencies**
-   ```bash
    composer install
-   ```
 
 3. **Install JavaScript dependencies**
-   ```bash
    npm install
-   ```
 
 4. **Environment setup**
-   ```bash
    cp .env.example .env
    php artisan key:generate
-   ```
 
-5. **Configure your database**
-   Update the `.env` file with your database credentials:
-   ```
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=your_database
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
-   ```
-
-6. **Run database migrations**
-   ```bash
+5. **Run database migrations**
    php artisan migrate
-   ```
 
-7. **Build assets**
-   For development:
-   ```bash
+6. **Build assets**
+For development:
    npm run dev
-   ```
    
-   For production:
-   ```bash
+For production:
    npm run build
-   ```
 
-8. **Start the development server**
-   ```bash
-   php artisan serve
-   ```
+7. **Start the development server**
+   php -S 127.0.0.1:8000 -t public
 
-## Development
-
-- Run Vite dev server:
-  ```bash
-  npm run dev
-  ```
-
-- Build for production:
-  ```bash
-  npm run build
-  ```
 
 ## Project Structure
 
@@ -95,12 +57,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 - `config/` - Configuration files
 - `database/` - Database migrations and seeders
 
-## License
+## Files of Interest:
+ - Most of the development will be made within the resources folder and its js and css folders.
+ - Inside resources/js/stores contains the theme.js which is the main storage for the themes.
 
-This project is proprietary software. All rights reserved.
-
-## Author
-
-Jerome Andrei O. Hontiveros  
-Department of Science and Technology — Project LODI  
-Copyright © 2025
