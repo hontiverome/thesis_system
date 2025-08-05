@@ -5,10 +5,10 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 ## Installation
 
 1. **Clone the repository**
-   '
+   ```bash
    git clone [your-repository-url]
    cd project
-   '
+   ```
 
 2. **Install PHP dependencies**
    composer install
