@@ -62,8 +62,8 @@
         
         <!-- User details -->
         <div class="details">
-          <h3>Jerome Hontiveros</h3>
-          <p class="email">jrmhntvrs@gmail.com</p>
+          <h3>User</h3>
+          <p class="email">User@email.com</p>
           <p class="member-since">Member since July 2025</p>
           
           <!-- Placeholder for future action buttons -->
