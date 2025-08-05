@@ -2,21 +2,6 @@
 
 A modern web application built with Laravel, Vue.js, and Vite, featuring a responsive design with theme support.
 
-## Features
-
-- Responsive layout with collapsible sidebar
-- Theme management system
-- Modern UI components
-- Built with Laravel 10 and Vue 3
-- Vite for asset bundling
-
-## Prerequisites
-
-- PHP 8.1 or higher
-- Composer
-- Node.js 16+ and npm 9+
-- MySQL 5.7+ or MariaDB 10.3+
-
 ## Installation
 
 1. **Clone the repository**
