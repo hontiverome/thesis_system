@@ -6,7 +6,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 
 1. **Clone the repository**
    ```bash
-   git clone [http://devhub.dost.gov.ph/jaohontiveros/website_template.git]
+   git clone http://devhub.dost.gov.ph/jaohontiveros/website_template.git
    ```
 
  Inside the terminal:
