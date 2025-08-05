@@ -52,7 +52,7 @@ After installation, you just need to start the development server now.
    ```
 
 ## Accessing the website
-- To access the website, simply go to the url 127.0.0.1:8000.
+- To access the website, simply go to the url " 127.0.0.1:8000 ".
 
 ## Project Structure
 
