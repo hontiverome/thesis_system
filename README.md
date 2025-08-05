@@ -2,6 +2,11 @@
 
 A modern web application built with Laravel, Vue.js, and Vite, featuring a responsive design with theme support.
 
+## Prerequisites
+- PHP 8.1 or higher
+- Composer
+- Node.js 16+ and npm 9+
+
 ## Installation
 
 1. **Clone the repository**
