@@ -10,7 +10,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    ```
 
  Inside the terminal:
- 
+
 2. **Install PHP dependencies**
    ```bash
    composer install
@@ -44,6 +44,9 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    ```bash
    php -S 127.0.0.1:8000 -t public
    ```
+
+## Installation
+After installation, you just need to start the development server now.
 
 ## Project Structure
 
