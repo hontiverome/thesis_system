@@ -9,6 +9,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    git clone [http://devhub.dost.gov.ph/jaohontiveros/website_template.git]
    ```
 
+ Inside the terminal:
 2. **Install PHP dependencies**
    ```bash
    composer install
