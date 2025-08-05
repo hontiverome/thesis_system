@@ -11,28 +11,37 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    ```
 
 2. **Install PHP dependencies**
+   ```bash
    composer install
-
+   ```
 3. **Install JavaScript dependencies**
+   ```bash
    npm install
-
+   ```
 4. **Environment setup**
+   ```bash
    cp .env.example .env
    php artisan key:generate
+   ```
 
-5. **Run database migrations**
+5. **Run database migrations (for future database integrations)**
+   ```bash
    php artisan migrate
-
+   ```
 6. **Build assets**
-For development:
-   npm run dev
-   
 For production:
+   ```bash
    npm run build
+   ```
+For development:
+   ```bash
+   npm run dev
+   ```
 
 7. **Start the development server**
+   ```bash
    php -S 127.0.0.1:8000 -t public
-
+   ```
 
 ## Project Structure
 
