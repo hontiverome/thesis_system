@@ -97,7 +97,7 @@
             <span class="user-avatar" aria-hidden="true">
               <IconifyIcon icon="mdi:account" width="24" height="24" />
             </span>
-            <span class="user-name">Jerome</span>
+            <span class="user-name">User</span>
             <IconifyIcon class="icon-chevron" icon="mdi:chevron-down" width="16" height="16" />
           </button>
         </div>
