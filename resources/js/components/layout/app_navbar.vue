@@ -49,8 +49,8 @@
         <h1 class="page-title">Theming Test | {{ currentPageTitle }}</h1>
       </div>
 
-      <!-- Center navigation -->
-      <nav class="navbar-nav" aria-label="Primary">
+      <!-- Center navigation - only show when not in 'both' layout mode -->
+      <nav v-if="layoutStore.layoutPreference !== 'both'" class="navbar-nav" aria-label="Primary">
         <ul role="menu">
           <li v-for="item in navItems" 
               :key="item.path" 
