@@ -46,6 +46,41 @@
     
     <!-- Main settings sections -->
     <div class="settings-sections">
+      <!-- Theme Settings Section -->
+      <section class="card settings-section" aria-labelledby="theme-settings-heading">
+        <div class="section-header">
+          <h2 id="theme-settings-heading">
+            <span class="icon">🎨</span>
+            Theme & Appearance
+          </h2>
+          <p class="section-description">
+            Customize the look and feel of the application
+          </p>
+        </div>
+        
+        <!--
+          Theme selection dropdown with options for each available theme
+          The currently selected theme is shown as "(current)" in the dropdown
+          and is also highlighted in the list
+        -->
+        <div class="settings-options">
+          <div class="setting-option">
+            <label for="theme">Select Theme:</label>
+            <select 
+              v-model="currentTheme"
+            >
+              <option 
+                v-for="theme in availableThemes" 
+                :key="theme.id" 
+                :value="theme.id"
+              >
+                {{ theme.name }}{{ theme.id === currentTheme ? ' (current)' : '' }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </section>
+      
       <!-- Layout Settings Section -->
       <section class="card settings-section" aria-labelledby="layout-settings-heading">
         <div class="section-header">
@@ -86,7 +121,6 @@
                   <span class="radio-description">Show only the sidebar navigation</span>
                 </span>
               </label>
-              
               <label>
                 <input 
                   type="radio" 
@@ -100,49 +134,12 @@
                 </span>
               </label>
             </div>
-            
             <div class="save-notice">
               <p>Changes to layout preferences are saved automatically.</p>
             </div>
           </div>
         </div>
       </section>
-      
-      <!-- Theme Settings Section -->
-      <section class="card settings-section" aria-labelledby="theme-settings-heading">
-        <div class="section-header">
-          <h2 id="theme-settings-heading">
-            <span class="icon">🎨</span>
-            Theme & Appearance
-          </h2>
-          <p class="section-description">
-            Customize the look and feel of the application
-          </p>
-        </div>
-        
-        <!--
-          Theme selection dropdown with options for each available theme
-          The currently selected theme is shown as "(current)" in the dropdown
-          and is also highlighted in the list
-        -->
-        <div class="settings-options">
-          <div class="setting-option">
-            <label for="theme">Select Theme:</label>
-            <select 
-              v-model="currentTheme"
-            >
-              <option 
-                v-for="theme in availableThemes" 
-                :key="theme.id" 
-                :value="theme.id"
-              >
-                {{ theme.name }}{{ theme.id === currentTheme ? ' (current)' : '' }}
-              </option>
-            </select>
-          </div>
-        </div>
-      </section>
-      
       <!-- Account Settings Section -->
       <section class="card settings-section" aria-labelledby="account-settings-heading">
         <div class="section-header">
