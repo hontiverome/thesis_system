@@ -1178,6 +1178,62 @@ body {
   border-bottom: 1px solid var(--border-color); 
 }
 
+/* Layout Preferences Styles */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--input-bg);
+}
+
+.radio-group label:hover {
+  border-color: var(--primary-color);
+  background-color: var(--hover-color);
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.radio-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-title {
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.radio-description {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Checked state */
+.radio-group input[type="radio"]:checked + .radio-label .radio-title {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.radio-group input[type="radio"]:checked + .radio-label .radio-description {
+  color: var(--text-color);
+}
+
 .settings-section {
   margin-bottom: 2rem;
   padding: 1.5rem;

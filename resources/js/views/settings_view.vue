@@ -41,6 +41,61 @@
     
     <!-- Main settings sections -->
     <div class="settings-sections">
+      <!-- Layout Settings Section -->
+      <section class="card settings-section" aria-labelledby="layout-settings-heading">
+        <div class="section-header">
+          <h2 id="layout-settings-heading">
+            <span class="icon">📱</span>
+            Layout Preferences
+          </h2>
+          <p class="section-description">
+            Choose your preferred navigation layout
+          </p>
+        </div>
+        
+        <div class="settings-options">
+          <div class="setting-option">
+            <div class="radio-group">
+              <label>
+                <input 
+                  type="radio" 
+                  v-model="settings.layout.preference" 
+                  value="both"
+                >
+                <span class="radio-label">
+                  <span class="radio-title">Both Sidebar & Navbar</span>
+                  <span class="radio-description">Show both navigation elements</span>
+                </span>
+              </label>
+              
+              <label>
+                <input 
+                  type="radio" 
+                  v-model="settings.layout.preference" 
+                  value="sidebar"
+                >
+                <span class="radio-label">
+                  <span class="radio-title">Sidebar Only</span>
+                  <span class="radio-description">Show only the sidebar navigation</span>
+                </span>
+              </label>
+              
+              <label>
+                <input 
+                  type="radio" 
+                  v-model="settings.layout.preference" 
+                  value="navbar"
+                >
+                <span class="radio-label">
+                  <span class="radio-title">Navbar Only</span>
+                  <span class="radio-description">Show only the top navbar</span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <!-- Theme Settings Section -->
       <section class="card settings-section" aria-labelledby="theme-settings-heading">
         <div class="section-header">
@@ -135,6 +190,9 @@ const currentTheme = computed({
 
 // Form data
 const settings = ref({
+  layout: {
+    preference: 'both' // 'both', 'sidebar', or 'navbar'
+  },
   account: {
     language: 'en'
   }
