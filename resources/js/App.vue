@@ -41,12 +41,14 @@
     - 'currentTheme': Applies the current theme class to the root element
     - 'layoutStyles': Dynamically sets CSS variables for responsive layout
   -->
-  <div class="app" :class="currentTheme" :style="layoutStyles">
+  <div class="app" :class="[currentTheme, layoutStore.layoutClasses]" :style="layoutStyles">
     <!-- Application Navigation Bar -->
-    <AppNavbar @toggle-sidebar="toggleSidebar" />
+    <AppNavbar v-if="layoutStore.layoutPreference !== 'sidebar'" 
+               @toggle-sidebar="toggleSidebar" />
     
     <!-- Sidebar Navigation (collapsible) -->
-    <AppSidebar :isCollapsed="isSidebarCollapsed" />
+    <AppSidebar v-if="layoutStore.layoutPreference !== 'navbar'" 
+                :isCollapsed="layoutStore.isSidebarCollapsed" />
     
     <!-- Main Content Area -->
     <main class="main-content" role="main">
@@ -63,11 +65,13 @@
  */
 import { ref, computed, onMounted, watch } from 'vue';
 import { useThemeStore } from '@/stores/theme.js';
+import { useLayoutStore } from '@/stores/layout.js';
 import AppNavbar from '@/components/layout/app_navbar.vue';
 import AppSidebar from '@/components/layout/app_sidebar.vue';
 
-// Initialize the theme store for managing application theming
+// Initialize the stores
 const themeStore = useThemeStore();
+const layoutStore = useLayoutStore();
 
 /**
  * Computed Properties
@@ -79,30 +83,54 @@ const themeStore = useThemeStore();
  */
 const currentTheme = computed(() => themeStore.currentTheme);
 
-// State for sidebar collapse status
-const isSidebarCollapsed = ref(false);
-
 // Layout configuration constants
 const sidebarWidth = 250;         // Width of the expanded sidebar in pixels
 const collapsedSidebarWidth = 60;  // Width of the collapsed sidebar in pixels
 
 /**
  * Computed styles for dynamic layout adjustments
- * Updates CSS variables based on sidebar state
+ * Updates CSS variables based on sidebar state and layout preference
  * @type {ComputedRef<Object>}
  */
-const layoutStyles = computed(() => ({
-  '--sidebar-width': isSidebarCollapsed.value ? `${collapsedSidebarWidth}px` : `${sidebarWidth}px`,
-  '--header-height': '60px'  // Fixed height for the header
-}));
+const layoutStyles = computed(() => {
+  const showSidebar = layoutStore.layoutPreference !== 'navbar';
+  const isCollapsed = layoutStore.isSidebarCollapsed && showSidebar;
+  
+  return {
+    '--sidebar-width': showSidebar 
+      ? (isCollapsed ? `${collapsedSidebarWidth}px` : `${sidebarWidth}px`)
+      : '0px',
+    '--header-height': layoutStore.layoutPreference !== 'sidebar' ? '60px' : '0px',
+    '--sidebar-opacity': showSidebar ? '1' : '0',
+    '--sidebar-visibility': showSidebar ? 'visible' : 'hidden',
+    '--navbar-display': layoutStore.layoutPreference !== 'sidebar' ? 'flex' : 'none'
+  };
+});
 
-/**
- * Toggles the sidebar's collapsed state and persists it to localStorage
- */
+// Apply layout classes to body
+document.body.className = Object.entries(layoutStore.layoutClasses)
+  .filter(([_, value]) => value)
+  .map(([key]) => key)
+  .join(' ');
+
+// Watch for layout class changes
+watch(() => layoutStore.layoutClasses, (newClasses) => {
+  const body = document.body;
+  // Remove all layout classes
+  ['has-sidebar', 'has-navbar', 'sidebar-collapsed'].forEach(cls => {
+    body.classList.remove(cls);
+  });
+  // Add active layout classes
+  Object.entries(newClasses).forEach(([cls, isActive]) => {
+    if (isActive) body.classList.add(cls);
+  });
+}, { immediate: true, deep: true });
+
+// Proxy for the toggleSidebar method to maintain compatibility
 const toggleSidebar = () => {
-  isSidebarCollapsed.value = !isSidebarCollapsed.value;
-  // Save the collapsed state to persist across page reloads
-  localStorage.setItem('sidebarCollapsed', isSidebarCollapsed.value);
+  if (layoutStore.layoutPreference !== 'navbar') {
+    layoutStore.toggleSidebar();
+  }
 };
 
 /**
@@ -111,11 +139,6 @@ const toggleSidebar = () => {
 
 // Component mounted hook
 onMounted(() => {
-  // Restore sidebar state from localStorage if available
-  const savedState = localStorage.getItem('sidebarCollapsed');
-  if (savedState !== null) {
-    isSidebarCollapsed.value = savedState === 'true';
-  }
   // Set the initial theme on the HTML element
   document.documentElement.setAttribute('data-theme', currentTheme.value);
 });

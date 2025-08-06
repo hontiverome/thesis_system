@@ -39,6 +39,11 @@
       <p class="subtitle">Customize your application experience</p>
     </header>
     
+    <!-- Save success message -->
+    <div v-if="saveStatus.show" :class="['save-status', saveStatus.type]">
+      {{ saveStatus.message }}
+    </div>
+    
     <!-- Main settings sections -->
     <div class="settings-sections">
       <!-- Layout Settings Section -->
@@ -61,6 +66,7 @@
                   type="radio" 
                   v-model="settings.layout.preference" 
                   value="both"
+                  @change="updateLayoutPreference"
                 >
                 <span class="radio-label">
                   <span class="radio-title">Both Sidebar & Navbar</span>
@@ -73,6 +79,7 @@
                   type="radio" 
                   v-model="settings.layout.preference" 
                   value="sidebar"
+                  @change="updateLayoutPreference"
                 >
                 <span class="radio-label">
                   <span class="radio-title">Sidebar Only</span>
@@ -85,12 +92,17 @@
                   type="radio" 
                   v-model="settings.layout.preference" 
                   value="navbar"
+                  @change="updateLayoutPreference"
                 >
                 <span class="radio-label">
                   <span class="radio-title">Navbar Only</span>
                   <span class="radio-description">Show only the top navbar</span>
                 </span>
               </label>
+            </div>
+            
+            <div class="save-notice">
+              <p>Changes to layout preferences are saved automatically.</p>
             </div>
           </div>
         </div>
@@ -168,15 +180,33 @@
 
 <script setup>
 // Import required Vue composition API functions and stores
-import { ref, onMounted, computed } from 'vue';
-import { useThemeStore } from '@/stores/theme';
+import { ref, computed, watch } from 'vue';
+import { useThemeStore } from '@/stores/theme.js';
+import { useLayoutStore } from '@/stores/layout.js';
 
 /**
  * Component State and Data
  */
 
-// Store references
+// Initialize the stores
 const themeStore = useThemeStore();
+const layoutStore = useLayoutStore();
+
+// Form data - Initialize first to avoid reference errors
+const settings = ref({
+  layout: {
+    preference: layoutStore.layoutPreference // Initialize with store value
+  },
+  account: {
+    language: 'en'
+  }
+});
+
+// Watch for layout preference changes to update the UI
+watch(() => layoutStore.layoutPreference, (newValue) => {
+  // This ensures the radio button stays in sync with the store
+  settings.value.layout.preference = newValue;
+}, { immediate: true });
 
 // Create computed property for two-way binding with theme store
 const currentTheme = computed({
@@ -188,15 +218,37 @@ const currentTheme = computed({
   }
 });
 
-// Form data
-const settings = ref({
-  layout: {
-    preference: 'both' // 'both', 'sidebar', or 'navbar'
-  },
-  account: {
-    language: 'en'
-  }
+// Save status state
+const saveStatus = ref({
+  show: false,
+  message: '',
+  type: 'success' // 'success' or 'error'
 });
+
+// Show save status message
+const showSaveStatus = (message, type = 'success') => {
+  saveStatus.value = {
+    show: true,
+    message,
+    type
+  };
+  
+  // Hide the message after 3 seconds
+  setTimeout(() => {
+    saveStatus.value.show = false;
+  }, 3000);
+};
+
+// Update layout preference in the store
+const updateLayoutPreference = () => {
+  try {
+    layoutStore.setLayoutPreference(settings.value.layout.preference);
+    showSaveStatus('Layout preference saved successfully!');
+  } catch (error) {
+    console.error('Failed to save layout preference:', error);
+    showSaveStatus('Failed to save layout preference. Please try again.', 'error');
+  }
+};
 
 // Available themes for selection
 const availableThemes = computed(() => themeStore.availableThemes);
