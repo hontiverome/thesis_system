@@ -37,8 +37,9 @@
     <div class="navbar-content">
       <!-- Left section -->
       <div class="navbar-left">
-        <!-- Button to toggle the sidebar visibility -->
-        <button @click="$emit('toggle-sidebar')" 
+        <!-- Button to toggle the sidebar visibility (only show when sidebar is enabled) -->
+        <button v-if="layoutStore.layoutPreference !== 'navbar'"
+                @click="$emit('toggle-sidebar')" 
                 class="menu-button"
                 aria-label="Toggle sidebar menu">
           <IconifyIcon icon="mdi:menu" class="menu-icon" aria-hidden="true" />
@@ -107,19 +108,19 @@
 </template>
 
 <script setup>
-/**
- * Imports Vue's composition API functions and required dependencies
- */
+// Import required Vue composition API functions and stores
 import { computed, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { useThemeStore } from '@/stores/theme.js';
+import { useLayoutStore } from '@/stores/layout.js';
 import { loadIcons } from '@iconify/vue';
-import { useThemeStore } from '@/stores/theme';
 
 // Define the events this component emits to parent components
 defineEmits(['toggle-sidebar']);
 
 const route = useRoute();
 const themeStore = useThemeStore();
+const layoutStore = useLayoutStore();
 
 // Theme handling using computed property for two-way binding
 const currentTheme = computed({
