@@ -70,7 +70,7 @@
       </ul>
     </nav>
     
-    <!-- Footer section with theme toggle -->
+    <!-- Footer section with theme toggle and user button -->
     <div class="sidebar-footer">
       <button @click="toggleTheme" 
               class="theme-toggle" 
@@ -79,6 +79,14 @@
           <IconifyIcon icon="mdi:palette" width="30" height="30" />
         </span>
         <span class="text" v-if="!isCollapsed" style="margin-right: 1rem">{{ themeButtonText }}</span>
+      </button>
+      <button class="sidebar-user-button" 
+              :class="{ 'collapsed': isCollapsed }"
+              aria-label="User account">
+        <span class="icon" aria-hidden="true">
+          <IconifyIcon icon="mdi:account-circle" width="24" height="24" />
+        </span>
+        <span class="text" v-if="!isCollapsed">User Account</span>
       </button>
     </div>
   </aside>
@@ -150,7 +158,8 @@ onMounted(() => {
     'mdi:account',
     'mdi:cog',
     'mdi:help-circle',
-    'mdi:palette'
+    'mdi:palette',
+    'mdi:account-circle'
   ]);
 });
 </script>
