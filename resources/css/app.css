@@ -77,6 +77,8 @@ h6 { font-size: 1rem; font-weight: 500; }
   --sidebar-hover:rgb(224, 224, 224);
   --sidebar-active:rgb(224, 224, 224);
   --sidebar-active-text:rgb(43, 38, 38);
+  --sidebar-width: 12rem;
+  --sidebar-collapsed-width: 5.3rem;
   
   /* Quick Settings */
   --floating-settings-bg:rgb(240, 240, 240);
