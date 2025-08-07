@@ -56,6 +56,9 @@
         <router-view :key="$route.fullPath" />
       </div>
     </main>
+    
+    <!-- Floating Settings Button -->
+    <FloatingSettings />
   </div>
 </template>
 
@@ -68,10 +71,18 @@ import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import AppNavbar from '@/components/layout/app_navbar.vue';
 import AppSidebar from '@/components/layout/app_sidebar.vue';
+import FloatingSettings from '@/components/ui/floating_settings.vue';
 
 // Initialize the stores
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
+
+// Component registration
+const components = {
+  AppNavbar,
+  AppSidebar,
+  FloatingSettings
+};
 
 /**
  * Computed Properties
