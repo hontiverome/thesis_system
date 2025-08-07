@@ -1573,6 +1573,20 @@ body {
   cursor: pointer;
 }
 
+.settings-section h2 {
+  display: flex;
+  align-items: center;
+  margin: 0 0 0.5rem 0;
+}
+
+.settings-section h2 .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.75rem;
+  color: var(--primary-color);
+}
+
 .settings-section:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);

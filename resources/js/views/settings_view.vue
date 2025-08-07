@@ -50,7 +50,9 @@
       <section class="card settings-section" aria-labelledby="theme-settings-heading">
         <div class="section-header">
           <h2 id="theme-settings-heading">
-            <span class="icon">🎨</span>
+            <span class="icon">
+              <IconifyIcon icon="mdi:palette" width="24" height="24" />
+            </span>
             Theme & Appearance
           </h2>
           <p class="section-description">
@@ -85,7 +87,9 @@
       <section class="card settings-section" aria-labelledby="layout-settings-heading">
         <div class="section-header">
           <h2 id="layout-settings-heading">
-            <span class="icon">📱</span>
+            <span class="icon">
+              <IconifyIcon icon="mdi:view-dashboard" width="24" height="24" />
+            </span>
             Layout Preferences
           </h2>
           <p class="section-description">
@@ -144,7 +148,9 @@
       <section class="card settings-section" aria-labelledby="account-settings-heading">
         <div class="section-header">
           <h2 id="account-settings-heading">
-            <span class="icon">👤</span>
+            <span class="icon">
+              <IconifyIcon icon="mdi:account-cog" width="24" height="24" />
+            </span>
             Account
           </h2>
           <p class="section-description">
@@ -177,9 +183,10 @@
 
 <script setup>
 // Import required Vue composition API functions and stores
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
+import { loadIcons } from '@iconify/vue';
 
 /**
  * Component State and Data
@@ -259,10 +266,23 @@ const currentThemeName = computed(() => {
 // Get user's timezone
 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// Available languages for selection
+// Load required icons
+onMounted(() => {
+  loadIcons([
+    'mdi:palette',
+    'mdi:view-dashboard',
+    'mdi:account-cog'
+  ]);
+});
+
+// Available languages for the language selector
 const availableLanguages = [
   { value: 'en', label: 'English' },
   { value: 'es', label: 'Español' },
   { value: 'fr', label: 'Français' },
+  { value: 'de', label: 'Deutsch' },
+  { value: 'ja', label: '日本語' },
+  { value: 'zh', label: '中文' },
+  { value: 'fil', label: 'Filipino' }
 ];
 </script>
