@@ -1,8 +1,8 @@
-<!--
- * System Name: Human Resource Management Information System
- * Module Name: Profile Module
+<!---
+ * System Name: Theming and UI Framework
+ * Module Name: Profile
  * Purpose Of this file: 
- * To display and manage user profile information including personal details and account settings.
+ * To display and manage user profile information and settings.
  * 
  * Author: Jerome Andrei O. Hontiveros
  * Copyright (C) 2025

@@ -1,5 +1,5 @@
 <!--
- * System Name: Human Resource Management Information System
+ * System Name: Theming and UI Framework
  * Module Name: Profile Module
  * Component Name: Account Information
  * Purpose Of this file: 
