@@ -30,66 +30,169 @@
 -->
 
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-    <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-white">Account Information</h3>
-      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your account details and preferences</p>
+  <div class="profile-account-card">
+    <div class="profile-account-header">
+      <h3>Account Information</h3>
+      <p>Manage your account details and preferences</p>
     </div>
     
-    <div class="px-6 py-5">
-      <dl class="space-y-8">
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Full name</dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+    <div class="profile-account-content">
+      <dl class="profile-account-details">
+        <div class="profile-account-row">
+          <dt>Full name</dt>
+          <dd>
             {{ user?.name || 'Not provided' }}
           </dd>
         </div>
         
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email address</dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+        <div class="profile-account-row">
+          <dt>Email address</dt>
+          <dd>
             {{ user?.email || 'Not provided' }}
           </dd>
         </div>
         
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Account status</dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+        <div class="profile-account-row">
+          <dt>Account status</dt>
+          <dd>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" :class="statusClasses">
               {{ statusText }}
             </span>
           </dd>
         </div>
         
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Member since</dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-            {{ user?.created_at ? formatDate(user.created_at) : 'N/A' }}
+        <div class="profile-account-row">
+          <dt>Member since</dt>
+          <dd>
+            {{ formatDate(user?.created_at) || 'Not available' }}
           </dd>
         </div>
         
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4">
-          <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Last updated</dt>
-          <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
-            {{ user?.updated_at ? formatDate(user.updated_at) : 'N/A' }}
+        <div class="profile-account-row">
+          <dt>Last updated</dt>
+          <dd>
+            {{ formatDate(user?.updated_at) || 'Not available' }}
           </dd>
+        </div>
+        
+        <div class="profile-account-actions">
+          <button
+            @click="$emit('edit-profile')"
+            class="profile-btn profile-btn-primary"
+          >
+            <svg class="profile-icon" viewBox="0 0 24 24">
+              <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit Profile
+          </button>
         </div>
       </dl>
     </div>
-    
-    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 text-right">
-      <button 
-        @click="$emit('edit-profile')"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        Edit Profile
-      </button>
-    </div>
   </div>
 </template>
+
+<style scoped>
+.profile-account-card {
+  background-color: var(--card-bg);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.profile-account-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.profile-account-header h3 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.profile-account-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.profile-account-content {
+  padding: 1.5rem;
+}
+
+.profile-account-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-account-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .profile-account-row {
+    grid-template-columns: 12rem 1fr;
+    align-items: flex-start;
+  }
+}
+
+.profile-account-row dt {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.profile-account-row dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--text-color);
+  word-break: break-word;
+}
+
+.profile-account-actions {
+  padding-top: 1.25rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.profile-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.profile-btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.profile-btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+.profile-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.profile-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.5rem;
+  fill: currentColor;
+}
+</style>
 
 <script setup>
 import { computed } from 'vue';

@@ -29,32 +29,46 @@
 -->
 
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="profile" role="main" aria-labelledby="profile-title">
     <!-- Loading State -->
-    <div v-if="userStore.isLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg flex items-center space-x-4">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-        <span class="text-gray-700 dark:text-gray-200">Loading profile...</span>
+    <div v-if="userStore.isLoading" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <span>Loading profile...</span>
       </div>
     </div>
 
     <!-- Error Message -->
-    <div v-if="error" class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
-      <p>{{ error }}</p>
+    <div v-else-if="error" class="error-message">
+      <div class="error-content">
+        <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <div class="error-text">
+          <h3>Error Loading Profile</h3>
+          <p>{{ error }}</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Profile Header -->
-    <ProfileHeader 
-      :user="userStore.user"
-      @edit-profile="showEditModal = true"
-    />
+    <!-- Main Content -->
+    <div v-else class="profile-content">
+      <!-- Profile Header Component -->
+      <ProfileHeader 
+        :user="userStore.user"
+        @edit-profile="showEditModal = true"
+      />
 
-    <!-- Account Information -->
-    <AccountInfo 
-      :user="userStore.user" 
-      class="mt-8"
-      @edit-profile="showEditModal = true"
-    />
+      <!-- Account Information Card -->
+      <div class="account-info-card">
+        <div class="card-content">
+          <AccountInfo 
+            :user="userStore.user"
+            @edit-profile="showEditModal = true"
+          />
+        </div>
+      </div>
+    </div>
 
     <!-- Edit Profile Modal -->
     <EditProfileModal 
@@ -68,10 +82,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useUserStore } from '@/stores/user';
-import ProfileHeader from '@/components/profile/profile_header.vue';
-import AccountInfo from '@/components/profile/account_info.vue';
-import EditProfileModal from '@/components/profile/edit_profile_modal.vue';
+import { useUserStore } from '@/stores/user.js';
+import ProfileHeader from '../components/profile/profile_header.vue';
+import AccountInfo from '../components/profile/account_info.vue';
+import EditProfileModal from '../components/profile/edit_profile_modal.vue';
 
 const userStore = useUserStore();
 const showEditModal = ref(false);

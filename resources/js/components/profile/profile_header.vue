@@ -30,36 +30,35 @@
 -->
 
 <template>
-  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mb-8">
-    <!-- Profile Header with Gradient Background -->
-    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-white">
-      <div class="flex flex-col md:flex-row items-center">
+  <div class="profile-header-card">
+    <div class="profile-header-banner" style="color: var(--text-color);">
+      <div class="profile-header-content">
         <!-- Avatar Section -->
-        <div class="relative group mb-4 md:mb-0 md:mr-8">
+        <div class="profile-avatar-container">
           <div 
-            class="w-32 h-32 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center overflow-hidden border-4 border-white dark:border-gray-200 shadow-lg cursor-pointer"
+            class="profile-avatar"
             @click="$refs.fileInput.click()"
           >
             <img 
               v-if="user?.avatar" 
               :src="user.avatar" 
               :alt="user.name || 'Profile'"
-              class="w-full h-full object-cover"
+              class="profile-avatar-img"
             />
-            <div v-else class="text-4xl text-gray-400">
+            <div v-else class="profile-avatar-initials">
               {{ user?.name?.charAt(0) || 'U' }}
             </div>
             
             <!-- Upload Overlay -->
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span class="text-white text-sm font-medium">Change Photo</span>
+            <div class="profile-avatar-overlay">
+              <span>Change Photo</span>
             </div>
           </div>
           
           <input 
             ref="fileInput"
             type="file" 
-            class="hidden" 
+            class="file-input" 
             accept="image/*"
             @change="handleFileUpload"
           />
@@ -68,51 +67,37 @@
           <button 
             v-if="user?.avatar"
             @click.stop="removeAvatar"
-            class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+            class="remove-avatar-btn"
             title="Remove photo"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
             </svg>
           </button>
         </div>
         
         <!-- User Info -->
-        <div class="text-center md:text-left">
-          <h2 class="text-2xl md:text-3xl font-bold">
+        <div class="profile-info">
+          <h2 class="profile-name">
             {{ user?.name || 'User' }}
           </h2>
           
-          <div class="flex items-center justify-center md:justify-start mt-2">
-            <span 
-              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              :class="statusClasses"
-            >
-              {{ statusText }}
-            </span>
+          <div class="status-badge" :class="'status-' + (user?.status || 'active')">
+            {{ statusText }}
           </div>
           
-          <p class="mt-2 text-blue-100">{{ user?.email || 'user@example.com' }}</p>
+          <p class="profile-email">{{ user?.email || 'user@example.com' }}</p>
           
-          <div class="mt-4 flex flex-wrap gap-2 justify-center md:justify-start">
+          <div class="profile-actions">
             <button 
               @click="$emit('edit-profile')"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              class="btn btn-primary"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
               Edit Profile
-            </button>
-            
-            <button 
-              @click="$emit('update-status')"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Update Status
             </button>
           </div>
         </div>
@@ -123,7 +108,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '../../stores/user';
 
 const props = defineProps({
   user: {
@@ -137,19 +122,19 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['edit-profile', 'update-status']);
+const emit = defineEmits(['edit-profile']);
 const userStore = useUserStore();
 const fileInput = ref(null);
 
-const statusMap = {
-  active: { text: 'Active', classes: 'bg-green-100 text-green-800' },
-  away: { text: 'Away', classes: 'bg-yellow-100 text-yellow-800' },
-  busy: { text: 'Busy', classes: 'bg-red-100 text-red-800' },
-  offline: { text: 'Offline', classes: 'bg-gray-100 text-gray-800' }
-};
-
-const statusText = computed(() => statusMap[props.user?.status || 'active']?.text || 'Active');
-const statusClasses = computed(() => statusMap[props.user?.status || 'active']?.classes || 'bg-gray-100 text-gray-800');
+const statusText = computed(() => {
+  const statusMap = {
+    active: 'Active',
+    away: 'Away',
+    busy: 'Busy',
+    offline: 'Offline'
+  };
+  return statusMap[props.user?.status] || 'Active';
+});
 
 const handleFileUpload = async (event) => {
   const file = event.target.files?.[0];
@@ -159,18 +144,19 @@ const handleFileUpload = async (event) => {
     await userStore.updateAvatar(file);
   } catch (error) {
     console.error('Error uploading avatar:', error);
-    // Handle error (e.g., show error message)
+  } finally {
+    // Reset the file input
+    event.target.value = '';
   }
 };
 
 const removeAvatar = async () => {
-  if (confirm('Are you sure you want to remove your profile picture?')) {
-    try {
-      await userStore.updateAvatar(null);
-    } catch (error) {
-      console.error('Error removing avatar:', error);
-      // Handle error
-    }
+  if (!confirm('Are you sure you want to remove your profile photo?')) return;
+  
+  try {
+    await userStore.removeAvatar();
+  } catch (error) {
+    console.error('Error removing avatar:', error);
   }
 };
 </script>
