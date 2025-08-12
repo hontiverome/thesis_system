@@ -71,7 +71,7 @@
     </nav>
     
     <!-- Footer section with theme toggle and user button -->
-    <div class="sidebar-footer">
+    <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
       <button @click="toggleTheme" 
               class="theme-toggle" 
               aria-label="Toggle theme">
@@ -98,6 +98,7 @@
  */
 import { computed, onMounted } from 'vue';
 import { useThemeStore } from '../../stores/theme';
+import { useLayoutStore } from '../../stores/layout';
 import { loadIcons } from '@iconify/vue';
 
 /**
@@ -112,8 +113,9 @@ const props = defineProps({
   }
 });
 
-// Initialize the theme store to manage application theming
+// Initialize the stores
 const themeStore = useThemeStore();
+const layoutStore = useLayoutStore();
 
 /**
  * Navigation items configuration
