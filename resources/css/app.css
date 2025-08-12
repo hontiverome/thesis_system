@@ -1983,21 +1983,27 @@ body {
   .profile-btn-primary {
     background-color: var(--primary-color);
     color: white;
+    font-size: .9rem;
+    padding: .5rem 1rem;
     font-weight: 600;
     letter-spacing: 0.01em;
   }
 
-  .profile-btn-primary:hover:not(:disabled) {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  .profile-btn-modal {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: .9rem;
+    padding: .5rem 1rem;
+    margin-left: 15%;
+    margin-top: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
   }
 
-  .profile-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none !important;
-    box-shadow: none !important;
+  .profile-btn-modal:hover:not(:disabled) {
+    background-color: var(--hover-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .profile-icon {
@@ -2041,12 +2047,13 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  opacity: 1;
   padding: 1rem;
 }
 
 /* Modal Container */
 .profile-modal {
-  background: var(--card-bg);
+  background: var(--input-bg);
   border-radius: var(--border-radius);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   width: 100%;
@@ -2168,11 +2175,11 @@ body {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: var(--text-color);
 }
 
-.btn-primary:not(:disabled):hover {
-  background-color: var(--primary-dark);
+.profile-btn-primary:not(:disabled):hover {
+  background-color: var(--hover-color);
 }
 
 .btn-secondary {

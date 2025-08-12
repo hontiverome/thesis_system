@@ -73,14 +73,14 @@
             <button
               type="button"
               @click="$emit('close')"
-              class="profile-btn profile-btn-secondary"
+              class="profile-btn profile-btn-modal"
             >
               Cancel
             </button>
             <button
               type="submit"
               :disabled="isSubmitting"
-              class="profile-btn profile-btn-primary"
+              class="profile-btn profile-btn-modal"
             >
               <span v-if="isSubmitting" class="profile-btn-loading">
                 <svg class="profile-spinner" viewBox="0 0 24 24">
