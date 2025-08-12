@@ -98,21 +98,12 @@
 import { ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 
-const props = defineProps({
-  user: {
-    type: Object,
-    default: () => ({
-      name: '',
-      email: '',
-      status: 'active',
-      avatar: null
-    })
-  }
-});
-
 const emit = defineEmits(['edit-profile']);
 const userStore = useUserStore();
 const fileInput = ref(null);
+
+// Use the user from the store
+const user = computed(() => userStore.user);
 
 const statusText = computed(() => {
   const statusMap = {
@@ -121,7 +112,7 @@ const statusText = computed(() => {
     busy: 'Busy',
     offline: 'Offline'
   };
-  return statusMap[props.user?.status] || 'Active';
+  return statusMap[user.value?.status] || 'Active';
 });
 
 const handleFileUpload = async (event) => {

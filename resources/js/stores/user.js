@@ -49,16 +49,34 @@ const formatDate = (dateString) => {
 };
 
 export const useUserStore = defineStore('user', () => {
-  // State
-  const user = ref({
-    id: 'user-123',
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    status: 'active',
-    avatar: null,
-    memberSince: new Date('2025-01-15').toISOString(),
-    lastLogin: new Date().toISOString(),
-  });
+  // State - Load from localStorage or use defaults
+  const loadUserFromStorage = () => {
+    const savedUser = localStorage.getItem('userData');
+    if (savedUser) {
+      try {
+        return JSON.parse(savedUser);
+      } catch (e) {
+        console.error('Failed to parse saved user data', e);
+      }
+    }
+    // Default user data
+    return {
+      id: 'user-123',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      status: 'active',
+      avatar: null,
+      memberSince: new Date('2025-01-15').toISOString(),
+      lastLogin: new Date().toISOString(),
+    };
+  };
+
+  const user = ref(loadUserFromStorage());
+  
+  // Save user data to localStorage whenever it changes
+  const saveUserToStorage = () => {
+    localStorage.setItem('userData', JSON.stringify(user.value));
+  };
   
   const isAuthenticated = ref(true);
   const authToken = ref(localStorage.getItem('authToken') || null);
@@ -106,13 +124,14 @@ export const useUserStore = defineStore('user', () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // Update user data
-      user.value = { ...user.value, ...profileData };
+      user.value = { 
+        ...user.value, 
+        ...profileData,
+        updatedAt: new Date().toISOString() // Update last modified timestamp
+      };
       
-      // Update last modified timestamp
-      user.value.updatedAt = new Date().toISOString();
-      
-      // In a real app, you would save to the server here
-      // await api.updateUserProfile(user.value.id, profileData);
+      // Save to localStorage
+      saveUserToStorage();
       
       return { success: true, data: user.value };
     } catch (err) {
@@ -159,11 +178,9 @@ export const useUserStore = defineStore('user', () => {
           // and get back a URL to store in the user's profile
           // For now, we'll store the data URL directly
           user.value.avatar = e.target.result;
-          
-          // Persist to localStorage (temporary solution)
-          localStorage.setItem('user_avatar', e.target.result);
-          
-          resolve(e.target.result);
+          user.value.updatedAt = new Date().toISOString();
+          saveUserToStorage();
+          resolve({ success: true, avatar: user.value.avatar });
         } catch (err) {
           console.error('Error processing image:', err);
           error.value = 'Failed to process image';
@@ -180,6 +197,19 @@ export const useUserStore = defineStore('user', () => {
       
       reader.readAsDataURL(file);
     });
+  }
+
+  async function removeAvatar() {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      user.value.avatar = null;
+      user.value.updatedAt = new Date().toISOString();
+      saveUserToStorage();
+      return { success: true };
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+      throw error;
+    }
   }
 
   // Mock authentication methods (for future implementation)
@@ -201,6 +231,8 @@ export const useUserStore = defineStore('user', () => {
       
       // Update last login time
       user.value.lastLogin = new Date().toISOString();
+      user.value.updatedAt = new Date().toISOString();
+      saveUserToStorage();
       
       return { success: true };
     } catch (err) {

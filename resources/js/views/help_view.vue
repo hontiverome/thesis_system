@@ -33,7 +33,7 @@
 -->
 <template>
   <div class="help">
-    <h1>Help & Support</h1>
+    <h1 id="help-title">Help & Support</h1>
     
     <div class="card">
       <h2>Frequently Asked Questions</h2>

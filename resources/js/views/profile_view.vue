@@ -55,7 +55,6 @@
     <div v-else class="profile-content">
       <!-- Profile Header Component -->
       <ProfileHeader 
-        :user="userStore.user"
         @edit-profile="showEditModal = true"
       />
 
@@ -63,7 +62,6 @@
       <div class="account-info-card">
         <div class="card-content">
           <AccountInfo 
-            :user="userStore.user"
             @edit-profile="showEditModal = true"
           />
         </div>
@@ -94,16 +92,26 @@ const error = ref<string | null>(null);
 // Initialize user data
 const initialize = async (): Promise<void> => {
   try {
-    await userStore.initialize();
+    // Only initialize if we don't have user data yet
+    if (!userStore.user || !userStore.user.id) {
+      await userStore.initialize();
+    }
   } catch (err) {
     console.error('Failed to load profile:', err);
     error.value = 'Failed to load profile data. Please try again later.';
   }
 };
 
-const handleProfileSaved = (): void => {
+const handleProfileSaved = async (): Promise<void> => {
+  // Any additional logic after profile is saved
   showEditModal.value = false;
-  initialize();
+  
+  // Refresh user data to ensure everything is up to date
+  try {
+    await userStore.initialize();
+  } catch (err: unknown) {
+    console.error('Error refreshing user data:', err);
+  }
 };
 
 // Load data when component mounts

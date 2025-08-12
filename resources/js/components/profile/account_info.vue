@@ -97,21 +97,13 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useUserStore } from '@/stores/user';
 
-const props = defineProps({
-  user: {
-    type: Object,
-    default: () => ({
-      name: '',
-      email: '',
-      status: 'active',
-      created_at: null,
-      updated_at: null
-    })
-  }
-});
-
+const userStore = useUserStore();
 const emit = defineEmits(['edit-profile']);
+
+// Use the user from the store
+const user = computed(() => userStore.user);
 
 const statusMap = {
   active: { text: 'Active', classes: 'bg-green-100 text-green-800' },
@@ -120,8 +112,8 @@ const statusMap = {
   offline: { text: 'Offline', classes: 'bg-gray-100 text-gray-800' }
 };
 
-const statusText = computed(() => statusMap[props.user?.status || 'active']?.text || 'Active');
-const statusClasses = computed(() => statusMap[props.user?.status || 'active']?.classes || 'bg-gray-100 text-gray-800');
+const statusText = computed(() => statusMap[user.value?.status || 'active']?.text || 'Active');
+const statusClasses = computed(() => statusMap[user.value?.status || 'active']?.classes || 'bg-gray-100 text-gray-800');
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
