@@ -30,8 +30,8 @@
 -->
 
 <template>
-  <div class="profile-modal-overlay">
-    <div class="profile-modal">
+  <div class="profile-modal-overlay" @click.self="handleOverlayClick">
+    <div class="profile-modal" ref="modal">
       <div class="profile-modal-content">
         <div class="profile-modal-header">
           <h3>Edit Profile</h3>
@@ -98,8 +98,30 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useUserStore } from '@/stores/user';
+
+const modal = ref(null);
+
+const handleClickOutside = (event) => {
+  if (modal.value && !modal.value.contains(event.target)) {
+    emit('close');
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
+});
+
+const handleOverlayClick = (event) => {
+  if (event.target === event.currentTarget) {
+    emit('close');
+  }
+};
 
 const props = defineProps({
   user: {
