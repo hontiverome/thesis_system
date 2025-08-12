@@ -38,6 +38,7 @@
           <div 
             class="profile-avatar"
             @click="$refs.fileInput.click()"
+            :key="user?.avatar || 'no-avatar'"
           >
             <img 
               v-if="user?.avatar" 
@@ -126,6 +127,8 @@ const removeAvatar = async () => {
   
   try {
     await userStore.removeAvatar();
+    // Force a re-render by creating a new user object reference
+    userStore.user = { ...userStore.user };
   } catch (error) {
     console.error('Error removing avatar:', error);
   }

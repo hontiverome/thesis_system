@@ -52,6 +52,7 @@ export const useUserStore = defineStore('user', () => {
   // State - Load from localStorage or use defaults
   const loadUserFromStorage = () => {
     const savedUser = localStorage.getItem('userData');
+    
     if (savedUser) {
       try {
         return JSON.parse(savedUser);
@@ -59,6 +60,7 @@ export const useUserStore = defineStore('user', () => {
         console.error('Failed to parse saved user data', e);
       }
     }
+    
     // Default user data
     return {
       id: 'user-123',
@@ -201,10 +203,27 @@ export const useUserStore = defineStore('user', () => {
 
   async function removeAvatar() {
     try {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      user.value.avatar = null;
-      user.value.updatedAt = new Date().toISOString();
-      saveUserToStorage();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Clear both the avatar and preview
+      avatarPreview.value = null;
+      
+      // Create a new user object to ensure reactivity
+      const updatedUser = {
+        ...user.value,
+        avatar: null,
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Update the user ref with the new object
+      user.value = updatedUser;
+      
+      // Save to storage
+      localStorage.setItem('userData', JSON.stringify(user.value));
+      
+      // Force a re-render by updating the user reference
+      user.value = { ...user.value };
+      
       return { success: true };
     } catch (error) {
       console.error('Error removing avatar:', error);
@@ -345,9 +364,10 @@ export const useUserStore = defineStore('user', () => {
     // Actions
     updateProfile,
     updateAvatar,
+    removeAvatar,
     login,
     register,
     logout,
-    initialize,
+    initialize
   };
 });

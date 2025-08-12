@@ -70,8 +70,8 @@
       </ul>
     </nav>
     
-    <!-- Footer section with theme toggle and user button -->0
-     <!-- Omit sidebar footer when layout is both-->
+    <!-- Footer section with theme toggle and user button -->
+    <!-- Omit sidebar footer when layout is both -->
     <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
       <button @click="toggleTheme" 
               class="theme-toggle" 
