@@ -1395,6 +1395,32 @@ body {
 }
 
 /* Profile Header Component */
+.profile-header {
+  text-align: center;
+  color: var(--header-text);
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.profile-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.profile-email {
+  margin-top: 0.25rem;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .profile-header {
+    text-align: left;
+  }
+}
+
 .profile-header-card {
   background-color: var(--header-bg);
   color: var(--header-bg);
@@ -1783,16 +1809,18 @@ body {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--header-text);
-  margin: 0 0 0.5rem;
+  margin: 0;
   line-height: 1.2;
-  letter-spacing: -0.01em;
 }
 
 .profile-email {
-  color: var(--text-muted);
-  margin: 0.5rem 0 0;
+  color: var(--header-text);
+  opacity: 0.9;
+  margin: 0.25rem 0 0;
   font-size: 1.1rem;
   font-weight: 400;
+  display: block;
+  line-height: 1.4;
 }
 
 .status-badge {

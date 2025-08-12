@@ -77,18 +77,10 @@
         </div>
         
         <!-- User Info -->
-        <div class="profile-info">
-          <h2 class="profile-name">
-            {{ user?.name || 'User' }}
-          </h2>
-          
-          <div class="status-badge" :class="'status-' + (user?.status || 'active')">
-            {{ statusText }}
-          </div>
-          
-          <p class="profile-email">{{ user?.email || 'user@example.com' }}</p>
-          
-        </div>
+        <header class="profile-header">
+          <h2 class=profile-name>{{ user?.name || 'User' }}</h2>
+          <div class="profile-email">{{ user?.email || 'user@example.com' }}</div>
+        </header>
       </div>
     </div>
   </div>

@@ -55,7 +55,7 @@
         <div class="profile-account-row">
           <dt>Account status</dt>
           <dd>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" :class="statusClasses">
+            <span class="status-badge" :class="'status-' + (user?.status || 'active')">
               {{ statusText }}
             </span>
           </dd>
@@ -106,14 +106,13 @@ const emit = defineEmits(['edit-profile']);
 const user = computed(() => userStore.user);
 
 const statusMap = {
-  active: { text: 'Active', classes: 'bg-green-100 text-green-800' },
-  away: { text: 'Away', classes: 'bg-yellow-100 text-yellow-800' },
-  busy: { text: 'Busy', classes: 'bg-red-100 text-red-800' },
-  offline: { text: 'Offline', classes: 'bg-gray-100 text-gray-800' }
+  active: 'Active',
+  away: 'Away',
+  busy: 'Busy',
+  offline: 'Offline'
 };
 
-const statusText = computed(() => statusMap[user.value?.status || 'active']?.text || 'Active');
-const statusClasses = computed(() => statusMap[user.value?.status || 'active']?.classes || 'bg-gray-100 text-gray-800');
+const statusText = computed(() => statusMap[user.value?.status || 'active'] || 'Active');
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
