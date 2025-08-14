@@ -1082,12 +1082,12 @@ body {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
   overflow: hidden;
-  z-index: 1000; /* Increased to ensure it appears above settings button */
+  z-index: 500;
   opacity: 0;
   pointer-events: none;
   transform: translateY(-8px);
   transition: all 0.2s ease-out;
-} 
+}
 
 .navbar .user-dropdown.active {
   opacity: 1;
@@ -1220,7 +1220,7 @@ body {
 
 .navbar .user-dropdown-item.logout:hover {
   background-color: var(--danger-bg);
-  color: #fff;
+  color: rgb(255, 17, 17);
 }
 
 .navbar .divider {

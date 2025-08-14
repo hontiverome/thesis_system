@@ -165,16 +165,27 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
 import { useUserStore } from '@/stores/user';
+import { useThemeStore } from '@/stores/theme';
 import { loadIcons } from '@iconify/vue';
 const router = useRouter();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
+const themeStore = useThemeStore();
 
 const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
 const isUserMenuOpen = ref(false);
 
+const themeButtonText = computed(() => {
+  const currentTheme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
+  return currentTheme?.name || 'Theme';
+});
+
 const toggleSidebar = () => {
   layoutStore.toggleSidebar();
+};
+
+const toggleTheme = () => {
+  themeStore.toggleTheme();
 };
 
 const toggleUserMenu = (event) => {
