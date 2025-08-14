@@ -102,30 +102,29 @@
                 @click.stop="toggleUserMenu"
                 aria-label="User menu"
                 aria-expanded="isUserMenuOpen">
-          <div class="user-avatar-container">
+          <div class="sidebar-avatar-container">
             <template v-if="userStore.user?.avatar">
-              <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+              <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="sidebar-avatar" />
             </template>
-            <div v-else class="user-avatar-initials">
+            <div v-else class="sidebar-avatar-initials">
               {{ userStore.user?.name?.charAt(0) || 'U' }}
             </div>
           </div>
           <div class="user-info" v-if="!isCollapsed">
             <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
-            <div class="user-email">{{ userStore.user?.email || 'user@example.com' }}</div>
           </div>
-          <IconifyIcon icon="mdi:chevron-down" class="dropdown-arrow" v-if="!isCollapsed" />
+          <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="dropdown-arrow" />
         </button>
         
         <!-- User Dropdown Menu -->
         <transition name="fade">
           <div v-if="isUserMenuOpen && !isCollapsed" class="user-dropdown">
             <div class="user-dropdown-header">
-              <div class="user-avatar-container">
+              <div class="sidebar-avatar-container">
                 <template v-if="userStore.user?.avatar">
-                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="sidebar-avatar" />
                 </template>
-                <div v-else class="user-avatar-initials">
+                <div v-else class="sidebar-avatar-initials">
                   {{ userStore.user?.name?.charAt(0) || 'U' }}
                 </div>
               </div>
@@ -138,7 +137,7 @@
               <li>
                 <router-link to="/profile" class="user-dropdown-item" @click="closeUserMenu">
                   <IconifyIcon icon="mdi:account" class="menu-icon" />
-                  <span>Profile</span>
+                  <span>My Profile</span>
                 </router-link>
               </li>
               <li>
@@ -163,72 +162,46 @@
 </template>
 
 <script setup>
-/**
- * Imports Vue's composition API functions and required dependencies
- */
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
-import { useThemeStore } from '@/stores/theme';
 import { useLayoutStore } from '@/stores/layout';
+import { useUserStore } from '@/stores/user';
 import { loadIcons } from '@iconify/vue';
-
-// Initialize stores
-const userStore = useUserStore();
-const themeStore = useThemeStore();
-const layoutStore = useLayoutStore();
 const router = useRouter();
+const layoutStore = useLayoutStore();
+const userStore = useUserStore();
 
-// State for user menu
+const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
 const isUserMenuOpen = ref(false);
 
-// Toggle sidebar collapsed state
 const toggleSidebar = () => {
   layoutStore.toggleSidebar();
 };
 
-// Toggle user menu
-const toggleUserMenu = () => {
+const toggleUserMenu = (event) => {
+  event.stopPropagation();
   isUserMenuOpen.value = !isUserMenuOpen.value;
 };
 
-// Close user menu
 const closeUserMenu = () => {
   isUserMenuOpen.value = false;
 };
 
-// Handle click outside to close menu
-const handleClickOutside = (event) => {
-  const userMenu = event.target.closest('.user-menu-container');
-  if (!userMenu) {
-    closeUserMenu();
-  }
-};
-
-// Handle logout
 const handleLogout = async () => {
   try {
     await userStore.logout();
     router.push('/login');
   } catch (error) {
     console.error('Logout failed:', error);
-  } finally {
-    closeUserMenu();
   }
 };
 
-// Theme toggle functionality
-const toggleTheme = () => {
-  themeStore.toggleTheme();
+const handleClickOutside = (event) => {
+  const userMenu = event.target.closest('.user-menu-container');
+  if (!userMenu && isUserMenuOpen.value) {
+    closeUserMenu();
+  }
 };
-
-// Computed property for theme button text
-const themeButtonText = computed(() => {
-  return themeStore.currentTheme.charAt(0).toUpperCase() + themeStore.currentTheme.slice(1);
-});
-
-// Computed property for sidebar collapsed state
-const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
 
 // Navigation items
 const navItems = [
