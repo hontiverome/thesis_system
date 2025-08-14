@@ -41,9 +41,18 @@
          role="navigation"
          aria-label="Main navigation">
     
-    <!-- Sidebar header with collapsible title -->
+    <!-- Sidebar header with collapsible title and hamburger button -->
     <div class="sidebar-header">
-      <!-- Single element that changes content based on collapsed state -->
+      <!-- Hamburger button - only show in sidebar-only layout -->
+      <button v-if="layoutStore.layoutPreference === 'sidebar'" 
+              @click="toggleSidebar" 
+              class="hamburger-button"
+              :class="{ 'collapsed': isCollapsed }"
+              aria-label="Toggle sidebar">
+        <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
+      </button>
+      
+      <!-- Title that changes based on collapsed state -->
       <h2 class="sidebar-title" :class="{ 'collapsed': isCollapsed }" aria-label="Menu">
         {{ isCollapsed ? 'M' : 'Menu' }}
       </h2>
@@ -70,9 +79,10 @@
       </ul>
     </nav>
     
-    <!-- Footer section with theme toggle and user button -->
+    <!-- Footer section with theme toggle and user menu -->
     <!-- Omit sidebar footer when layout is both -->
     <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
+      <!-- Theme Toggle -->
       <button @click="toggleTheme" 
               class="theme-toggle" 
               aria-label="Toggle theme">
@@ -81,14 +91,70 @@
         </span>
         <span class="text" v-if="!isCollapsed" style="margin-right: 1rem">{{ themeButtonText }}</span>
       </button>
-      <button class="sidebar-user-button" 
-              :class="{ 'collapsed': isCollapsed }"
-              aria-label="User account">
-        <span class="icon" aria-hidden="true">
-          <IconifyIcon icon="mdi:account-circle" width="24" height="24" />
-        </span>
-        <span class="text" v-if="!isCollapsed">User Account</span>
-      </button>
+      
+      <!-- User Menu -->
+      <div class="user-menu-container" v-click-outside="closeUserMenu">
+        <button class="sidebar-user-button" 
+                :class="{ 'collapsed': isCollapsed, 'active': isUserMenuOpen }"
+                @click.stop="toggleUserMenu"
+                aria-label="User menu"
+                aria-expanded="isUserMenuOpen">
+          <div class="user-avatar-container">
+            <template v-if="userStore.user?.avatar">
+              <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+            </template>
+            <div v-else class="user-avatar-initials">
+              {{ userStore.user?.name?.charAt(0) || 'U' }}
+            </div>
+          </div>
+          <div class="user-info" v-if="!isCollapsed">
+            <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
+            <div class="user-email">{{ userStore.user?.email || 'user@example.com' }}</div>
+          </div>
+          <IconifyIcon icon="mdi:chevron-down" class="dropdown-arrow" v-if="!isCollapsed" />
+        </button>
+        
+        <!-- User Dropdown Menu -->
+        <transition name="fade">
+          <div v-if="isUserMenuOpen && !isCollapsed" class="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-avatar-container">
+                <template v-if="userStore.user?.avatar">
+                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+                </template>
+                <div v-else class="user-avatar-initials">
+                  {{ userStore.user?.name?.charAt(0) || 'U' }}
+                </div>
+              </div>
+              <div class="user-info">
+                <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
+                <div class="user-email">{{ userStore.user?.email || 'user@example.com' }}</div>
+              </div>
+            </div>
+            <ul class="user-dropdown-menu">
+              <li>
+                <router-link to="/profile" class="user-dropdown-item" @click="closeUserMenu">
+                  <IconifyIcon icon="mdi:account" class="menu-icon" />
+                  <span>Profile</span>
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/settings" class="user-dropdown-item" @click="closeUserMenu">
+                  <IconifyIcon icon="mdi:cog" class="menu-icon" />
+                  <span>Settings</span>
+                </router-link>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <button class="user-dropdown-item" @click="handleLogout">
+                  <IconifyIcon icon="mdi:logout" class="menu-icon" />
+                  <span>Logout</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </transition>
+      </div>
     </div>
   </aside>
 </template>
@@ -97,32 +163,71 @@
 /**
  * Imports Vue's composition API functions and required dependencies
  */
-import { computed, onMounted } from 'vue';
-import { useThemeStore } from '../../stores/theme';
-import { useLayoutStore } from '../../stores/layout';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { useThemeStore } from '@/stores/theme';
+import { useLayoutStore } from '@/stores/layout';
 import { loadIcons } from '@iconify/vue';
 
-/**
- * Component Properties
- * Defines the props that can be passed to this component
- * @property {Boolean} isCollapsed - Controls whether the sidebar is in collapsed state
- */
-const props = defineProps({
-  isCollapsed: {
-    type: Boolean,
-    default: false
-  }
-});
-
-// Initialize the stores
+// Initialize stores
+const userStore = useUserStore();
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
+const router = useRouter();
 
-/**
- * Navigation items configuration
- * Defines the main navigation structure with paths, icons, and display text
- * @type {Array<{path: string, icon: string, text: string}>}
- */
+// State for user menu
+const isUserMenuOpen = ref(false);
+
+// Toggle sidebar collapsed state
+const toggleSidebar = () => {
+  layoutStore.toggleSidebar();
+};
+
+// Toggle user menu
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+};
+
+// Close user menu
+const closeUserMenu = () => {
+  isUserMenuOpen.value = false;
+};
+
+// Handle click outside to close menu
+const handleClickOutside = (event) => {
+  const userMenu = event.target.closest('.user-menu-container');
+  if (!userMenu) {
+    closeUserMenu();
+  }
+};
+
+// Handle logout
+const handleLogout = async () => {
+  try {
+    await userStore.logout();
+    router.push('/login');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  } finally {
+    closeUserMenu();
+  }
+};
+
+// Theme toggle functionality
+const toggleTheme = () => {
+  themeStore.toggleTheme();
+};
+
+// Computed property for theme button text
+const themeButtonText = computed(() => {
+  return themeStore.currentTheme.charAt(0).toUpperCase() + themeStore.currentTheme.slice(1);
+});
+
+// Computed property for sidebar collapsed state
+const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
+
+// Navigation items
 const navItems = [
   { path: '/', icon: 'mdi:home', text: 'Home' },
   { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
@@ -130,28 +235,6 @@ const navItems = [
   { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
   { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
 ];
-
-/**
- * Computed property that determines the text for the theme toggle button
- * Shows the name of the next theme that will be applied when toggling
- * @returns {string} The display name of the next theme
- */
-const themeButtonText = computed(() => {
-  // Find the index of the current theme
-  const currentIndex = themeStore.availableThemes.findIndex(t => t.id === themeStore.currentTheme);
-  // Calculate the index of the next theme (wraps around to 0 at the end)
-  const nextIndex = (currentIndex + 1) % themeStore.availableThemes.length;
-  // Return the name of the next theme
-  return themeStore.availableThemes[nextIndex].name;
-});
-
-/**
- * Toggles between available themes in the theme store
- * This function is called when the theme toggle button is clicked
- */
-const toggleTheme = () => {
-  themeStore.toggleTheme();
-};
 
 // Load required icons
 onMounted(() => {
@@ -162,7 +245,17 @@ onMounted(() => {
     'mdi:cog',
     'mdi:help-circle',
     'mdi:palette',
-    'mdi:account-circle'
+    'mdi:account-circle',
+    'mdi:chevron-down',
+    'mdi:logout',
   ]);
+  
+  // Add click outside listener
+  document.addEventListener('click', handleClickOutside);
+});
+
+// Clean up event listeners
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
 });
 </script>

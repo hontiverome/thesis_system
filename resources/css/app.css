@@ -364,6 +364,34 @@ body {
     margin-bottom: 0.5rem;
     position: relative;
     overflow: hidden;
+    gap: 0.5rem;
+  }
+  
+  /* Hamburger button styles */
+  .hamburger-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--sidebar-text);
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+  }
+  
+  .hamburger-button:hover {
+    background-color: var(--sidebar-hover);
+  }
+  
+  .hamburger-button .hamburger-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  
+  .hamburger-button.collapsed .hamburger-icon {
+    transform: rotate(180deg);
   }
   
   .sidebar-title {
@@ -1722,8 +1750,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: var(--secondary-color);
-  color: var(--header-text);
+  background-color: var(--input-bg);
+  color: var(--text-color);
   border: 1px solid var(--secondary-color);
   border-radius: 0.375rem;
   font-size: 0.875rem;
