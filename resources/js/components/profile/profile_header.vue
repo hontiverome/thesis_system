@@ -34,47 +34,51 @@
     <div class="profile-header-banner">
       <div class="profile-header-content">
         <!-- Avatar Section -->
-        <div class="profile-avatar-container">
-          <div 
-            class="profile-avatar"
-            @click="$refs.fileInput.click()"
-            :key="user?.avatar || 'no-avatar'"
-          >
-            <img 
-              v-if="user?.avatar" 
-              :src="user.avatar" 
-              :alt="user.name || 'Profile'"
-              class="profile-avatar-img"
-            />
-            <div v-else class="profile-avatar-initials">
-              {{ user?.name?.charAt(0) || 'U' }}
+        <div class="profile-avatar-wrapper">
+          <div class="profile-avatar-container">
+            <div 
+              class="profile-avatar"
+              @click="$refs.fileInput.click()"
+              :key="user?.avatar || 'no-avatar'"
+            >
+              <img 
+                v-if="user?.avatar" 
+                :src="user.avatar" 
+                :alt="user.name || 'Profile'"
+                class="profile-avatar-img"
+              />
+              <div v-else class="profile-avatar-initials">
+                {{ user?.name?.charAt(0) || 'U' }}
+              </div>
+              
+              <!-- Upload Overlay -->
+              <div class="profile-avatar-overlay">
+                <span>Change Photo</span>
+              </div>
             </div>
             
-            <!-- Upload Overlay -->
-            <div class="profile-avatar-overlay">
-              <span>Change Photo</span>
-            </div>
+            <input 
+              ref="fileInput"
+              type="file" 
+              class="file-input" 
+              accept="image/*"
+              @change="handleFileUpload"
+            />
           </div>
           
-          <input 
-            ref="fileInput"
-            type="file" 
-            class="file-input" 
-            accept="image/*"
-            @change="handleFileUpload"
-          />
-          
           <!-- Remove Avatar Button -->
-          <button 
-            v-if="user?.avatar"
-            @click.stop="removeAvatar"
-            class="remove-avatar-btn"
-            title="Remove photo"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-            </svg>
-          </button>
+          <div v-if="user?.avatar" class="remove-avatar-container">
+            <button 
+              @click.stop="removeAvatar"
+              class="remove-avatar-btn"
+              title="Remove photo"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+              </svg>
+              <span>Remove Photo</span>
+            </button>
+          </div>
         </div>
         
         <!-- User Info -->
