@@ -52,9 +52,12 @@
         <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
       </button>
       
-      <!-- Title that changes based on collapsed state -->
-      <h2 class="sidebar-title" :class="{ 'collapsed': isCollapsed }" aria-label="Menu">
-        {{ isCollapsed ? 'M' : 'Menu' }}
+      <!-- Title - only show when not in sidebar-only layout or when expanded -->
+      <h2 v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" 
+          class="sidebar-title" 
+          :class="{ 'collapsed': isCollapsed }" 
+          aria-label="Menu">
+        {{ isCollapsed && layoutStore.layoutPreference !== 'sidebar' ? 'M' : 'Menu' }}
       </h2>
     </div>
     
