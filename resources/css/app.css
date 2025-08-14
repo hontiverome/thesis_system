@@ -982,7 +982,6 @@ body {
   }
 }
 
-
 .theme-select:hover {
   background-color: var(--hover-color);
   border-color: var(--primary-color);
@@ -1083,12 +1082,12 @@ body {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-color);
   overflow: hidden;
-  z-index: 50;
+  z-index: 1000; /* Increased to ensure it appears above settings button */
   opacity: 0;
   pointer-events: none;
   transform: translateY(-8px);
   transition: all 0.2s ease-out;
-}
+} 
 
 .navbar .user-dropdown.active {
   opacity: 1;
@@ -1365,7 +1364,7 @@ body {
   position: fixed;
   top: 80px;
   right: -15px;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .floating-settings .settings-button {
