@@ -139,7 +139,10 @@
               </label>
             </div>
             <div class="save-notice">
-              <p>Changes to layout preferences are saved automatically.</p>
+              <div class="flex items-start text-sm text-gray-500 mt-2">
+                <IconifyIcon icon="mdi:information-outline" class="mt-0.5 mr-4 text-blue-500 text-lg" />
+                <span class="leading-tight">Changes to layout preferences are saved automatically.</span>
+              </div>
             </div>
           </div>
         </div>

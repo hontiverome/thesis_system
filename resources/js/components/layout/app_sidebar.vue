@@ -111,7 +111,7 @@
             </div>
           </div>
           <div class="user-info" v-if="!isCollapsed">
-            <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
+            <div class="sidebar-username">{{ userStore.user?.name || 'User' }}</div>
           </div>
           <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="dropdown-arrow" />
         </button>
@@ -130,7 +130,6 @@
               </div>
               <div class="user-info">
                 <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
-                <div class="user-email">{{ userStore.user?.email || 'user@example.com' }}</div>
               </div>
             </div>
             <ul class="user-dropdown-menu">

@@ -111,40 +111,47 @@
           </button>
           
           <!-- Dropdown Menu -->
-          <div v-if="isUserMenuOpen" class="user-dropdown" v-click-outside="closeUserMenu">
-            <div class="dropdown-header">
-              <div class="dropdown-avatar-container">
+          <div v-if="isUserMenuOpen" class="user-dropdown active">
+            <div class="user-dropdown-header">
+              <div class="user-avatar-container">
                 <template v-if="userStore.user?.avatar">
-                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="dropdown-avatar" />
+                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
                 </template>
-                <div v-else class="dropdown-avatar-initials">
+                <div v-else class="user-avatar-initials">
                   {{ userStore.userInitials }}
                 </div>
               </div>
-              <div class="dropdown-user-info">
-                <div class="dropdown-user-name">{{ userStore.user?.name || 'User' }}</div>
-                <div class="dropdown-user-email">{{ userStore.user?.email || '' }}</div>
-                <div class="dropdown-user-status">
+              <div class="user-info">
+                <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
+                <div class="user-email">{{ userStore.user?.email || '' }}</div>
+                <div class="user-status">
                   <span class="status-badge" :class="userStore.user?.status || 'active'">
                     {{ userStore.statusOptions.find(s => s.value === (userStore.user?.status || 'active'))?.label || 'Active' }}
                   </span>
                 </div>
               </div>
             </div>
-            <div class="dropdown-divider"></div>
-            <router-link to="/profile" class="dropdown-item" @click="closeUserMenu">
-              <IconifyIcon icon="mdi:account" class="dropdown-icon" />
-              <span>Your Profile</span>
-            </router-link>
-            <router-link to="/settings" class="dropdown-item" @click="closeUserMenu">
-              <IconifyIcon icon="mdi:cog" class="dropdown-icon" />
-              <span>Settings</span>
-            </router-link>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item" @click="handleLogout">
-              <IconifyIcon icon="mdi:logout" class="dropdown-icon" />
-              <span>Sign out</span>
-            </button>
+            <ul class="user-dropdown-menu">
+              <li>
+                <router-link to="/profile" class="user-dropdown-item" @click="closeUserMenu">
+                  <IconifyIcon icon="mdi:account" class="menu-icon" />
+                  <span>Your Profile</span>
+                </router-link>
+              </li>
+              <li>
+                <router-link to="/settings" class="user-dropdown-item" @click="closeUserMenu">
+                  <IconifyIcon icon="mdi:cog" class="menu-icon" />
+                  <span>Settings</span>
+                </router-link>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <button class="user-dropdown-item logout" @click="handleLogout">
+                  <IconifyIcon icon="mdi:logout" class="menu-icon" />
+                  <span>Sign out</span>
+                </button>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
