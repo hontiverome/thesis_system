@@ -93,14 +93,59 @@
         </div>
 
         <!-- User menu section -->
-        <div class="user-menu">
-          <button class="user-button" aria-label="User menu">
-            <span class="user-avatar" aria-hidden="true">
-              <IconifyIcon icon="mdi:account" width="24" height="24" />
-            </span>
-            <span class="user-name">User</span>
-            <IconifyIcon class="icon-chevron" icon="mdi:chevron-down" width="16" height="16" />
+        <div class="user-menu" @click.stop="toggleUserMenu">
+          <button class="user-button" aria-label="User menu" aria-expanded="isUserMenuOpen">
+            <div class="user-avatar-container">
+              <template v-if="userStore.user?.avatar">
+                <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+              </template>
+              <div v-else class="user-avatar-initials">
+                {{ userStore.userInitials }}
+              </div>
+            </div>
+            <div class="user-info">
+              <span class="user-name">{{ userStore.user?.name || 'User' }}</span>
+              <span class="user-email hidden">{{ userStore.user?.email || '' }}</span>
+            </div>
+            <IconifyIcon class="icon-chevron" :class="{ 'rotate-180': isUserMenuOpen }" icon="mdi:chevron-down" width="16" height="16" />
           </button>
+          
+          <!-- Dropdown Menu -->
+          <div v-if="isUserMenuOpen" class="user-dropdown" v-click-outside="closeUserMenu">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar-container">
+                <template v-if="userStore.user?.avatar">
+                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="dropdown-avatar" />
+                </template>
+                <div v-else class="dropdown-avatar-initials">
+                  {{ userStore.userInitials }}
+                </div>
+              </div>
+              <div class="dropdown-user-info">
+                <div class="dropdown-user-name">{{ userStore.user?.name || 'User' }}</div>
+                <div class="dropdown-user-email">{{ userStore.user?.email || '' }}</div>
+                <div class="dropdown-user-status">
+                  <span class="status-badge" :class="userStore.user?.status || 'active'">
+                    {{ userStore.statusOptions.find(s => s.value === (userStore.user?.status || 'active'))?.label || 'Active' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <router-link to="/profile" class="dropdown-item" @click="closeUserMenu">
+              <IconifyIcon icon="mdi:account" class="dropdown-icon" />
+              <span>Your Profile</span>
+            </router-link>
+            <router-link to="/settings" class="dropdown-item" @click="closeUserMenu">
+              <IconifyIcon icon="mdi:cog" class="dropdown-icon" />
+              <span>Settings</span>
+            </router-link>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" @click="handleLogout">
+              <IconifyIcon icon="mdi:logout" class="dropdown-icon" />
+              <span>Sign out</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -109,18 +154,67 @@
 
 <script setup>
 // Import required Vue composition API functions and stores
-import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onMounted, ref, onUnmounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
+import { useUserStore } from '@/stores/user.js';
 import { loadIcons } from '@iconify/vue';
+
+// Click outside directive
+const vClickOutside = {
+  beforeMount(el, binding) {
+    el.clickOutsideEvent = function(event) {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value();
+      }
+    };
+    document.addEventListener('click', el.clickOutsideEvent);
+  },
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent);
+  },
+};
 
 // Define the events this component emits to parent components
 defineEmits(['toggle-sidebar']);
 
 const route = useRoute();
+const router = useRouter();
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
+const userStore = useUserStore();
+
+// User menu state
+const isUserMenuOpen = ref(false);
+
+// Toggle user menu
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+};
+
+// Close user menu
+const closeUserMenu = () => {
+  isUserMenuOpen.value = false;
+};
+
+// Close menu when clicking outside
+const handleClickOutside = (event) => {
+  const userMenu = document.querySelector('.user-menu');
+  if (userMenu && !userMenu.contains(event.target)) {
+    closeUserMenu();
+  }
+};
+
+// Handle logout
+const handleLogout = async () => {
+  try {
+    await userStore.logout();
+    router.push('/login');
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+};
 
 // Theme handling using computed property for two-way binding
 const currentTheme = computed({
@@ -178,6 +272,7 @@ const navItems = [
 ];
 
 onMounted(() => {
+  // Load all icons
   loadIcons([
     'mdi:menu', 
     'mdi:account', 
@@ -192,7 +287,16 @@ onMounted(() => {
     'mdi:account',
     'mdi:cog',
     'mdi:help-circle',
-    'mdi:palette'
+    'mdi:palette',
+    'mdi:logout'
   ]);
+  
+  // Add click outside listener
+  document.addEventListener('click', handleClickOutside);
+});
+
+// Clean up event listener
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
 });
 </script>
