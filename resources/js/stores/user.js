@@ -64,12 +64,17 @@ export const useUserStore = defineStore('user', () => {
     // Default user data
     return {
       id: 'user-123',
-      name: 'John Doe',
+      firstName: 'John',
+      lastName: 'Doe',
       email: 'john.doe@example.com',
       status: 'active',
       avatar: null,
       memberSince: new Date('2025-01-15').toISOString(),
       lastLogin: new Date().toISOString(),
+      // Computed property for full name
+      get fullName() {
+        return `${this.firstName} ${this.lastName}`.trim();
+      }
     };
   };
 
@@ -94,15 +99,14 @@ export const useUserStore = defineStore('user', () => {
     { value: 'offline', label: 'Offline' }
   ];
 
-  // Getters
+  // Computed
   const userInitials = computed(() => {
-    if (!user.value.name) return 'U';
-    return user.value.name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    const firstName = user.value?.firstName || '';
+    const lastName = user.value?.lastName || '';
+    
+    if (!firstName && !lastName) return 'U';
+    
+    return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
   });
 
   const memberSinceFormatted = computed(() => {
@@ -126,10 +130,13 @@ export const useUserStore = defineStore('user', () => {
       await new Promise(resolve => setTimeout(resolve, 500));
       
       // Update user data
-      user.value = { 
-        ...user.value, 
-        ...profileData,
-        updatedAt: new Date().toISOString() // Update last modified timestamp
+      user.value = {
+        ...user.value,
+        firstName: profileData.firstName || user.value.firstName,
+        lastName: profileData.lastName || user.value.lastName,
+        email: profileData.email || user.value.email,
+        status: 'active', // Always set status to active when updating
+        updatedAt: new Date().toISOString()
       };
       
       // Save to localStorage
