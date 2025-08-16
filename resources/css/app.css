@@ -1249,8 +1249,8 @@ body {
 }
 
 .sidebar-avatar-container {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.3rem;
+  height: 2.3rem;
   border-radius: 50%;
   overflow: hidden;
   background-color: var(--primary-color);
@@ -1271,14 +1271,6 @@ body {
 .sidebar-user-info {
   flex: 1;
   min-width: 0;
-}
-
-.sidebar-user-name {
-  font-weight: 600;
-  color: var(--text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .sidebar-user-email {
