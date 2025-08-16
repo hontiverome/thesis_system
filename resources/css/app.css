@@ -1273,6 +1273,16 @@ body {
   min-width: 0;
 }
 
+.sidebar-username {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--sidebar-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 0.4rem;
+}
+
 .sidebar-user-email {
   font-size: 0.875rem;
   color: var(--text-muted);
