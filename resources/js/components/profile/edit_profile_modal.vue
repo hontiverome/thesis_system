@@ -82,13 +82,7 @@
               :disabled="isSubmitting"
               class="profile-btn profile-btn-modal"
             >
-              <span v-if="isSubmitting" class="profile-btn-loading">
-                <svg class="profile-spinner" viewBox="0 0 24 24">
-                  <circle class="profile-spinner-path" cx="12" cy="12" r="10"/>
-                </svg>
-                Saving...
-              </span>
-              <span v-else>Save Changes</span>
+              Save Changes
             </button>
           </div>
         </form>
