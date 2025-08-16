@@ -1,55 +1,85 @@
 <template>
-  <div 
-  class="user-dropdown-popover" 
-  :class="{ 'is-visible': isOpen }" 
-  v-click-outside="close"
-  :style="popoverStyle"
+  <transition
+  name="dropdown"
+  @before-enter="beforeEnter"
+  @after-leave="afterLeave"
 >
-    <div class="user-dropdown-header">
-      <div class="user-avatar-container">
+  <div 
+    v-show="isOpen"
+    ref="popoverRef"
+    class="sidebar-dropdown-popover"
+    v-click-outside="handleClickOutside"
+    :style="popoverStyle"
+  >
+    <div class="sidebar-dropdown-header">
+      <div class="sidebar-avatar-container">
         <template v-if="userStore.user?.avatar">
-          <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+          <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="sidebar-avatar" />
         </template>
-        <div v-else class="user-avatar-initials">
+        <div v-else class="sidebar-avatar-initials">
           {{ userStore.userInitials }}
         </div>
       </div>
-      <div class="user-info">
-        <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
-        <div class="user-email">{{ userStore.user?.email || '' }}</div>
-        <div class="user-status">
-          <span class="status-badge active">Active</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name">{{ userStore.user?.name || 'User' }}</div>
+        <div class="sidebar-user-email">{{ userStore.user?.email || '' }}</div>
+        <div class="sidebar-user-status">
+          <span class="sidebar-status-badge active">Active</span>
         </div>
       </div>
     </div>
-    <ul class="user-dropdown-menu">
+    <ul class="sidebar-dropdown-menu">
       <li>
-        <router-link to="/profile" class="user-dropdown-item" @click="close">
-          <IconifyIcon icon="mdi:account" class="menu-icon" />
+        <router-link to="/profile" class="sidebar-dropdown-item" @click="close">
+          <IconifyIcon icon="mdi:account" class="sidebar-menu-icon" />
           <span>My Profile</span>
         </router-link>
       </li>
       <li>
-        <router-link to="/settings" class="user-dropdown-item" @click="close">
-          <IconifyIcon icon="mdi:cog" class="menu-icon" />
+        <router-link to="/settings" class="sidebar-dropdown-item" @click="close">
+          <IconifyIcon icon="mdi:cog" class="sidebar-menu-icon" />
           <span>Settings</span>
         </router-link>
       </li>
-      <li class="divider"></li>
+      <li class="sidebar-divider"></li>
       <li>
-        <button class="user-dropdown-item logout" @click="handleLogout">
-          <IconifyIcon icon="mdi:logout" class="menu-icon" />
+        <button class="sidebar-dropdown-item sidebar-logout" @click="handleLogout">
+          <IconifyIcon icon="mdi:logout" class="sidebar-menu-icon" />
           <span>Logout</span>
         </button>
       </li>
     </ul>
   </div>
+</transition>
 </template>
+
+<script>
+// Define the click-outside directive in a normal script block
+export default {
+  directives: {
+    'click-outside': {
+      beforeMount(el, binding) {
+        el.__clickHandler__ = (event) => {
+          // Check if the click is outside the element and its children
+          if (!(el === event.target || el.contains(event.target))) {
+            binding.value(event);
+          }
+        };
+        // Use mousedown instead of click to handle cases where mouseup might happen outside
+        document.addEventListener('mousedown', el.__clickHandler__);
+      },
+      unmounted(el) {
+        document.removeEventListener('mousedown', el.__clickHandler__);
+      }
+    }
+  }
+};
+</script>
 
 <script setup>
 import { useUserStore } from '@/stores/user';
 import { Icon } from '@iconify/vue';
-import { ref, onMounted, onUnmounted, watch, defineProps, defineEmits } from 'vue';
+import { ref, onMounted, onUnmounted, watch, defineProps, defineEmits, nextTick } from 'vue';
 import { Icon as IconifyIcon } from '@iconify/vue';
 
 const props = defineProps({
@@ -58,7 +88,7 @@ const props = defineProps({
     default: false
   },
   targetElement: {
-    type: HTMLElement,
+    type: [HTMLElement, Object],
     default: null
   },
   isSidebarCollapsed: {
@@ -93,12 +123,15 @@ const popoverStyle = ref({
 });
 
 const updatePosition = () => {
-  if (!props.targetElement) return;
+  if (!props.isOpen) return;
   
-  const rect = props.targetElement.getBoundingClientRect();
+  const targetEl = props.targetElement?.$el || props.targetElement;
+  if (!targetEl) return;
+  
+  const rect = targetEl.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
   const popoverWidth = 280; // Width of the popover
-  const offset = 30; // Space between button and popover
+  const offset = 32; // Space between button and popover
   
   let left, top;
   
@@ -109,7 +142,7 @@ const updatePosition = () => {
   } else {
     // When sidebar is expanded, position to the right of the user button
     left = rect.right + offset;
-    top = rect.top - 20; // Slight vertical adjustment
+    top = rect.top - 205; // Slight vertical adjustment
   }
   
   // If popover would go off-screen to the right, show it on the left side instead
@@ -121,12 +154,15 @@ const updatePosition = () => {
   if (left < 10) left = 10;
   if (top < 10) top = 10;
   
+  updatePopoverStyle(left, top, popoverWidth);
+};
+
+const updatePopoverStyle = (left, top, width = 280) => {
   popoverStyle.value = {
-    ...popoverStyle.value,
     position: 'fixed',
     top: `${top}px`,
     left: `${left}px`,
-    width: `${popoverWidth}px`,
+    width: `${width}px`,
     opacity: props.isOpen ? 1 : 0,
     visibility: props.isOpen ? 'visible' : 'hidden',
     transform: props.isOpen ? 'scale(1)' : 'scale(0.95)',
@@ -137,8 +173,12 @@ const updatePosition = () => {
   };
 };
 
-watch(() => props.isOpen, (isOpen) => {
+watch(() => props.isOpen, async (isOpen) => {
+  console.log('isOpen changed to:', isOpen);
+  
   if (isOpen) {
+    // Wait for the next tick to ensure the DOM is updated
+    await nextTick();
     updatePosition();
     window.addEventListener('resize', updatePosition);
     window.addEventListener('scroll', updatePosition, true);
@@ -146,6 +186,14 @@ watch(() => props.isOpen, (isOpen) => {
     window.removeEventListener('resize', updatePosition);
     window.removeEventListener('scroll', updatePosition, true);
   }
+  
+  // Update popover style with current position or default values
+  const currentStyle = popoverStyle.value;
+  updatePopoverStyle(
+    currentStyle.left ? parseInt(currentStyle.left) : 0,
+    currentStyle.top ? parseInt(currentStyle.top) : 0,
+    currentStyle.width ? parseInt(currentStyle.width) : 280
+  );
 }, { immediate: true });
 
 onMounted(() => {
@@ -163,144 +211,51 @@ const close = () => {
   emit('close');
 };
 
+const handleClickOutside = (event) => {
+  const targetEl = props.targetElement?.$el || props.targetElement;
+  if (targetEl && (targetEl === event.target || targetEl.contains(event.target))) {
+    return;
+  }
+  close();
+};
+
+onMounted(() => {
+  if (props.isOpen) {
+    updatePosition();
+  }
+});
+
+watch(() => props.isOpen, async (isOpen) => {
+  if (isOpen) {
+    await nextTick();
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+  } else {
+    window.removeEventListener('resize', updatePosition);
+    window.removeEventListener('scroll', updatePosition, true);
+  }
+  
+  const currentStyle = popoverStyle.value;
+  updatePopoverStyle(
+    currentStyle.left ? parseInt(currentStyle.left) : 0,
+    currentStyle.top ? parseInt(currentStyle.top) : 0,
+    currentStyle.width ? parseInt(currentStyle.width) : 280
+  );
+}, { immediate: true });
+
+const beforeEnter = (el) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(-10px) scale(0.95)';
+};
+
+const afterLeave = () => {
+  // Cleanup if needed
+};
+
 const handleLogout = async () => {
   await userStore.logout();
   close();
 };
 </script>
 
-<style scoped>
-.user-dropdown-popover {
-  position: fixed;
-  width: 280px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-  z-index: 1000;
-  pointer-events: none;
-  transform-origin: top left;
-}
-
-.user-dropdown-popover.is-visible {
-  pointer-events: auto;
-}
-
-.user-dropdown-header {
-  padding: 1.25rem 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--card-bg);
-}
-
-.user-avatar-container {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.user-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.user-name {
-  font-weight: 600;
-  color: var(--text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-email {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.user-dropdown-menu {
-  list-style: none;
-  padding: 0.5rem 0;
-  margin: 0;
-}
-
-.user-dropdown-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  color: var(--text-color);
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  font-size: 0.9375rem;
-}
-
-.user-dropdown-item:hover {
-  background-color: var(--hover-color);
-}
-
-.user-dropdown-item.logout {
-  color: var(--danger);
-}
-
-.user-dropdown-item.logout:hover {
-  background-color: var(--danger-bg);
-  color: #fff;
-}
-
-.user-dropdown-item.logout:hover .menu-icon {
-  color: #fff !important;
-}
-
-.menu-icon {
-  margin-right: 0.75rem;
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-}
-
-.divider {
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 0.5rem 0;
-}
-
-.status-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  background-color: #d1fae5;
-  color: #065f46;
-  margin-top: 0.25rem;
-}
-
-.status-badge.active {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-</style>
