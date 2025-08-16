@@ -31,18 +31,22 @@
  * be used in advertising or otherwise to promote the sale, use or other dealings
  * in this Software without prior written authorization of the copyright holder.
 */
-import { createApp } from 'vue';
+import { createApp, h } from 'vue';
 import App from './App.vue';
 import { createPinia } from 'pinia';
 import { useThemeStore } from '@/stores/theme.js';
 import router from './router';
 import '../css/app.css';
 import { Icon } from '@iconify/vue';
+import clickOutside from './directives/click_outside';
 
 const app = createApp(App);
 
 // Register the Icon component globally
 app.component('IconifyIcon', Icon);
+
+// Register the click-outside directive globally
+app.directive('click-outside', clickOutside);
 
 // Use Pinia for state management
 const pinia = createPinia();

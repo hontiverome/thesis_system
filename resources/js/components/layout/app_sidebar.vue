@@ -96,8 +96,9 @@
       </button>
       
       <!-- User Menu -->
-      <div class="user-menu-container" v-click-outside="closeUserMenu">
+      <div class="user-menu-container">
         <button class="sidebar-user-button" 
+                ref="userButtonRef"
                 :class="{ 'collapsed': isCollapsed, 'active': isUserMenuOpen }"
                 @click.stop="toggleUserMenu"
                 aria-label="User menu"
@@ -116,61 +117,40 @@
           <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="dropdown-arrow" />
         </button>
         
-        <!-- User Dropdown Menu -->
-        <transition name="fade">
-          <div v-if="isUserMenuOpen && !isCollapsed" class="user-dropdown">
-            <div class="user-dropdown-header">
-              <div class="sidebar-avatar-container">
-                <template v-if="userStore.user?.avatar">
-                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="sidebar-avatar" />
-                </template>
-                <div v-else class="sidebar-avatar-initials">
-                  {{ userStore.user?.name?.charAt(0) || 'U' }}
-                </div>
-              </div>
-              <div class="user-info">
-                <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
-              </div>
-            </div>
-            <ul class="user-dropdown-menu">
-              <li>
-                <router-link to="/profile" class="user-dropdown-item" @click="closeUserMenu">
-                  <IconifyIcon icon="mdi:account" class="menu-icon" />
-                  <span>My Profile</span>
-                </router-link>
-              </li>
-              <li>
-                <router-link to="/settings" class="user-dropdown-item" @click="closeUserMenu">
-                  <IconifyIcon icon="mdi:cog" class="menu-icon" />
-                  <span>Settings</span>
-                </router-link>
-              </li>
-              <li class="divider"></li>
-              <li>
-                <button class="user-dropdown-item" @click="handleLogout">
-                  <IconifyIcon icon="mdi:logout" class="menu-icon" />
-                  <span>Logout</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </transition>
+        <!-- User Dropdown Popover -->
+        <Teleport to="body">
+          <UserDropdownPopover 
+            v-if="!isCollapsed"
+            :is-open="isUserMenuOpen"
+            :target-element="userButtonRef"
+            @close="closeUserMenu"
+          />
+        </Teleport>
       </div>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
 import { useUserStore } from '@/stores/user';
 import { useThemeStore } from '@/stores/theme';
 import { loadIcons } from '@iconify/vue';
+import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
 const router = useRouter();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 const themeStore = useThemeStore();
+const userButtonRef = ref(null);
+const popoverStyle = ref({});
+
+defineOptions({
+  components: {
+    UserDropdownPopover
+  }
+});
 
 const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
 const isUserMenuOpen = ref(false);
