@@ -120,9 +120,9 @@
         <!-- User Dropdown Popover -->
         <Teleport to="body">
           <UserDropdownPopover 
-            v-if="!isCollapsed"
             :is-open="isUserMenuOpen"
             :target-element="userButtonRef"
+            :is-sidebar-collapsed="isCollapsed"
             @close="closeUserMenu"
           />
         </Teleport>

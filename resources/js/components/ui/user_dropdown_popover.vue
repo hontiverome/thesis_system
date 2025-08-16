@@ -61,6 +61,10 @@ const props = defineProps({
     type: HTMLElement,
     default: null
   },
+  isSidebarCollapsed: {
+    type: Boolean,
+    default: false
+  },
   position: {
     type: Object,
     default: () => ({
@@ -96,15 +100,26 @@ const updatePosition = () => {
   const popoverWidth = 280; // Width of the popover
   const offset = 30; // Space between button and popover
   
-  // Position the popover to the right of the user button
-  let left = rect.right + offset;
-  // Position higher by subtracting from the top position
-  let top = rect.top + window.scrollY - 200; // Increased from 0 to -40 to move it up more
+  let left, top;
+  
+  if (props.isSidebarCollapsed) {
+    // When sidebar is collapsed, position the popover to the right of the collapsed sidebar
+    left = rect.right + offset;
+    top = rect.top + (rect.height / 2) - 240; // Center vertically with the button
+  } else {
+    // When sidebar is expanded, position to the right of the user button
+    left = rect.right + offset;
+    top = rect.top - 20; // Slight vertical adjustment
+  }
   
   // If popover would go off-screen to the right, show it on the left side instead
-  if (left + popoverWidth > viewportWidth - 10) {
+  if (left + popoverWidth > viewportWidth - 20) {
     left = rect.left - popoverWidth - offset;
   }
+  
+  // Ensure popover stays within viewport bounds
+  if (left < 10) left = 10;
+  if (top < 10) top = 10;
   
   popoverStyle.value = {
     ...popoverStyle.value,
@@ -114,7 +129,7 @@ const updatePosition = () => {
     width: `${popoverWidth}px`,
     opacity: props.isOpen ? 1 : 0,
     visibility: props.isOpen ? 'visible' : 'hidden',
-    transform: props.isOpen ? 'translateX(0)' : 'translateX(-10px)',
+    transform: props.isOpen ? 'scale(1)' : 'scale(0.95)',
     'transform-origin': 'top left',
     'transition': 'all 0.15s ease-out',
     'z-index': 1000,
