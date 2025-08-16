@@ -1210,7 +1210,7 @@ body {
   flex-shrink: 0;
 }
 
-.user-dropdown-item.logout:hover .menu-icon {
+.navbar .user-dropdown-item.logout:hover .menu-icon {
   color: rgb(255, 17, 17);
 }
 
