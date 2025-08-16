@@ -45,7 +45,7 @@
       <li>
         <button class="sidebar-dropdown-item sidebar-logout" @click="handleLogout">
           <IconifyIcon icon="mdi:logout" class="sidebar-menu-icon" />
-          <span>Logout</span>
+          <span>Sign out</span>
         </button>
       </li>
     </ul>

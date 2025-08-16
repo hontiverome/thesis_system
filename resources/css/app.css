@@ -1210,6 +1210,10 @@ body {
   flex-shrink: 0;
 }
 
+.user-dropdown-item.logout:hover .menu-icon {
+  color: rgb(255, 17, 17);
+}
+
 .navbar .user-dropdown-item.logout {
   color: var(--danger);
 }
@@ -1322,11 +1326,11 @@ body {
 
 .sidebar-dropdown-item.sidebar-logout:hover {
   background-color: var(--danger-bg);
-  color: #fff;
+  color: rgb(255, 17, 17);
 }
 
 .sidebar-dropdown-item.sidebar-logout:hover .sidebar-menu-icon {
-  color: #fff !important;
+  color: rgb(255, 17, 17);
 }
 
 .sidebar-menu-icon {
@@ -1448,6 +1452,7 @@ body {
 
 .sidebar .user-dropdown-item:hover .menu-icon {
   opacity: 1;
+  color: rgb(255, 17, 17);
 }
 
 .divider {
