@@ -989,7 +989,6 @@ body {
   background-color: var(--primary-color);
   color: white;
   font-weight: 600;
-  font-size: 1rem;
   flex-shrink: 0;
 }
 
@@ -2051,7 +2050,7 @@ body {
   border: 0.25rem solid var(--header-bg);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .profile-avatar:hover {
@@ -2074,25 +2073,24 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-size: 0.875rem;
-  font-weight: 500;
   text-align: center;
   padding: 0.5rem;
+  margin-bottom: 0.20rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: translateY(100%);
+  transition: transform 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 .profile-avatar-container:hover .profile-avatar-overlay {
+  transform: translateY(0);
   opacity: 1;
 }
-
-
 
 .profile-info {
   text-align: center;
@@ -3149,3 +3147,35 @@ input:disabled {
     @apply bg-white text-black;
   }
 }
+
+/* ===================================
+   Avatar Upload Helpers
+   =================================== */
+.upload-hint {
+  margin-top: 0.5rem;
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.upload-error {
+  margin-top: 0.5rem;
+  font-size: 0.875rem; /* 14px */
+  color: #dc2626; /* Tailwind red-600 */
+}
+
+/* Align remove button and hint inline */
+.avatar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap; /* stack on small widths */
+}
+
+.avatar-actions .upload-hint {
+  margin-top: 0; /* override default */
+}
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';

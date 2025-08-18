@@ -49,9 +49,15 @@ const formatDate = (dateString) => {
 };
 
 export const useUserStore = defineStore('user', () => {
-  // State - Load from localStorage or use defaults
+  // State - Load from localStorage, sessionStorage, or use defaults
   const loadUserFromStorage = () => {
-    const savedUser = localStorage.getItem('userData');
+    // First try localStorage
+    let savedUser = localStorage.getItem('userData');
+    
+    // If not in localStorage, try sessionStorage
+    if (!savedUser) {
+      savedUser = sessionStorage.getItem('userData');
+    }
     
     if (savedUser) {
       try {
@@ -80,9 +86,31 @@ export const useUserStore = defineStore('user', () => {
 
   const user = ref(loadUserFromStorage());
   
-  // Save user data to localStorage whenever it changes
+  // Helper function to estimate the size of an object in bytes
+  const getObjectSize = (obj) => {
+    return new Blob([JSON.stringify(obj)]).size;
+  };
+
+  // Save user data to storage with fallback to sessionStorage if too large
   const saveUserToStorage = () => {
-    localStorage.setItem('userData', JSON.stringify(user.value));
+    const userData = user.value;
+    const dataSize = getObjectSize(userData);
+    
+    // If data is larger than 4.5MB (safely under 5MB localStorage limit)
+    if (dataSize > 4.5 * 1024 * 1024) {
+      console.warn('User data too large for localStorage, using sessionStorage instead');
+      sessionStorage.setItem('userData', JSON.stringify(userData));
+      localStorage.removeItem('userData');
+    } else {
+      try {
+        localStorage.setItem('userData', JSON.stringify(userData));
+        // Clean up any old sessionStorage data if it exists
+        sessionStorage.removeItem('userData');
+      } catch (e) {
+        console.error('Failed to save to localStorage, falling back to sessionStorage', e);
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+      }
+    }
   };
   
   const isAuthenticated = ref(true);
@@ -90,6 +118,9 @@ export const useUserStore = defineStore('user', () => {
   const avatarPreview = ref(null);
   const isLoading = ref(false);
   const error = ref(null);
+  // Set max avatar size to 4MB to leave room for other user data
+  const avatarMaxSizeMB = ref(4);
+  const avatarMaxSizeBytes = computed(() => avatarMaxSizeMB.value * 1024 * 1024);
 
   // Available status options
   const statusOptions = [
@@ -154,11 +185,13 @@ export const useUserStore = defineStore('user', () => {
 
   async function updateAvatar(file) {
     return new Promise((resolve, reject) => {
+      // reset any previous error
+      error.value = null;
       if (!file) {
         // If no file, remove the avatar
         user.value.avatar = null;
         avatarPreview.value = null;
-        localStorage.removeItem('user_avatar');
+        saveUserToStorage();
         return resolve(null);
       }
 
@@ -169,9 +202,10 @@ export const useUserStore = defineStore('user', () => {
         return reject(err);
       }
 
-      // Validate file size (max 2MB)
-      if (file.size > 2 * 1024 * 1024) {
-        const err = new Error('Image size should be less than 2MB');
+      // Validate file size (max 4MB to leave room for other user data)
+      const maxSize = avatarMaxSizeBytes.value;
+      if (file.size > maxSize) {
+        const err = new Error(`Image size should be less than ${avatarMaxSizeMB.value}MB (current: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
         error.value = err.message;
         return reject(err);
       }
@@ -361,6 +395,7 @@ export const useUserStore = defineStore('user', () => {
     avatarPreview,
     isLoading,
     error,
+    avatarMaxSizeMB,
     
     // Getters
     userInitials,

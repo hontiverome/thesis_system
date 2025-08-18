@@ -79,6 +79,13 @@
               <span>Remove Photo</span>
             </button>
           </div>
+          <!-- Upload hint and errors -->
+          <div class="upload-hint">
+            Allowed: JPG, PNG, GIF • Max {{ userStore.avatarMaxSizeMB }}MB
+          </div>
+          <div v-if="uploadError" class="upload-error" role="alert" aria-live="polite">
+            {{ uploadError }}
+          </div>
         </div>
         
         <!-- User Info -->
@@ -98,6 +105,7 @@ import { useUserStore } from '../../stores/user';
 const emit = defineEmits(['edit-profile']);
 const userStore = useUserStore();
 const fileInput = ref(null);
+const uploadError = ref(null);
 
 // Use the user from the store
 const user = computed(() => userStore.user);
@@ -116,9 +124,11 @@ const handleFileUpload = async (event) => {
   const file = event.target.files?.[0];
   if (!file) return;
   
+  uploadError.value = null;
   try {
     await userStore.updateAvatar(file);
   } catch (error) {
+    uploadError.value = error?.message || 'Failed to upload image';
     console.error('Error uploading avatar:', error);
   } finally {
     // Reset the file input
