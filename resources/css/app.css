@@ -575,7 +575,7 @@ body {
   
   .sidebar.collapsed .nav-link {
     justify-content: center;
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     position: relative;
   }
   
