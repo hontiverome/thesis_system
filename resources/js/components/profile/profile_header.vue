@@ -48,7 +48,7 @@
                 class="profile-avatar-img"
               />
               <div v-else class="profile-avatar-initials">
-                {{ user?.name?.charAt(0) || 'U' }}
+                {{userStore.userInitials }}
               </div>
               
               <!-- Upload Overlay -->
@@ -83,7 +83,7 @@
         
         <!-- User Info -->
         <header class="profile-header">
-          <h2 class=profile-name>{{ user?.name || 'User' }}</h2>
+          <h1 class="profile-name">{{ user?.firstName }} {{ user?.lastName || '' }}</h1>
           <div class="profile-email">{{ user?.email || 'user@example.com' }}</div>
         </header>
       </div>

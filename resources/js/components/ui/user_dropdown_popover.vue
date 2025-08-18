@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="sidebar-user-info">
-        <div class="sidebar-user-name">{{ userStore.user?.name || 'User' }}</div>
+        <div class="sidebar-user-name">{{ userStore.user?.firstName }} {{ userStore.user?.lastName || '' }}</div>
         <div class="sidebar-user-email">{{ userStore.user?.email || '' }}</div>
         <div class="sidebar-user-status">
           <span class="sidebar-status-badge active">Active</span>
@@ -249,9 +249,6 @@ const beforeEnter = (el) => {
   el.style.transform = 'translateY(-10px) scale(0.95)';
 };
 
-const afterLeave = () => {
-  // Cleanup if needed
-};
 
 const handleLogout = async () => {
   await userStore.logout();

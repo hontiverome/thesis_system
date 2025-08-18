@@ -108,11 +108,11 @@
               <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="sidebar-avatar" />
             </template>
             <div v-else class="sidebar-avatar-initials">
-              {{ userStore.user?.name?.charAt(0) || 'U' }}
+              {{ userStore.userInitials }}
             </div>
           </div>
           <div class="user-info" v-if="!isCollapsed">
-            <div class="sidebar-username">{{ userStore.user?.name || 'User' }}</div>
+            <div class="sidebar-username">{{ userStore.user?.firstName|| 'User' }}</div>
           </div>
           <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="dropdown-arrow" />
         </button>

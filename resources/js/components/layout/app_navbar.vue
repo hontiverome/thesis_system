@@ -104,7 +104,7 @@
               </div>
             </div>
             <div class="user-info">
-              <span class="user-name">{{ userStore.user?.name || 'User' }}</span>
+              <span class="user-name">{{ userStore.user?.firstName || 'User' }}</span>
               <span class="user-email hidden">{{ userStore.user?.email || '' }}</span>
             </div>
             <IconifyIcon class="icon-chevron" :class="{ 'rotate-180': isUserMenuOpen }" icon="mdi:chevron-down" width="16" height="16" />
@@ -115,14 +115,14 @@
             <div class="user-dropdown-header">
               <div class="user-avatar-container">
                 <template v-if="userStore.user?.avatar">
-                  <img :src="userStore.user.avatar" :alt="userStore.user.name || 'User'" class="user-avatar" />
+                  <img :src="userStore.user.avatar" :alt="userStore.user.firstName || 'User'" class="user-avatar" />
                 </template>
                 <div v-else class="user-avatar-initials">
                   {{ userStore.userInitials }}
                 </div>
               </div>
               <div class="user-info">
-                <div class="user-name">{{ userStore.user?.name || 'User' }}</div>
+                <div class="user-name">{{ userStore.user?.firstName }} {{ userStore.user?.lastName || '' }}</div>
                 <div class="user-email">{{ userStore.user?.email || '' }}</div>
                 <div class="user-status">
                   <span class="status-badge" :class="userStore.user?.status || 'active'">

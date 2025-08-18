@@ -47,17 +47,30 @@
         </div>
         
         <form @submit.prevent="handleSubmit" class="profile-modal-form">
-          <div class="profile-form-group">
-            <label for="name">Full Name</label>
-            <input
-              id="name"
-              v-model="formData.name"
-              type="text"
-              required
-              class="profile-form-control"
-            />
+          <div class="form-row">
+            <div class="form-group w-1/2 pr-2">
+              <label for="firstName" class="form-label">First Name</label>
+              <input
+                v-model="formData.firstName"
+                type="text"
+                id="firstName"
+                class="form-input"
+                placeholder="First name"
+                required
+              >
+            </div>
+            <div class="form-group w-1/2 pl-2">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input
+                v-model="formData.lastName"
+                type="text"
+                id="lastName"
+                class="form-input"
+                placeholder="Last name"
+                required
+              >
+            </div>
           </div>
-          
           <div class="profile-form-group">
             <label for="email">Email Address</label>
             <input
@@ -134,7 +147,8 @@ const userStore = useUserStore();
 const isSubmitting = ref(false);
 
 const formData = reactive({
-  name: props.user?.name || '',
+  firstName: props.user?.firstName || '',
+  lastName: props.user?.lastName || '',
   email: props.user?.email || '',
   status: props.user?.status || 'active'
 });
@@ -142,6 +156,8 @@ const formData = reactive({
 // Update form data when user prop changes
 watch(() => props.user, (newUser) => {
   if (newUser) {
+    formData.firstName = newUser.firstName || '';
+    formData.lastName = newUser.lastName || '';
     formData.name = newUser.name || '';
     formData.email = newUser.email || '';
     formData.status = newUser.status || 'active';
@@ -154,7 +170,8 @@ const handleSubmit = async () => {
   try {
     isSubmitting.value = true;
     await userStore.updateProfile({
-      name: formData.name.trim(),
+      firstName: formData.firstName.trim(),
+      lastName: formData.lastName.trim(),
       email: formData.email.trim(),
       status: formData.status
     });

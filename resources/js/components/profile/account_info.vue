@@ -41,7 +41,8 @@
         <div class="profile-account-row">
           <dt>Full name</dt>
           <dd>
-            {{ user?.name || 'Not provided' }}
+            {{ user?.firstName }} {{ user?.lastName || '' }}
+            <span v-if="!user?.firstName && !user?.lastName">Not provided</span>
           </dd>
         </div>
         
