@@ -285,16 +285,7 @@ body {
   overflow: hidden;
 }
 
-.content {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
 
-/* Utility classes */
-.transition-all {
-  transition: all 0.3s ease;
-}
 
 /* Scrollbar */
 ::-webkit-scrollbar {
@@ -557,23 +548,7 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .user-button .icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 0.5rem;
-  }
-  
-  .user-button.collapsed {
-    justify-content: center;
-    padding: 0.75rem;
-  }
-  
-  .user-button.collapsed .text {
-    display: none;
-  }
-  
+
   /* Collapsed state */
   .sidebar.collapsed .text {
     opacity: 0;
@@ -1791,11 +1766,6 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.home .theme-card {
-  background: var(--card-bg);
-  border-left: 4px solid var(--primary-color);
-}
-
 .home ul {
   padding-left: 1.5rem;
   margin: 1rem 0;
@@ -1996,7 +1966,7 @@ body {
 
 .profile-header-card {
   background-color: var(--header-bg);
-  color: var(--header-bg);
+  color: var(--text-color);
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
   overflow: hidden;
@@ -2732,12 +2702,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.form-group label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-color);
 }
 
 .form-control {
