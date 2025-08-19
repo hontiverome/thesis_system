@@ -57,8 +57,10 @@
       <div class="sidebar-user-info">
         <div class="sidebar-user-name">{{ userStore.user?.firstName }} {{ userStore.user?.lastName || '' }}</div>
         <div class="sidebar-user-email">{{ userStore.user?.email || '' }}</div>
-        <div class="sidebar-user-status">
-          <span class="sidebar-status-badge active">Active</span>
+        <div class="user-status">
+          <span class="status-badge" :class="userStore.user?.status || 'active'">
+                    {{ userStore.statusOptions.find(s => s.value === (userStore.user?.status || 'active'))?.label || 'Active' }}
+          </span>        
         </div>
       </div>
     </div>

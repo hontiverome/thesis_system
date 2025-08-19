@@ -35,6 +35,18 @@
 import { defineStore } from 'pinia';
 import { ref, computed, onMounted } from 'vue';
 
+// Guest/default user factory
+const getGuestUser = () => ({
+  id: 'guest',
+  firstName: 'Guest',
+  lastName: '',
+  email: 'user@example.com',
+  status: 'offline',
+  avatar: null,
+  memberSince: '',
+  lastLogin: ''
+});
+
 // Helper function to format dates
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -67,21 +79,8 @@ export const useUserStore = defineStore('user', () => {
       }
     }
     
-    // Default user data
-    return {
-      id: 'user-123',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@example.com',
-      status: 'active',
-      avatar: null,
-      memberSince: new Date('2025-01-15').toISOString(),
-      lastLogin: new Date().toISOString(),
-      // Computed property for full name
-      get fullName() {
-        return `${this.firstName} ${this.lastName}`.trim();
-      }
-    };
+    // Default to guest user when nothing is saved
+    return getGuestUser();
   };
 
   const user = ref(loadUserFromStorage());
@@ -113,8 +112,8 @@ export const useUserStore = defineStore('user', () => {
     }
   };
   
-  const isAuthenticated = ref(true);
   const authToken = ref(localStorage.getItem('authToken') || null);
+  const isAuthenticated = ref(!!authToken.value);
   const avatarPreview = ref(null);
   const isLoading = ref(false);
   const error = ref(null);
@@ -259,8 +258,9 @@ export const useUserStore = defineStore('user', () => {
       // Update the user ref with the new object
       user.value = updatedUser;
       
-      // Save to storage
-      localStorage.setItem('userData', JSON.stringify(user.value));
+      // Save to storage (and remove legacy avatar key)
+      saveUserToStorage();
+      localStorage.removeItem('user_avatar');
       
       // Force a re-render by updating the user reference
       user.value = { ...user.value };
@@ -344,18 +344,16 @@ export const useUserStore = defineStore('user', () => {
     authToken.value = null;
     localStorage.removeItem('authToken');
     isAuthenticated.value = false;
-    
-    // Reset user data (except for the avatar preview)
-    const currentAvatar = user.value.avatar;
-    user.value = {
-      id: '',
-      name: '',
-      email: '',
-      status: 'offline',
-      avatar: currentAvatar, // Keep the avatar for the login screen
-      memberSince: '',
-      lastLogin: ''
-    };
+
+    // Clear any stored user data and legacy avatar cache
+    localStorage.removeItem('userData');
+    sessionStorage.removeItem('userData');
+    localStorage.removeItem('user_avatar');
+
+    // Reset to guest user and persist
+    avatarPreview.value = null;
+    user.value = getGuestUser();
+    saveUserToStorage();
   }
 
   // Initialize the store
