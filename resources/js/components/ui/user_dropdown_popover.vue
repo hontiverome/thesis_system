@@ -174,11 +174,11 @@ const updatePosition = () => {
   if (props.isSidebarCollapsed) {
     // When sidebar is collapsed, position the popover to the right of the collapsed sidebar
     left = rect.right + offset;
-    top = rect.top + (rect.height / 2) - 240; // Center vertically with the button
+    top = rect.top + (rect.height / 2) - 270; // Center vertically with the button
   } else {
     // When sidebar is expanded, position to the right of the user button
     left = rect.right + offset;
-    top = rect.top - 205; // Slight vertical adjustment
+    top = rect.top - 235; // Slight vertical adjustment
   }
   
   // If popover would go off-screen to the right, show it on the left side instead
