@@ -332,7 +332,7 @@ body {
   }
   
   .sidebar.collapsed {
-    width: var(--sidebar-collapsed-width);
+    width: 5.5rem;
     transition: all var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1);
   }
   
@@ -583,47 +583,39 @@ body {
     position: relative;
   }
 
-  /* Collapsed alignment tweaks: center items and remove left border artifact */
-  .sidebar.collapsed .nav-link {
-    margin: 0.25rem auto;
-    width: 42px;
-    border-left: none;
+  /* When collapsed, suppress link backgrounds and rounded corners */
+  .sidebar.collapsed .sidebar-nav .nav-link,
+  .sidebar.collapsed .sidebar-nav .nav-link:hover,
+  .sidebar.collapsed .sidebar-nav .nav-link.router-link-active {
+    background-color: transparent !important;
+    border-radius: 0 !important;
   }
-  .sidebar.collapsed .nav-link .icon { margin-right: 0; }
-  
+
+  /* Keep icon/text colors consistent when active in collapsed rail */
+  .sidebar.collapsed .sidebar-nav .nav-link.router-link-active,
+  .sidebar.collapsed .sidebar-nav .nav-link.router-link-active .icon {
+    color: var(--sidebar-text) !important;
+    opacity: 1 !important;
+  }
+
   .sidebar.collapsed .theme-toggle {
     padding: 0.5rem;
     justify-content: center;
     border-radius: 0;
+    background-color: transparent !important;
   }
-  .sidebar.collapsed .sidebar-footer { padding: 0.5rem; }
-  .sidebar.collapsed .sidebar-user-button {
-    padding: 0.5rem;
-    border-radius: 0;
-  }
-  
+
   /* Responsive */
   @media (max-width: 1024px) {
+    /* Default: hide sidebar off-canvas on mobile */
     .sidebar {
       transform: translateX(-100%);
     }
-    /* When mobile sidebar is toggled open */
-    .mobile-sidebar-open .sidebar {
-      transform: translateX(0);
-    }
-    /* Sidebar-only layout on mobile: hide sidebar off-canvas by default */
-    .app.has-sidebar:not(.has-navbar) .sidebar {
-      transform: translateX(-100%);
-      width: var(--sidebar-width);
-    }
-    /* When mobile sidebar is open, slide in at full width */
+
+    /* Show sidebar when overlay is open (any layout) */
+    .mobile-sidebar-open .sidebar,
     .app.mobile-sidebar-open .sidebar {
       transform: translateX(0);
-      width: var(--sidebar-width);
-    }
-    /* Content should span full width on mobile */
-    .app.has-sidebar:not(.has-navbar) .main-content {
-      margin-left: 0;
     }
   }
 
