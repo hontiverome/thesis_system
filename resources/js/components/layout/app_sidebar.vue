@@ -115,7 +115,7 @@
           <div class="user-info" v-if="!isCollapsed">
             <div class="sidebar-username">{{ userStore.user?.firstName|| 'User' }}</div>
           </div>
-          <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="dropdown-arrow" />
+          <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="sidebar-dropdown-arrow" />
         </button>
         
         <!-- User Dropdown Popover -->

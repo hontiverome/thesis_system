@@ -541,7 +541,7 @@ body {
   
   .sidebar-user-button {
     width: 100%;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 0.5rem;
     background-color: var(--sidebar-bg);
     color: var(--sidebar-text);
     border: none;
@@ -553,7 +553,6 @@ body {
     justify-content: center;
     white-space: nowrap;
     overflow: hidden;
-    margin-top: 0.5rem;
   }
   
   .sidebar-user-button:hover {
@@ -1035,13 +1034,21 @@ body {
   /* Dropdown arrow */
   .dropdown-arrow {
     position: absolute;
-    right: 0.75rem;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-color);
     opacity: 0.7;
     width: 1rem;
     height: 1rem;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .sidebar-dropdown-arrow {
+    color: var(--text-color);
+    opacity: 0.7;
+    transform: translateX(50%);
     pointer-events: none;
     z-index: 0;
   }
