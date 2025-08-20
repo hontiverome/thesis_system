@@ -582,10 +582,23 @@ body {
     padding: 0.5rem 0.75rem;
     position: relative;
   }
+
+  /* Collapsed alignment tweaks: center items and remove left border artifact */
+  .sidebar.collapsed .nav-link {
+    margin: 0.25rem auto;
+    width: 42px;
+    border-left: none;
+  }
+  .sidebar.collapsed .nav-link .icon { margin-right: 0; }
   
   .sidebar.collapsed .theme-toggle {
     padding: 0.5rem;
     justify-content: center;
+    border-radius: 0;
+  }
+  .sidebar.collapsed .sidebar-footer { padding: 0.5rem; }
+  .sidebar.collapsed .sidebar-user-button {
+    padding: 0.5rem;
     border-radius: 0;
   }
   
@@ -638,20 +651,20 @@ body {
   right: 0;
   bottom: 0;
   height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
-  background-color: var(--card-bg);
+  background-color: var(--sidebar-bg);
   border-top: 1px solid var(--border-color);
   display: none; /* Shown via media query and layout class */
   align-items: center;
   justify-content: space-around;
   padding: 0 0.5rem env(safe-area-inset-bottom, 0px);
-  z-index: 50;
-}
-
-@media (max-width: 1024px) {
-  /* Show bottom nav only when in navbar-only layout */
-  .has-navbar:not(.has-sidebar) .mobile-bottom-nav {
-    display: flex;
+    z-index: 50;
   }
+
+  @media (max-width: 1024px) {
+    /* Show bottom nav only when in navbar-only layout */
+    .has-navbar:not(.has-sidebar) .mobile-bottom-nav {
+      display: flex;
+    }
   /* Ensure content isn't hidden behind bottom nav */
   .has-navbar:not(.has-sidebar) .main-content {
     padding-bottom: calc(1rem + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
@@ -685,6 +698,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  /* Ensure floating hamburger is visible on mobile when in sidebar-only layout */
+  @media (max-width: 1024px) {
+    .app.has-sidebar:not(.has-navbar) .floating-sidebar-toggle {
+      display: inline-flex !important;
+    }
   }
 
   .navbar-nav {
@@ -1787,14 +1807,20 @@ body {
   .chart-wrapper {
     position: relative !important;
     width: 100%;
-    flex: 1;
-    min-height: 250px;
+    height: 320px; /* explicit height so Chart.js can compute canvas size */
+    min-height: 0;
   }
   
   .chart-wrapper canvas {
-    max-width: 100%;
-    height: auto !important;
-    aspect-ratio: 16/9;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* Keep this override near the end so it wins in the cascade on small screens */
+  @media (max-width: 1024px) {
+    .chart-container { grid-template-columns: 1fr !important; }
+    .chart-card { padding: 1rem; }
+    .chart-wrapper { height: 240px !important; }
   }
 
 /* ===================================

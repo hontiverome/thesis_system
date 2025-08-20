@@ -70,7 +70,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 0.25rem;
-  color: var(--text-color);
+  color: var(--sidebar-text);
   text-decoration: none;
   padding: 0.25rem 0.5rem;
   min-width: 64px;
@@ -78,9 +78,17 @@ onMounted(() => {
 .mbnav-link[aria-current="page"] {
   color: var(--primary-color);
 }
+.mbnav-link.router-link-active {
+  background-color: var(--sidebar-active);
+  color: var(--sidebar-active-text);
+  border-radius: 8px;
+}
 .mbnav-icon {
   font-size: 22px;
+  color: var(--sidebar-text);
 }
+.mbnav-link[aria-current="page"] .mbnav-icon { color: var(--primary-color); }
+.mbnav-link.router-link-active .mbnav-icon { color: var(--sidebar-active-text); }
 .mbnav-text {
   font-size: 0.7rem;
 }
