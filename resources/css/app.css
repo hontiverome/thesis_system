@@ -652,7 +652,7 @@ body {
     position: absolute;
     left: 50%;
     top: 50%;
-    transform: translate(-50%, -165%);
+    transform: translate(-50%, -45%);
   }
   
   .navbar-nav ul {
