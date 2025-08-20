@@ -890,6 +890,26 @@ body {
     .chart-card { padding: 1rem; }
     .chart-wrapper { min-height: 220px; }
     .dashboard { padding: 1rem; }
+    .dashboard-content { overflow-x: hidden; }
+  }
+
+  /* Mobile refinements for Settings and Dashboard */
+  @media (max-width: 640px) {
+    /* Settings page */
+    .settings { padding: 1rem; overflow-x: hidden; }
+    .settings-header h1 { font-size: 1.5rem; line-height: 1.2; word-break: break-word; }
+    .settings-header .subtitle { font-size: 0.95rem; }
+    .settings-section { padding: 1rem; }
+    .section-header { padding-bottom: 0.75rem; }
+    .section-header h2 { font-size: 1.1rem; flex-wrap: wrap; gap: 0.4rem; min-width: 0; }
+    .settings-section h2 .icon, .section-header h2 .icon { margin-right: 0.5rem; flex-shrink: 0; }
+    .section-header .section-description { font-size: 0.9rem; overflow-wrap: anywhere; }
+
+    /* Dashboard */
+    .dashboard { padding: 0.75rem; }
+    .chart-card h3 { font-size: 1rem; }
+    .chart-wrapper { min-height: 180px; }
+    .chart-wrapper canvas { aspect-ratio: 4 / 3; }
   }
 
   .theme-selector {

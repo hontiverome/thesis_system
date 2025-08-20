@@ -168,6 +168,7 @@ const chartOptions = (theme) => {
   const isDark = theme === 'dark' || theme === 'night';
   const textColor = isDark ? '#fff' : '#666';
   const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+  const isSmall = window.innerWidth <= 640;
   
   return {
     line: {
@@ -175,13 +176,13 @@ const chartOptions = (theme) => {
       maintainAspectRatio: false,
       plugins: { 
         legend: { 
-          position: 'top', 
+          position: isSmall ? 'bottom' : 'top', 
           labels: { 
             color: textColor,
             usePointStyle: true,
-            padding: 20,
+            padding: isSmall ? 12 : 20,
             font: {
-              size: 12,
+              size: isSmall ? 10 : 12,
               weight: '500'
             }
           } 
@@ -212,7 +213,7 @@ const chartOptions = (theme) => {
           ticks: { 
             color: textColor,
             font: {
-              size: 11
+              size: isSmall ? 10 : 11
             }
           } 
         },
@@ -224,7 +225,7 @@ const chartOptions = (theme) => {
           ticks: { 
             color: textColor,
             font: {
-              size: 11
+              size: isSmall ? 10 : 11
             }
           } 
         }
@@ -262,11 +263,12 @@ const chartOptions = (theme) => {
       maintainAspectRatio: false,
       plugins: { 
         legend: { 
-          position: 'right', 
+          position: isSmall ? 'bottom' : 'right', 
           labels: { 
             color: textColor,
             usePointStyle: true,  // Use point style for better visual consistency
-            padding: 20
+            padding: isSmall ? 10 : 20,
+            font: { size: isSmall ? 10 : 12 }
           } 
         },
         tooltip: {
@@ -316,7 +318,7 @@ const chartOptions = (theme) => {
       },
       // Override any default offsets that might affect Category C
       layout: {
-        padding: 0
+        padding: isSmall ? 0 : 0
       }
     }
   };
@@ -400,8 +402,14 @@ watch(() => themeStore.currentTheme, () => {
 /**
  * Initializes the charts and sets up cleanup on component unmount
  */
+const handleResize = () => {
+  // Recompute options on resize and update charts for new dimensions
+  setTimeout(updateCharts, 100);
+};
+
 onMounted(() => {
   nextTick(() => setTimeout(createCharts, 100));
+  window.addEventListener('resize', handleResize, { passive: true });
 });
 
 /**
@@ -415,6 +423,7 @@ onBeforeUnmount(() => {
   });
   lineChart.value = null;
   pieChart.value = null;
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
