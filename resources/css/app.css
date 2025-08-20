@@ -3094,7 +3094,7 @@ input:disabled {
 .upload-hint {
   margin-top: 0.5rem;
   font-size: 0.875rem; /* 14px */
-  color: var(--text-color);
+  color: var(--header-text);
   opacity: 0.8;
 }
 
