@@ -1936,10 +1936,12 @@ body {
   transform: translateY(100%);
   transition: transform 0.2s ease;
   backdrop-filter: blur(4px);
+  opacity: 0;
 }
 
 .profile-avatar-container:hover .profile-avatar-overlay {
   transform: translateY(0);
+  opacity: 1;
 }
 
 .profile-info {
