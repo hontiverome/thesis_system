@@ -163,7 +163,14 @@ const themeButtonText = computed(() => {
 });
 
 const toggleSidebar = () => {
-  layoutStore.toggleSidebar();
+  const isSmall = window.innerWidth <= 1024; // tablet and below
+  if (isSmall) {
+    // On mobile, toggle the off-canvas sidebar overlay
+    layoutStore.toggleMobileSidebar();
+  } else {
+    // On larger screens, toggle collapsed state
+    layoutStore.toggleSidebar();
+  }
 };
 
 const toggleTheme = () => {

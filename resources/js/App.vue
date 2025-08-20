@@ -53,9 +53,9 @@
     <!-- Backdrop overlay for mobile sidebar -->
     <div v-if="layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
     
-    <!-- Floating hamburger for sidebar-only layout on mobile -->
+    <!-- Floating hamburger for sidebar-only layout on mobile (hidden when overlay is open) -->
     <button
-      v-if="layoutStore.layoutPreference === 'sidebar'"
+      v-if="layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
       class="floating-sidebar-toggle"
       @click="layoutStore.toggleMobileSidebar()"
       aria-label="Toggle sidebar"
