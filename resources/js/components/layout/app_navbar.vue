@@ -46,7 +46,10 @@
         </button>
         
         <!-- Dynamic page title that shows current route information -->
-        <h1 class="page-title">Theming Test | {{ currentPageTitle }}</h1>
+        <h1 class="page-title">
+          <span class="prefix">Theming Test | </span>
+          <span class="page-name">{{ currentPageTitle }}</span>
+        </h1>
       </div>
 
       <!-- Center navigation - only show when not in 'both' layout mode -->

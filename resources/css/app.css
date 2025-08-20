@@ -598,6 +598,20 @@ body {
     .mobile-sidebar-open .sidebar {
       transform: translateX(0);
     }
+    /* Sidebar-only layout on mobile: hide sidebar off-canvas by default */
+    .app.has-sidebar:not(.has-navbar) .sidebar {
+      transform: translateX(-100%);
+      width: var(--sidebar-width);
+    }
+    /* When mobile sidebar is open, slide in at full width */
+    .app.mobile-sidebar-open .sidebar {
+      transform: translateX(0);
+      width: var(--sidebar-width);
+    }
+    /* Content should span full width on mobile */
+    .app.has-sidebar:not(.has-navbar) .main-content {
+      margin-left: 0;
+    }
   }
 
   /* Mobile sidebar backdrop overlay + body scroll lock */
@@ -614,6 +628,35 @@ body {
     backdrop-filter: blur(1px);
     z-index: 39; /* Under sidebar (40), above content */
   }
+
+/* ===================================
+   Mobile Bottom Navigation
+   =================================== */
+.mobile-bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  display: none; /* Shown via media query and layout class */
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem env(safe-area-inset-bottom, 0px);
+  z-index: 50;
+}
+
+@media (max-width: 1024px) {
+  /* Show bottom nav only when in navbar-only layout */
+  .has-navbar:not(.has-sidebar) .mobile-bottom-nav {
+    display: flex;
+  }
+  /* Ensure content isn't hidden behind bottom nav */
+  .has-navbar:not(.has-sidebar) .main-content {
+    padding-bottom: calc(1rem + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+  }
+}
 
 /* ===================================
    Navbar Component Styles
@@ -836,6 +879,17 @@ body {
   @media (max-width: 1024px) {
     .navbar-nav { display: none; }
     .page-title { font-size: 1.1rem; }
+    /* Hide static prefix and theme selector on mobile */
+    .page-title .prefix { display: none; }
+    .navbar-right .theme-selector { display: none; }
+  }
+
+  /* Dashboard responsiveness */
+  @media (max-width: 1024px) {
+    .chart-container { grid-template-columns: 1fr; }
+    .chart-card { padding: 1rem; }
+    .chart-wrapper { min-height: 220px; }
+    .dashboard { padding: 1rem; }
   }
 
   .theme-selector {

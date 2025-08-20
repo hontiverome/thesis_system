@@ -153,7 +153,8 @@ defineOptions({
   }
 });
 
-const isCollapsed = computed(() => layoutStore.isSidebarCollapsed);
+// On mobile when the off-canvas sidebar is open, force expanded view
+const isCollapsed = computed(() => layoutStore.isSidebarCollapsed && !layoutStore.isMobileSidebarOpen);
 const isUserMenuOpen = ref(false);
 
 const themeButtonText = computed(() => {

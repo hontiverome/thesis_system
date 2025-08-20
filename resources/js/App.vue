@@ -53,12 +53,25 @@
     <!-- Backdrop overlay for mobile sidebar -->
     <div v-if="layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
     
+    <!-- Floating hamburger for sidebar-only layout on mobile -->
+    <button
+      v-if="layoutStore.layoutPreference === 'sidebar'"
+      class="floating-sidebar-toggle"
+      @click="layoutStore.toggleMobileSidebar()"
+      aria-label="Toggle sidebar"
+    >
+      ☰
+    </button>
+
     <!-- Main Content Area -->
     <main class="main-content" role="main">
       <div class="content-wrapper">
         <router-view :key="$route.fullPath" />
       </div>
     </main>
+    
+    <!-- Bottom Mobile Navigation (for navbar-only layout) -->
+    <MobileBottomNav v-if="layoutStore.layoutPreference === 'navbar'" />
     
     <!-- Floating Settings Button -->
     <FloatingSettings />
@@ -74,6 +87,7 @@ import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import AppNavbar from '@/components/layout/app_navbar.vue';
 import AppSidebar from '@/components/layout/app_sidebar.vue';
+import MobileBottomNav from '@/components/layout/mobile_bottom_nav.vue';
 import FloatingSettings from '@/components/ui/floating_settings.vue';
 
 // Initialize the stores
@@ -84,7 +98,8 @@ const layoutStore = useLayoutStore();
 const components = {
   AppNavbar,
   AppSidebar,
-  FloatingSettings
+  FloatingSettings,
+  MobileBottomNav
 };
 
 /**
@@ -108,12 +123,17 @@ const collapsedSidebarWidth = 60;  // Width of the collapsed sidebar in pixels
  */
 const layoutStyles = computed(() => {
   const showSidebar = layoutStore.layoutPreference !== 'navbar';
-  const isCollapsed = layoutStore.isSidebarCollapsed && showSidebar;
-  
+  const collapsedPref = layoutStore.isSidebarCollapsed && showSidebar;
+  const mobileOpen = layoutStore.isMobileSidebarOpen;
+  // When mobile overlay is open, force expanded width regardless of collapsedPref
+  const effectiveCollapsed = mobileOpen ? false : collapsedPref;
+
   return {
-    '--sidebar-width': showSidebar 
-      ? (isCollapsed ? `${collapsedSidebarWidth}px` : `${sidebarWidth}px`)
+    '--sidebar-width': showSidebar
+      ? (effectiveCollapsed ? `${collapsedSidebarWidth}px` : `${sidebarWidth}px`)
       : '0px',
+    '--sidebar-collapsed-width': `${collapsedSidebarWidth}px`,
+    '--mobile-bottom-nav-height': '56px',
     '--header-height': layoutStore.layoutPreference !== 'sidebar' ? '60px' : '0px',
     '--sidebar-opacity': showSidebar ? '1' : '0',
     '--sidebar-visibility': showSidebar ? 'visible' : 'hidden',
@@ -229,5 +249,36 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
     /* Adjust padding for smaller screens */
     padding: 1rem;
   }
+
+  /* Floating toggle visible only on mobile */
+  .floating-sidebar-toggle {
+    display: inline-flex;
+  }
+}
+
+/* Floating sidebar toggle button */
+.floating-sidebar-toggle {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 60; /* Above overlay (39) and sidebar (40) */
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-color);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-duration), box-shadow var(--transition-duration);
+  display: none; /* hidden by default; shown in mobile media query */
+}
+
+.floating-sidebar-toggle:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 </style>
