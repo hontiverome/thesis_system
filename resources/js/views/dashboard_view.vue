@@ -188,9 +188,9 @@ const getChartData = () => {
         {
           data: [30, 50, 20],
           backgroundColor: [
-            toTransparent(primaryRgba, 0.2),
-            toTransparent(secondaryRgba, 0.2),
-            toTransparent(accentRgba, 0.2)
+            toTransparent(primaryRgba, 0.1),
+            toTransparent(secondaryRgba, 0.1),
+            toTransparent(accentRgba, 0.1)
           ],
           borderColor: [
             primaryRgba,
@@ -271,17 +271,7 @@ const chartOptions = (theme) => {
           } 
         }
       },
-      // Enhanced animations for line chart
-      animation: {
-        duration: 1500,
-        easing: 'easeOutQuart'
-      },
-      // Smooth hover animations
-      hover: {
-        animationDuration: 200,
-        intersect: false,
-        mode: 'nearest'
-      },
+      
       // Enhanced interaction
       interaction: {
         intersect: false,
@@ -336,17 +326,7 @@ const chartOptions = (theme) => {
         intersect: false,
         mode: 'nearest'
       },
-      // Smooth animations
-      animation: {
-        animateRotate: true,
-        animateScale: true,
-        duration: 800,
-        easing: 'easeOutQuart'
-      },
-      // Hover animations
-      hover: {
-        animationDuration: 200
-      },
+      
       // Element options for consistent behavior - fix layering issues
       elements: {
         arc: {
@@ -372,7 +352,7 @@ const updateChart = (chart, data, options) => {
   try {
     chart.stop && chart.stop();
     chart.data = data;
-    chart.options = { ...options, animation: false, animations: { duration: 0 } };
+    chart.options = options;
     chart.update('none');
     return true;
   } catch (error) {
@@ -443,18 +423,16 @@ const createCharts = () => {
     });
     
     // Create new charts
-    const lineOptionsNoAnim = { ...options.line, animation: false, animations: { duration: 0 } };
-    const pieOptionsNoAnim = { ...options.pie, animation: false, animations: { duration: 0 } };
     lineChart.value = new Chart(line2d, {
       type: 'line',
       data: data.line,
-      options: lineOptionsNoAnim
+      options: options.line
     });
     
     pieChart.value = new Chart(pie2d, {
       type: 'pie',
       data: data.pie,
-      options: pieOptionsNoAnim
+      options: options.pie
     });
     if (!lineChart.value?.ctx || !pieChart.value?.ctx) {
       console.warn('[Dashboard] Chart ctx missing after create; scheduling retry');
