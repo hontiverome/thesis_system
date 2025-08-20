@@ -96,6 +96,10 @@ h6 { font-size: 1rem; font-weight: 500; }
     --chart-primary: rgb(96, 165, 250);
     --chart-secondary: rgb(74, 222, 128);
     --chart-accent: rgb(251, 191, 36);
+  /* Layout & animation */
+  --transition-duration: 0.2s;
+  /* Header height used by components (falls back to navbar height if set elsewhere) */
+  --header-height: var(--navbar-height, 60px);
 }
 
 /* Dark theme */
@@ -586,10 +590,29 @@ body {
   }
   
   /* Responsive */
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     .sidebar {
       transform: translateX(-100%);
     }
+    /* When mobile sidebar is toggled open */
+    .mobile-sidebar-open .sidebar {
+      transform: translateX(0);
+    }
+  }
+
+  /* Mobile sidebar backdrop overlay + body scroll lock */
+  body.no-scroll {
+    overflow: hidden;
+  }
+  .backdrop-overlay {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+    z-index: 39; /* Under sidebar (40), above content */
   }
 
 /* ===================================
@@ -622,7 +645,7 @@ body {
   }
 
   .navbar-nav {
-    display: absolute;
+    display: flex;
     align-items: center;
     height: 50%;
     margin: 0 1rem;
@@ -807,6 +830,12 @@ body {
     align-items: center;
     gap: 1.5rem;
     margin-left: auto;
+  }
+
+  /* Hide center nav on small screens */
+  @media (max-width: 1024px) {
+    .navbar-nav { display: none; }
+    .page-title { font-size: 1.1rem; }
   }
 
   .theme-selector {
