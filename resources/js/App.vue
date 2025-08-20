@@ -44,11 +44,14 @@
   <div class="app" :class="[currentTheme, layoutStore.layoutClasses]" :style="layoutStyles">
     <!-- Application Navigation Bar -->
     <AppNavbar v-if="layoutStore.layoutPreference !== 'sidebar'" 
-               @toggle-sidebar="toggleSidebar" />
+               @toggle-sidebar="handleToggleSidebar" />
     
-    <!-- Sidebar Navigation (collapsible) -->
+    <!-- Sidebar Navigation (collapsible / off-canvas on mobile) -->
     <AppSidebar v-if="layoutStore.layoutPreference !== 'navbar'" 
                 :isCollapsed="layoutStore.isSidebarCollapsed" />
+
+    <!-- Backdrop overlay for mobile sidebar -->
+    <div v-if="layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
     
     <!-- Main Content Area -->
     <main class="main-content" role="main">
@@ -118,17 +121,13 @@ const layoutStyles = computed(() => {
   };
 });
 
-// Apply layout classes to body
-document.body.className = Object.entries(layoutStore.layoutClasses)
-  .filter(([_, value]) => value)
-  .map(([key]) => key)
-  .join(' ');
+// Body layout classes are managed by the watcher below (no full overwrite)
 
 // Watch for layout class changes
 watch(() => layoutStore.layoutClasses, (newClasses) => {
   const body = document.body;
   // Remove all layout classes
-  ['has-sidebar', 'has-navbar', 'sidebar-collapsed'].forEach(cls => {
+  ['has-sidebar', 'has-navbar', 'sidebar-collapsed', 'mobile-sidebar-open'].forEach(cls => {
     body.classList.remove(cls);
   });
   // Add active layout classes
@@ -137,9 +136,13 @@ watch(() => layoutStore.layoutClasses, (newClasses) => {
   });
 }, { immediate: true, deep: true });
 
-// Proxy for the toggleSidebar method to maintain compatibility
-const toggleSidebar = () => {
-  if (layoutStore.layoutPreference !== 'navbar') {
+// Handle navbar hamburger: on mobile open off-canvas, else toggle collapse
+const handleToggleSidebar = () => {
+  if (layoutStore.layoutPreference === 'navbar') return;
+  const isSmall = window.innerWidth <= 1024; // tablet and below
+  if (isSmall) {
+    layoutStore.toggleMobileSidebar();
+  } else {
     layoutStore.toggleSidebar();
   }
 };
@@ -162,6 +165,16 @@ onMounted(() => {
 watch(currentTheme, (newTheme) => {
   document.documentElement.setAttribute('data-theme', newTheme);  
   // This allows for theme-specific CSS selectors using [data-theme="theme-name"]
+});
+
+// Lock body scroll when mobile sidebar is open
+watch(() => layoutStore.isMobileSidebarOpen, (open) => {
+  const body = document.body;
+  if (open) {
+    body.classList.add('no-scroll');
+  } else {
+    body.classList.remove('no-scroll');
+  }
 });
 </script>
 
@@ -209,7 +222,7 @@ watch(currentTheme, (newTheme) => {
  * Responsive Adjustments
  * Handles layout changes for different screen sizes
  */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .main-content {
     /* On mobile, remove sidebar margin for full-width content */
     margin-left: 0;

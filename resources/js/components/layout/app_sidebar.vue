@@ -70,6 +70,7 @@
             role="none">
           <router-link :to="item.path" 
                       class="sidebar-nav nav-link" 
+                      @click="handleNavClick"
                       :title="item.text"
                       role="menuitem"
                       :aria-current="$route.path === item.path ? 'page' : undefined">
@@ -201,6 +202,13 @@ const navItems = [
   { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
   { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
 ];
+
+// Close mobile sidebar after navigation on small screens
+const handleNavClick = () => {
+  if (window.innerWidth <= 1024) {
+    layoutStore.closeMobileSidebar();
+  }
+};
 
 // Load required icons
 onMounted(() => {

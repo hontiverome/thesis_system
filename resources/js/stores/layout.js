@@ -39,6 +39,8 @@ export const useLayoutStore = defineStore('layout', () => {
   // Default layout preference
   const layoutPreference = ref('both'); // 'both', 'sidebar', or 'navbar'
   const isSidebarCollapsed = ref(false);
+  // Mobile off-canvas sidebar state
+  const isMobileSidebarOpen = ref(false);
 
   // Load saved preferences from localStorage
   const loadPreferences = () => {
@@ -72,11 +74,17 @@ export const useLayoutStore = defineStore('layout', () => {
     localStorage.setItem('sidebarCollapsed', isSidebarCollapsed.value);
   };
 
+  // Mobile sidebar controls
+  const openMobileSidebar = () => { isMobileSidebarOpen.value = true; };
+  const closeMobileSidebar = () => { isMobileSidebarOpen.value = false; };
+  const toggleMobileSidebar = () => { isMobileSidebarOpen.value = !isMobileSidebarOpen.value; };
+
   // Computed properties for layout classes
   const layoutClasses = computed(() => ({
     'has-sidebar': layoutPreference.value !== 'navbar',
     'has-navbar': layoutPreference.value !== 'sidebar',
     'sidebar-collapsed': isSidebarCollapsed.value && layoutPreference.value !== 'navbar',
+    'mobile-sidebar-open': isMobileSidebarOpen.value,
   }));
 
   // Initialize the store
@@ -85,8 +93,12 @@ export const useLayoutStore = defineStore('layout', () => {
   return {
     layoutPreference,
     isSidebarCollapsed,
+    isMobileSidebarOpen,
     layoutClasses,
     setLayoutPreference,
     toggleSidebar,
+    openMobileSidebar,
+    closeMobileSidebar,
+    toggleMobileSidebar,
   };
 });
