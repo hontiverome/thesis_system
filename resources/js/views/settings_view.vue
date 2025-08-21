@@ -33,7 +33,6 @@
 -->
 <template>
   <div class="settings page-view" role="main" aria-labelledby="settings-title">
-    <!-- Page header with title and description -->
     <header class="settings-header page-header">
       <h1 id="settings-title" class="page-title">Settings</h1>
       <p class="subtitle page-subtitle">Customize your application experience</p>
@@ -147,39 +146,6 @@
           </div>
         </div>
       </section>
-      <!-- Account Settings Section -->
-      <section class="card settings-section" aria-labelledby="account-settings-heading">
-        <div class="section-header">
-          <h2 id="account-settings-heading">
-            <span class="icon">
-              <IconifyIcon icon="mdi:account-cog" width="24" height="24" />
-            </span>
-            Account
-          </h2>
-          <p class="section-description">
-            Manage your account settings and preferences
-          </p>
-        </div>
-        
-        <div class="settings-options">
-          <div class="setting-option">
-            <label for="language">Language:</label>
-            <select 
-              id="language" 
-              v-model="settings.account.language"
-            >
-              <option v-for="lang in availableLanguages" :key="lang.value" :value="lang.value">
-                {{ lang.label }}
-              </option>
-            </select>
-          </div>
-          
-          <div class="setting-option">
-            <label>Time Zone:</label>
-            <div class="timezone-display">{{ userTimezone }}</div>
-          </div>
-        </div>
-      </section>
     </div>
   </div>
 </template>
@@ -203,9 +169,6 @@ const layoutStore = useLayoutStore();
 const settings = ref({
   layout: {
     preference: layoutStore.layoutPreference // Initialize with store value
-  },
-  account: {
-    language: 'en'
   }
 });
 
@@ -262,26 +225,16 @@ const availableThemes = computed(() => themeStore.availableThemes);
 
 // currentThemeName removed (unused)
 
-// Get user's timezone
-const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+// Account section removed; no timezone displayed
 
 // Load required icons
 onMounted(() => {
   loadIcons([
     'mdi:palette',
     'mdi:view-dashboard',
-    'mdi:account-cog'
+    // account icons removed
   ]);
 });
 
-// Available languages for the language selector
-const availableLanguages = [
-  { value: 'en', label: 'English' },
-  { value: 'es', label: 'Español' },
-  { value: 'fr', label: 'Français' },
-  { value: 'de', label: 'Deutsch' },
-  { value: 'ja', label: '日本語' },
-  { value: 'zh', label: '中文' },
-  { value: 'fil', label: 'Filipino' }
-];
+// Languages array removed with Account section
 </script>

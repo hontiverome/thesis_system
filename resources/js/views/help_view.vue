@@ -33,7 +33,10 @@
 -->
 <template>
   <div class="help page-view" role="main" aria-labelledby="help-title">
-    <h1 id="help-title" class="page-title">Help & Support</h1>
+    <header class="page-header">
+      <h1 class="page-title">Help & Support</h1>
+      <p class="page-subtitle">Find answers and get assistance</p>
+    </header>
     
     <div class="card">
       <h2>Frequently Asked Questions</h2>
