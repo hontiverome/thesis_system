@@ -560,10 +560,10 @@ onBeforeUnmount(() => {
 
 <!-- Main Page Template -->
 <template>
-  <div class="dashboard">
-    <header class="dashboard-header">
-      <h1 id="dashboard-title">Dashboard</h1>
-      <p class="subtitle">Welcome to your personalized dashboard</p>
+  <div class="dashboard page-view" role="main" aria-labelledby="dashboard-title">
+    <header class="dashboard-header page-header">
+      <h1 id="dashboard-title" class="page-title">Dashboard</h1>
+      <p class="subtitle page-subtitle">Welcome to your personalized dashboard</p>
     </header>
     <div class="dashboard-content">
       <div class="chart-container">

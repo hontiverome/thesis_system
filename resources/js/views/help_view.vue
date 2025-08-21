@@ -32,8 +32,8 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <div class="help">
-    <h1 id="help-title">Help & Support</h1>
+  <div class="help page-view" role="main" aria-labelledby="help-title">
+    <h1 id="help-title" class="page-title">Help & Support</h1>
     
     <div class="card">
       <h2>Frequently Asked Questions</h2>

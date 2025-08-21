@@ -32,11 +32,11 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <div class="settings" role="main" aria-labelledby="settings-title">
+  <div class="settings page-view" role="main" aria-labelledby="settings-title">
     <!-- Page header with title and description -->
-    <header class="settings-header">
-      <h1 id="settings-title">Settings</h1>
-      <p class="subtitle">Customize your application experience</p>
+    <header class="settings-header page-header">
+      <h1 id="settings-title" class="page-title">Settings</h1>
+      <p class="subtitle page-subtitle">Customize your application experience</p>
     </header>
     
     <!-- Save success message -->
@@ -260,11 +260,7 @@ const updateLayoutPreference = () => {
 // Available themes for selection
 const availableThemes = computed(() => themeStore.availableThemes);
 
-// Get current theme name for display
-const currentThemeName = computed(() => {
-  const theme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
-  return theme ? theme.name : 'Select a theme';
-});
+// currentThemeName removed (unused)
 
 // Get user's timezone
 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;

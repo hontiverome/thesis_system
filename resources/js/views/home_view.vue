@@ -39,12 +39,12 @@
     - Displays current theme information
     - Provides guidance on theme switching
   -->
-  <div class="home" role="main" aria-labelledby="page-title">
+  <div class="home page-view" role="main" aria-labelledby="page-title">
     <!-- Main heading with welcome message -->
-    <h1 id="page-title">Welcome to Theming App</h1>
+    <h1 id="page-title" class="page-title">Welcome to Theming App</h1>
     
     <!-- Brief introduction -->
-    <p class="lead">
+    <p class="lead page-subtitle">
       This is the home view. Use the sidebar to navigate between different sections of the application.
     </p>
     
@@ -64,7 +64,7 @@
  * Imports Vue's composition API functions and required dependencies
  */
 import { computed } from 'vue';
-import { useThemeStore } from '../stores/theme';
+import { useThemeStore } from '@/stores/theme.js';
 
 /**
  * Component Setup
