@@ -402,21 +402,6 @@ body {
     align-items: center;
     justify-content: center;
     transition: all var(--transition-duration) ease;
-    padding: 0.25rem 0;
-    font-family: 'Montserrat', sans-serif;
-    letter-spacing: 0.3px;
-  }
-  
-  .sidebar-title {
-    color: var(--sidebar-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition-duration) ease;
-    padding: 0.25rem 0;
     font-family: 'Montserrat', sans-serif;
     letter-spacing: 0.3px;
   }
