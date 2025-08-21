@@ -90,17 +90,15 @@
       <button @click="toggleTheme" 
               class="theme-toggle" 
               aria-label="Toggle theme">
-        <span class="icon" aria-hidden="true" style="margin-right: 0.15rem">
-          <IconifyIcon icon="mdi:palette" width="30" height="30" />
+        <span class="icon" aria-hidden="true">
+          <IconifyIcon icon="mdi:palette" width="20" height="20" />
         </span>
-        <span class="text" v-if="!isCollapsed" style="margin-right: 1rem">{{ themeButtonText }}</span>
+        <span class="text" v-if="!isCollapsed">{{ themeButtonText }}</span>
       </button>
       
       <!-- User Menu -->
-      <div class="user-menu-container">
-        <button class="sidebar-user-button" 
+      <button class="sidebar-user-button" 
                 ref="userButtonRef"
-                :class="{ 'collapsed': isCollapsed, 'active': isUserMenuOpen }"
                 @click.stop="toggleUserMenu"
                 aria-label="User menu"
                 aria-expanded="isUserMenuOpen">
@@ -116,7 +114,7 @@
             <div class="sidebar-username">{{ userStore.user?.firstName|| 'User' }}</div>
           </div>
           <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="sidebar-dropdown-arrow" />
-        </button>
+      </button>
         
         <!-- User Dropdown Popover -->
         <Teleport to="body">
@@ -127,7 +125,6 @@
             @close="closeUserMenu"
           />
         </Teleport>
-      </div>
     </div>
   </aside>
 </template>

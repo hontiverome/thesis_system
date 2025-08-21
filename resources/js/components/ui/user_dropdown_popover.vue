@@ -167,16 +167,17 @@ const updatePosition = () => {
   const rect = targetEl.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
   const popoverWidth = 280; // Width of the popover
-  const offset = 32; // Space between button and popover
   
   let left, top;
   
   if (props.isSidebarCollapsed) {
     // When sidebar is collapsed, position the popover to the right of the collapsed sidebar
+    let offset = 16;
     left = rect.right + offset;
     top = rect.top + (rect.height / 2) - 270; // Center vertically with the button
   } else {
     // When sidebar is expanded, position to the right of the user button
+    let offset = 70;
     left = rect.right + offset;
     top = rect.top - 235; // Slight vertical adjustment
   }
