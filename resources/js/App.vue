@@ -43,12 +43,16 @@
   -->
   <div class="app" :class="[currentTheme, layoutStore.layoutClasses]" :style="layoutStyles">
     <!-- Application Navigation Bar -->
-    <AppNavbar v-if="layoutStore.layoutPreference !== 'sidebar'" 
-               @toggle-sidebar="handleToggleSidebar" />
+    <transition name="navbar-slide" mode="out-in">
+      <AppNavbar v-if="layoutStore.layoutPreference !== 'sidebar'"
+                 @toggle-sidebar="handleToggleSidebar" />
+    </transition>
     
     <!-- Sidebar Navigation (collapsible / off-canvas on mobile) -->
-    <AppSidebar v-if="layoutStore.layoutPreference !== 'navbar'" 
-                :isCollapsed="layoutStore.isSidebarCollapsed" />
+    <transition name="sidebar-fade">
+      <AppSidebar v-if="layoutStore.layoutPreference !== 'navbar'"
+                  :isCollapsed="layoutStore.isSidebarCollapsed" />
+    </transition>
 
     <!-- Backdrop overlay for mobile sidebar -->
     <div v-if="layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
@@ -71,7 +75,9 @@
     </main>
     
     <!-- Bottom Mobile Navigation (for navbar-only layout) -->
-    <MobileBottomNav v-if="layoutStore.layoutPreference === 'navbar'" />
+    <transition name="bottom-nav-slide">
+      <MobileBottomNav v-if="layoutStore.layoutPreference === 'navbar'" />
+    </transition>
     
     <!-- Floating Settings Button -->
     <FloatingSettings />
@@ -218,8 +224,8 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   min-height: calc(100vh - var(--header-height));
   /* Add padding around content */
   padding: 1.5rem;
-  /* Smooth transition for sidebar collapse/expand */
-  transition: margin-left var(--transition-duration);
+  /* Smooth transition for sidebar collapse/expand and navbar enter/exit */
+  transition: margin-left var(--transition-duration), margin-top var(--transition-duration), padding-bottom var(--transition-duration);
   /* Theme-aware background color */
   background-color: var(--bg-color);
 }

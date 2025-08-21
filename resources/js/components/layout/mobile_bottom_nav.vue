@@ -38,10 +38,10 @@
       :key="item.path"
       :to="item.path"
       class="mbnav-link"
-      :aria-current="$route.path === item.path ? 'page' : undefined"
+      :title="item.text"
+      :aria-label="item.text"
     >
       <IconifyIcon :icon="item.icon" class="mbnav-icon" aria-hidden="true" />
-      <span class="mbnav-text">{{ item.text }}</span>
     </router-link>
   </nav>
 </template>
@@ -74,22 +74,20 @@ onMounted(() => {
   text-decoration: none;
   padding: 0.25rem 0.5rem;
   min-width: 64px;
+  border-radius: 8px;
 }
-.mbnav-link[aria-current="page"] {
-  color: var(--primary-color);
+.mbnav-link:hover {
+  background-color: var(--sidebar-hover);
 }
 .mbnav-link.router-link-active {
   background-color: var(--sidebar-active);
-  color: var(--sidebar-active-text);
-  border-radius: 8px;
+  color: var(--header-active-text);
 }
 .mbnav-icon {
   font-size: 22px;
   color: var(--sidebar-text);
 }
-.mbnav-link[aria-current="page"] .mbnav-icon { color: var(--primary-color); }
-.mbnav-link.router-link-active .mbnav-icon { color: var(--sidebar-active-text); }
-.mbnav-text {
-  font-size: 0.7rem;
+.mbnav-link.router-link-active .mbnav-icon {
+  color: var(--header-active-text);
 }
 </style>

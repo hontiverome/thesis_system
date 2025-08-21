@@ -348,7 +348,7 @@ body {
   }
   
   .sidebar-header {
-    padding: 0.75rem 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
@@ -644,7 +644,7 @@ body {
   height: calc(var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
   background-color: var(--sidebar-bg);
   border-top: 1px solid var(--border-color);
-  display: none; /* Shown via media query and layout class */
+  display: flex; /* Controlled by component mount and media query */
   align-items: center;
   justify-content: space-around;
   padding: 0 0.5rem env(safe-area-inset-bottom, 0px);
@@ -652,14 +652,86 @@ body {
   }
 
   @media (max-width: 1024px) {
-    /* Show bottom nav only when in navbar-only layout */
-    .has-navbar:not(.has-sidebar) .mobile-bottom-nav {
-      display: flex;
-    }
   /* Ensure content isn't hidden behind bottom nav */
   .has-navbar:not(.has-sidebar) .main-content {
     padding-bottom: calc(1rem + var(--mobile-bottom-nav-height) + env(safe-area-inset-bottom, 0px));
   }
+}
+
+@media (min-width: 1025px) {
+  .mobile-bottom-nav { display: none; }
+}
+
+/* ===================================
+   Transitions: Navbar and Sidebar
+   =================================== */
+/* Navbar slides from top with fade */
+.navbar-slide-enter-from {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+.navbar-slide-enter-active,
+.navbar-slide-leave-active {
+  transition: transform var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+              opacity var(--transition-duration) ease;
+}
+.navbar-slide-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+.navbar-slide-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+.navbar-slide-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* Sidebar fades and slides from the left on mount/unmount (desktop); mobile off-canvas keeps its own CSS transitions */
+.sidebar-fade-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.sidebar-fade-enter-active,
+.sidebar-fade-leave-active {
+  transition: transform var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+              opacity var(--transition-duration) ease;
+}
+.sidebar-fade-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+.sidebar-fade-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+.sidebar-fade-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Bottom mobile nav slides from bottom with fade */
+.bottom-nav-slide-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
+.bottom-nav-slide-enter-active,
+.bottom-nav-slide-leave-active {
+  transition: transform var(--transition-duration) cubic-bezier(0.4, 0, 0.2, 1),
+              opacity var(--transition-duration) ease;
+}
+.bottom-nav-slide-enter-to {
+  transform: translateY(0);
+  opacity: 1;
+}
+.bottom-nav-slide-leave-from {
+  transform: translateY(0);
+  opacity: 1;
+}
+.bottom-nav-slide-leave-to {
+  transform: translateY(100%);
+  opacity: 0;
 }
 
 /* ===================================
