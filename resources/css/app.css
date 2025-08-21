@@ -1745,8 +1745,8 @@ body {
    Dashboard View Styles
    =================================== */
    .dashboard {
-    padding: 1.5rem;
-    max-width: 1400px;
+    padding: 1rem;
+    max-width: 1200px;
     margin: 0 auto;
   }
   
@@ -1838,7 +1838,7 @@ body {
 .profile {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1rem;
   color: var(--text-color);
 }
 
@@ -2762,9 +2762,8 @@ body {
 .settings {
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
+  padding: 1rem;
   color: var(--text-color);
-  position: relative;
 }
 
 /* 
@@ -2968,7 +2967,7 @@ input:disabled {
 .help {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 1rem;
   color: var(--text-color);
   text-align: left;
 }
