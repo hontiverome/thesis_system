@@ -58,7 +58,8 @@ const getThemeColors = () => {
     primary: style.getPropertyValue('--chart-primary').trim() || style.getPropertyValue('--primary-color').trim(),
     secondary: style.getPropertyValue('--chart-secondary').trim() || style.getPropertyValue('--secondary-color') || '#4CAF50',
     accent: style.getPropertyValue('--chart-accent').trim() || style.getPropertyValue('--accent-color') || '#FFC107',
-    text: style.getPropertyValue('--text-color').trim()
+    text: style.getPropertyValue('--text-color').trim(),
+    border: style.getPropertyValue('--bg-color').trim() || '#ddd'
   };
 };
 
@@ -114,11 +115,12 @@ const toTransparent = (color, alpha = 0.1) => {
 const getChartData = () => {
   const colors = getThemeColors();
   
-  // Convert colors to rgba format for better compatibility
-  const primaryRgba = colors.primary.startsWith('#') ? hexToRgba(colors.primary) : colors.primary;
-  const secondaryRgba = colors.secondary.startsWith('#') ? hexToRgba(colors.secondary) : colors.secondary;
-  const accentRgba = colors.accent.startsWith('#') ? hexToRgba(colors.accent) : colors.accent;
-  const textColor = colors.text.startsWith('#') ? hexToRgba(colors.text) : colors.text;
+  // Convert colors to rgba format and force full opacity for solid fills
+  const primaryRgba = colors.primary.startsWith('#') ? hexToRgba(colors.primary, 1) : rgbToRgba(colors.primary, 1);
+  const secondaryRgba = colors.secondary.startsWith('#') ? hexToRgba(colors.secondary, 1) : rgbToRgba(colors.secondary, 1);
+  const accentRgba = colors.accent.startsWith('#') ? hexToRgba(colors.accent, 1) : rgbToRgba(colors.accent, 1);
+  const textColor = colors.text.startsWith('#') ? hexToRgba(colors.text, 1) : rgbToRgba(colors.text, 1);
+  const borderNeutral = colors.border.startsWith('#') ? hexToRgba(colors.border, 1) : rgbToRgba(colors.border, 1);
 
   // Static values for line chart
   return {
@@ -188,16 +190,12 @@ const getChartData = () => {
         {
           data: [30, 50, 20],
           backgroundColor: [
-            toTransparent(primaryRgba, 0.1),
-            toTransparent(secondaryRgba, 0.1),
-            toTransparent(accentRgba, 0.1)
-          ],
-          borderColor: [
             primaryRgba,
             secondaryRgba,
             accentRgba
           ],
-          borderWidth: 2
+          borderColor: borderNeutral,
+          borderWidth: 1
         }
       ]
     }
@@ -330,7 +328,7 @@ const chartOptions = (theme) => {
       // Element options for consistent behavior - fix layering issues
       elements: {
         arc: {
-          borderAlign: 'center',
+          borderAlign: 'inner',
           borderJoinStyle: 'round',
           borderWidth: 2,        
           offset: 0,            
