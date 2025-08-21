@@ -75,7 +75,7 @@ h6 { font-size: 1rem; font-weight: 500; }
   --sidebar-bg:rgb(228, 228, 228);
   --sidebar-text:rgb(26, 26, 26);
   --sidebar-hover:rgb(224, 224, 224);
-  --sidebar-active:rgb(224, 224, 224);
+  --sidebar-active:rgb(207, 207, 207);
   --sidebar-active-text:rgb(43, 38, 38);
 
   
@@ -110,13 +110,13 @@ h6 { font-size: 1rem; font-weight: 500; }
   
   --header-bg: linear-gradient(90deg,rgb(21, 30, 43) 0%,rgb(41, 50, 65) 100%);
   --header-text:rgb(255, 255, 255);
-  --header-active-text:rgb(117, 161, 187);
+  --header-active-text:rgb(63, 107, 167);
   --avatar-bg:rgb(54, 92, 156);
   
   --sidebar-bg:rgb(30, 41, 59);
   --sidebar-text:rgb(226, 232, 240);
   --sidebar-hover:rgb(51, 65, 85);
-  --sidebar-active:rgb(59, 130, 246);
+  --sidebar-active:rgb(61, 104, 174);
   --sidebar-active-text:rgb(255, 255, 255);
   
   --floating-settings-bg:rgb(30, 41, 59);
@@ -142,13 +142,13 @@ h6 { font-size: 1rem; font-weight: 500; }
   
   --header-bg: linear-gradient(90deg,rgb(12, 74, 110) 0%,rgb(29, 78, 216) 100%);
   --header-text:rgb(255, 255, 255);
-  --header-active-text:rgb(155, 178, 255);
+  --header-active-text:rgb(104, 202, 255);
   --avatar-bg:rgb(58, 83, 165);
   
   --sidebar-bg:rgb(30, 64, 175);
   --sidebar-text:rgb(219, 234, 254);
   --sidebar-hover:rgb(59, 130, 246);
-  --sidebar-active:rgb(255, 255, 255);
+  --sidebar-active:rgb(169, 189, 255);
   --sidebar-active-text:rgb(30, 64, 175);
   
   --floating-settings-bg:rgb(226, 239, 252);
@@ -174,13 +174,13 @@ h6 { font-size: 1rem; font-weight: 500; }
   
   --header-bg: linear-gradient(90deg,rgb(6, 78, 59) 0%,rgb(5, 150, 105) 100%);
   --header-text:rgb(255, 255, 255);
-  --header-active-text:rgb(122, 224, 139);
+  --header-active-text:rgb(108, 255, 132);
   --avatar-bg:rgb(6, 95, 70);
   
   --sidebar-bg:rgb(6, 95, 70);
   --sidebar-text:rgb(209, 250, 229);
   --sidebar-hover:rgb(16, 185, 129);
-  --sidebar-active:rgb(255, 255, 255);
+  --sidebar-active:rgb(184, 251, 181);
   --sidebar-active-text:rgb(46, 90, 78);
   
   --floating-settings-bg:rgb(226, 252, 228);
@@ -441,11 +441,11 @@ body {
   
   .sidebar-nav.nav-link.router-link-active {
     background-color: var(--sidebar-active);
-    color: var(--header-active-text);
+    color: var(--sidebar-active-text);
   }
   
   .sidebar-nav.nav-link.router-link-active .icon {
-    color: var(--header-active-text);
+    color: var(--sidebar-active-text);
   }
   
   .sidebar-nav.nav-link:hover .icon {
@@ -2760,9 +2760,8 @@ body {
  * Provides consistent spacing and layout for the entire settings page
  */
 .settings {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 3rem;
   width: 100%;
   color: var(--text-color);
   position: relative;
@@ -2932,15 +2931,6 @@ body {
   display: flex;          
   flex-direction: column; 
   gap: 0.5rem;            
-}
-
-.timezone-display {
-  padding: 0.625rem 0.75rem;
-  background-color: var(--input-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
 }
 
 select, 

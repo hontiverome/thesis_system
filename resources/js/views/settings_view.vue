@@ -225,7 +225,6 @@ const availableThemes = computed(() => themeStore.availableThemes);
 
 // currentThemeName removed (unused)
 
-// Account section removed; no timezone displayed
 
 // Load required icons
 onMounted(() => {
