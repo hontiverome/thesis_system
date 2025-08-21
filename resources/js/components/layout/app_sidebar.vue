@@ -37,10 +37,11 @@
     Provides collapsible navigation with theme toggle functionality
   -->
   <aside class="sidebar" 
+         :data-layout-mode="layoutMode"
          :class="{ 'collapsed': isCollapsed }" 
          role="navigation"
          aria-label="Main navigation">
-    
+
     <!-- Sidebar header with collapsible title and hamburger button -->
     <div class="sidebar-header">
       <!-- Hamburger button - only show in sidebar-only layout -->
@@ -93,7 +94,7 @@
         <span class="icon" aria-hidden="true">
           <IconifyIcon icon="mdi:palette" width="20" height="20" />
         </span>
-        <span class="text" v-if="!isCollapsed">{{ themeButtonText }}</span>
+        <span class="theme-toggle-text" v-if="!isCollapsed">{{ themeButtonText }}</span>
       </button>
       
       <!-- User Menu -->
@@ -142,6 +143,7 @@ const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 const themeStore = useThemeStore();
 const userButtonRef = ref(null);
+const layoutMode = computed(() => layoutStore.layoutPreference);
 const popoverStyle = ref({});
 
 defineOptions({

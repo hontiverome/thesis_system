@@ -177,7 +177,7 @@ const updatePosition = () => {
     top = rect.top + (rect.height / 2) - 270; // Center vertically with the button
   } else {
     // When sidebar is expanded, position to the right of the user button
-    let offset = 70;
+    let offset = 32;
     left = rect.right + offset;
     top = rect.top - 235; // Slight vertical adjustment
   }
