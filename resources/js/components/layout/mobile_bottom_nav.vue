@@ -80,8 +80,8 @@ onMounted(() => {
   background-color: var(--sidebar-hover);
 }
 .mbnav-link.router-link-active {
-  background-color: var(--sidebar-active);
-  color: var(--header-active-text);
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-bg);
 }
 .mbnav-icon {
   font-size: 22px;
