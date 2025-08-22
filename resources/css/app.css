@@ -790,7 +790,6 @@ body {
     display: flex;
     align-items: center;
     height: 100%;
-    gap: 2.5rem;
   }
   
   .navbar-left {
@@ -848,6 +847,7 @@ body {
     color: var(--header-text);
     margin: 0;
     white-space: nowrap;
+    margin-left: 2rem;
     overflow: hidden;
     text-overflow: ellipsis;
     font-family: 'Montserrat', sans-serif;
@@ -872,18 +872,6 @@ body {
     transform: scale(1.05);
     background-color: var(--hover-color);
   }
-
-  .page-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--header-text);
-    font-family: 'Montserrat', sans-serif;
-    letter-spacing: 0.3px;
-  }
   
   .navbar-right {
     display: flex;
@@ -895,7 +883,7 @@ body {
   /* Hide center nav on small screens */
   @media (max-width: 1024px) {
     .navbar-nav { display: none; }
-    .page-title { font-size: 1.1rem; }
+    .page-title { font-size: 1.3rem;}
     /* Hide static prefix and theme selector on mobile */
     .page-title .prefix { display: none; }
     .navbar-right .theme-selector { display: none; }
@@ -927,20 +915,6 @@ body {
     .chart-card h3 { font-size: 1rem; }
     .chart-wrapper { min-height: 180px; }
     .chart-wrapper canvas { aspect-ratio: 4 / 3; }
-  }
-
-  .theme-selector {
-    position: relative;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  .theme-select-wrapper {
-    position: relative;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
   }
   
   .theme-icon {
@@ -1001,6 +975,7 @@ body {
     transition: all var(--transition-duration);
     height: 2.5rem;
     min-width: 120px;
+    gap: 2rem;
   }
 
   .theme-selector:hover {
@@ -1016,26 +991,6 @@ body {
     flex-shrink: 0;
   }
 
-  .theme-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    font-size: 0.875rem;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    outline: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    opacity: 0;
-    z-index: 1;
-  }
 
   /* Dropdown arrow */
   .dropdown-arrow {
@@ -1078,7 +1033,7 @@ body {
 .navbar .user-dropdown {
   position: absolute;
   top: calc(100% + 0.5rem);
-  right: 0;
+  right: 30px;
   width: 280px;
   background-color: var(--floating-settings-bg);
   border-radius: 0.5rem;
