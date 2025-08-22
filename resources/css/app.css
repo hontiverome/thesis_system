@@ -1108,7 +1108,7 @@ body {
   display: inline-flex;
 }
 
-.navbar .status-badge {
+.status-badge {
   font-size: 0.7rem;
   font-weight: 500;
   padding: 0.15rem 0.5rem;
@@ -1117,22 +1117,12 @@ body {
   color: #374151;
 }
 
-.navbar .status-badge.active {
+.status-badge.active {
   background-color: #d1fae5;
   color: #065f46;
 }
 
-.navbar .status-badge.away {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-.navbar .status-badge.busy {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-
-.navbar .status-badge.offline {
+.status-badge.offline {
   background-color: #e5e7eb;
   color: #4b5563;
 }
@@ -1308,21 +1298,6 @@ body {
   margin: 0.5rem 0;
 }
 
-.sidebar-status-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  background-color: #d1fae5;
-  color: #065f46;
-  margin-top: 0.25rem;
-}
-
-.sidebar-status-badge.active {
-  background-color: #d1fae5;
-  color: #065f46;
-}
 
 /* Dropdown transition */
 .dropdown-enter-active {
@@ -2034,126 +2009,6 @@ body {
   opacity: 1;
 }
 
-.profile-info {
-  text-align: center;
-  flex: 1;
-}
-
-@media (min-width: 768px) {
-  .profile-info {
-    text-align: left;
-  }
-}
-
-.profile-name {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-  color: white;
-}
-
-.profile-email {
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0.5rem 0 1rem;
-  font-size: 1rem;
-}
-
-.profile-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-@media (min-width: 768px) {
-  .profile-actions {
-    justify-content: flex-start;
-  }
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-/* Status variants */
-.status-active {
-  background-color: var(--success-light);
-  color: var(--success-dark);
-}
-
-.status-away {
-  background-color: var(--warning-light);
-  color: var(--warning-dark);
-}
-
-.status-busy {
-  background-color: var(--danger-light);
-  color: var(--danger-dark);
-}
-
-.status-offline {
-  background-color: var(--gray-100);
-  color: var(--gray-800);
-}
-
-/* File input */
-.file-input {
-  display: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-  .profile-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .profile-avatar-section {
-    padding-right: 0;
-    padding-bottom: 1.5rem;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-  }
-}
-
-.profile-info {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 1.5rem;
-}
-
-.avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: var(--primary-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3rem;
-  color: var(--primary-color);
-  flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.details {
-  flex: 1;
-}
-
-.actions {
-  margin-top: 1.5rem;
-  display: flex;
-  gap: 1rem;
-}
-
 
 /* ===================================
    Profile Components
@@ -2805,33 +2660,6 @@ body {
   border: 1px solid #fecaca;
 }
 
-.save-notice {
-  margin-top: 1rem;
-  padding: 0.5rem 0;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  border-top: 1px dashed var(--border-color);
-  padding-top: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.save-notice p {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.save-notice p::before {
-  content: 'ℹ️';
-  font-size: 1.1em;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .settings-section {
   margin-bottom: 2rem;
   padding: 1.5rem;
@@ -3078,36 +2906,3 @@ input:disabled {
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
-/* Sidebar user status badge to match navbar style */
-.sidebar-user-info .status-badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  background-color: #e5e7eb;
-  color: #374151;
-}
-
-.sidebar-user-info .status-badge.active {
-  background-color: #d1fae5;
-  color: #065f46;
-}
-
-.sidebar-user-info .status-badge.offline {
-  background-color: #999;
-  color: #eee;
-  box-shadow: none;
-}
-
-.sidebar-user-info .status-badge.away {
-  background-color: #f59e0b;
-  color: #fff;
-  box-shadow: 0 0 8px #f59e0b;
-}
-
-.sidebar-user-info .status-badge.busy {
-  background-color: #dc2626;
-  color: #fff;
-  box-shadow: 0 0 8px #dc2626;
-}

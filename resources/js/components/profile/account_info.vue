@@ -56,9 +56,9 @@
         <div class="profile-account-row">
           <dt>Account status</dt>
           <dd>
-            <span class="status-badge" :class="'status-' + (user?.status || 'active')">
-              {{ statusText }}
-            </span>
+              <span class="status-badge" :class="userStore.user?.status || 'active'">
+                {{ userStore.statusOptions.find(s => s.value === (userStore.user?.status || 'active'))?.label || 'Active' }}
+              </span>       
           </dd>
         </div>
         
