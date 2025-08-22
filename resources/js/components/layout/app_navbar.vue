@@ -47,7 +47,7 @@
         
         <!-- Dynamic page title that shows current route information -->
         <h1 class="page-title">
-          <span class="prefix">Theming Test | </span>
+          <span class="prefix">Website Template | </span>
           <span class="page-name">{{ currentPageTitle }}</span>
         </h1>
       </div>
