@@ -34,7 +34,7 @@
 <template>
   <div class="settings page-view" role="main" aria-labelledby="settings-title">
     <header class="settings-header page-header">
-      <h1 id="settings-title" class="page-title">Settings</h1>
+      <h1 id="page-title" class="page-title">Settings</h1>
       <p class="subtitle page-subtitle">Customize your application experience</p>
     </header>
     

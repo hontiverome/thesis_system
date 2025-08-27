@@ -827,12 +827,19 @@ body {
     padding-bottom: 1rem;
     border-bottom: 1px solid var(--border-color);
   }
-  .page-view .page-title {
+  h1#page-title.page-title {
     color: var(--text-color);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.2;
     margin: 0 0 0.5rem 0;
+    max-width: 100%;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    word-break: break-word !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
   }
   .page-view .page-subtitle {
     color: var(--text-color);

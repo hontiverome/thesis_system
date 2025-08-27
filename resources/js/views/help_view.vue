@@ -34,7 +34,7 @@
 <template>
   <div class="help page-view" role="main" aria-labelledby="help-title">
     <header class="page-header">
-      <h1 class="page-title">Help & Support</h1>
+      <h1 id="page-title" class="page-title">Help & Support</h1>
       <p class="page-subtitle">Find answers and get assistance</p>
     </header>
     

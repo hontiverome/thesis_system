@@ -35,7 +35,7 @@
 <template>
   <div class="profile page-view" role="main" aria-labelledby="profile-title">
     <header class="page-header">
-      <h1 id="profile-title" class="page-title">Your Profile</h1>
+      <h1 id="page-title" class="page-title">Your Profile</h1>
       <p class="page-subtitle">Manage your profile and account information</p>
     </header>
     <!-- Loading State -->

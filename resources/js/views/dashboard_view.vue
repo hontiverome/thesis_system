@@ -32,6 +32,33 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 
+<!-- Main Page Template -->
+<template>
+  <div class="dashboard">
+    <header class="dashboard-header">
+      <h1 id="page-title" class="page-title">Dashboard</h1>
+      <p class="subtitle">Welcome to your personalized dashboard</p>
+    </header>
+    <div class="dashboard-content">
+      <div class="chart-container">
+        <div class="chart-card">
+          <h3>Monthly Performance</h3>
+          <div class="chart-wrapper">
+            <canvas id="lineChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Category Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
@@ -558,28 +585,3 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<!-- Main Page Template -->
-<template>
-  <div class="dashboard">
-    <header class="dashboard-header">
-      <h1 id="dashboard-title">Dashboard</h1>
-      <p class="subtitle">Welcome to your personalized dashboard</p>
-    </header>
-    <div class="dashboard-content">
-      <div class="chart-container">
-        <div class="chart-card">
-          <h3>Monthly Performance</h3>
-          <div class="chart-wrapper">
-            <canvas id="lineChart"></canvas>
-          </div>
-        </div>
-        <div class="chart-card">
-          <h3>Category Distribution</h3>
-          <div class="chart-wrapper">
-            <canvas id="pieChart"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
