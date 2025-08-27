@@ -1602,7 +1602,6 @@ body {
   opacity: 0;
   transform: scale(0.95) translateY(-10px);
 }
-
 /* ===================================
    Home View Styles
    =================================== */
@@ -1734,7 +1733,6 @@ body {
 /* ===================================
    Profile Components
    =================================== */
-/* removed page-level .profile wrapper and header/title overrides in favor of .page-view and .page-header */
 .profile-card {
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
@@ -2505,11 +2503,6 @@ body {
 /* ===================================
    Settings View Styles
    =================================== */
-
-/* 
- * Main Settings Container
- * Provides consistent spacing and layout for the entire settings page
- */
 .settings {
   max-width: 1200px;
   margin: 0 auto;
@@ -2517,17 +2510,12 @@ body {
   color: var(--text-color);
 }
 
-/* 
- * Settings Header
- * Styles for the page header section
- */
 .settings-header {
   margin-bottom: 2rem;    
   padding-bottom: 1rem;   
   border-bottom: 1px solid var(--border-color); 
 }
 
-/* Layout Preferences Styles */
 .radio-group {
   display: flex;
   flex-direction: column;
