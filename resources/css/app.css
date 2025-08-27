@@ -901,24 +901,16 @@ body {
     .chart-container { grid-template-columns: 1fr; }
     .chart-card { padding: 1rem; }
     .chart-wrapper { min-height: 220px; }
-    .dashboard { padding: 1rem; }
-    .dashboard-content { overflow-x: hidden; }
   }
 
   /* Mobile refinements for Settings and Dashboard */
   @media (max-width: 640px) {
-    /* Settings page */
-    .settings { padding: 1rem; overflow-x: hidden; }
-    .settings-header h1 { font-size: 1.5rem; line-height: 1.2; word-break: break-word; }
-    .settings-header .subtitle { font-size: 0.95rem; }
     .settings-section { padding: 1rem; }
     .section-header { padding-bottom: 0.75rem; }
     .section-header h2 { font-size: 1.1rem; flex-wrap: wrap; gap: 0.4rem; min-width: 0; }
     .settings-section h2 .icon, .section-header h2 .icon { margin-right: 0.5rem; flex-shrink: 0; }
     .section-header .section-description { font-size: 0.9rem; overflow-wrap: anywhere; }
 
-    /* Dashboard */
-    .dashboard { padding: 0.75rem; }
     .chart-card h3 { font-size: 1rem; }
     .chart-wrapper { min-height: 180px; }
     .chart-wrapper canvas { aspect-ratio: 4 / 3; }
@@ -1676,128 +1668,73 @@ body {
 }
 
 /* ===================================
-   Dashboard View Styles
+   Dashboard Content and Charts
    =================================== */
-   .dashboard {
-    padding: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .dashboard-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .dashboard h1 {
-    font-size: 2rem;                  
-    margin: 0 0 0.5rem 0;            
-    color: var(--text-color);        
-    font-weight: 700;                
-    line-height: 1.2;                
-  }
-  
-  .dashboard .subtitle {
-    font-size: 1.1rem;               
-    color: var(--text-muted);        
-    margin: 0;                       
-    font-weight: 400;                
-  }
-  
-  .dashboard-content {
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    min-height: 40vh;
-  }
-  
-  .chart-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  
-  .chart-card {
-    background-color: var(--card-bg);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  
-  .chart-card:hover {
-    transform: translateY(-2px);           
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
-  }
-  
-  .chart-card h3 {
-    margin: 0 0 1rem 0;
-    color: var(--text-color);
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.2;
-    flex-shrink: 0;
-  }
-  
-  .chart-wrapper {
-    position: relative !important;
-    width: 100%;
-    height: 320px; /* explicit height so Chart.js can compute canvas size */
-    min-height: 0;
-  }
-  
-  .chart-wrapper canvas {
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  /* Keep this override near the end so it wins in the cascade on small screens */
-  @media (max-width: 1024px) {
-    .chart-container { grid-template-columns: 1fr !important; }
-    .chart-card { padding: 1rem; }
-    .chart-wrapper { height: 240px !important; }
-  }
-
-/* ===================================
-   Profile View Styles
-   =================================== */
-.profile {
-  max-width: 1200px;
-  margin: 0 auto;
+.dashboard-content {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
   padding: 1rem;
-  color: var(--text-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 40vh;
 }
 
-.profile-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-color);
+.chart-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-.profile h1 {
+.chart-card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chart-card h3 {
+  margin: 0 0 1rem 0;
   color: var(--text-color);
-  margin: 0 0 0.5rem 0;
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.2;
+  flex-shrink: 0;
 }
 
-.profile .subtitle {
-  color: var(--text-muted);
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 400;
+.chart-wrapper {
+  position: relative !important;
+  width: 100%;
+  height: 320px; /* explicit height so Chart.js can compute canvas size */
+  min-height: 0;
 }
 
-/* Combined Profile Card */
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Keep this override near the end so it wins in the cascade on small screens */
+@media (max-width: 1024px) {
+  .chart-container { grid-template-columns: 1fr !important; }
+  .chart-card { padding: 1rem; }
+  .chart-wrapper { height: 240px !important; }
+}
+
+/* ===================================
+   Profile Components
+   =================================== */
+/* removed page-level .profile wrapper and header/title overrides in favor of .page-view and .page-header */
 .profile-card {
   background-color: var(--card-bg);
   border-radius: var(--border-radius);
@@ -2749,83 +2686,56 @@ input:disabled {
 }
 
 /* ===================================
-   Help View Styles
+   Generic Card/FAQ Typography
    =================================== */
-.help {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
+/* Headings inside cards */
+.card h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.35rem;
+  line-height: 1.25;
   color: var(--text-color);
-  text-align: left;
 }
 
-.help h1 {
+/* FAQ list container */
+.faq {
+  margin-top: 0.5rem;
+}
+
+/* Individual FAQ item */
+.faq-item h3 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.125rem;
+  line-height: 1.35;
   color: var(--text-color);
-  margin: 0 0 1.5rem;
-  font-size: 2rem;                  
-  font-weight: 600;
 }
 
-.help h2 {
-  color: var(--text-color);
-  margin: 0 0 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 1.5rem;
-  font-weight: 500;
-  text-align: left;
-}
-
-.help h3 {
-  color: var(--primary-hover);
-  margin: 1.5rem 0 0.75rem;
-  font-size: 1.25rem;
-  font-weight: 500;
-  text-align: left;
-}
-
-.help p {
+.faq-item p {
+  margin: 0 0 1rem;
   color: var(--text-color);
   line-height: 1.6;
-  margin: 0.5rem 0 1rem;
-  text-align: left;
 }
 
-.help a {
-  color: var(--primary-color);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.help a:hover {
-  color: var(--primary-hover);
-  text-decoration: underline;
-}
-
-/* Card Styles */
-.help .card {
+/* Base card and FAQ item components */
+.card {
   background-color: var(--card-bg);
   border-radius: 0.5rem;
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
+  margin-bottom: 1.5rem;
 }
-
-.help .card:hover {
+.card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.help .faq-item {
+.faq-item {
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-light);
 }
-
-.help .faq-item:last-child {
+.faq-item:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
@@ -2833,25 +2743,7 @@ input:disabled {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .help {
-    padding: 0.75rem;
-  }
-  
-  .help h1 {
-    font-size: 1.75rem;
-  }
-  
-  .help h2 {
-    font-size: 1.35rem;
-  }
-  
-  .help h3 {
-    font-size: 1.15rem;
-  }
-  
-  .help .card {
-    padding: 1.25rem;
-  }
+  .card { padding: 1.25rem; }
 }
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

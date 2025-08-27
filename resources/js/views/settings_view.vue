@@ -32,10 +32,10 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <div class="settings page-view" role="main" aria-labelledby="settings-title">
-    <header class="settings-header page-header">
+  <div class="page-view" role="main" aria-labelledby="settings-title">
+    <header class="page-header">
       <h1 id="page-title" class="page-title">Settings</h1>
-      <p class="subtitle page-subtitle">Customize your application experience</p>
+      <p class="page-subtitle">Customize your application experience</p>
     </header>
     
     <!-- Save success message -->

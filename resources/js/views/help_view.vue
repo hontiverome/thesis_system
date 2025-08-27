@@ -32,7 +32,7 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <div class="help page-view" role="main" aria-labelledby="help-title">
+  <div class="page-view" role="main" aria-labelledby="help-title">
     <header class="page-header">
       <h1 id="page-title" class="page-title">Help & Support</h1>
       <p class="page-subtitle">Find answers and get assistance</p>

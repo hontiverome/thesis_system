@@ -34,10 +34,10 @@
 
 <!-- Main Page Template -->
 <template>
-  <div class="dashboard">
-    <header class="dashboard-header">
+  <div class="page-view">
+    <header class="page-header">
       <h1 id="page-title" class="page-title">Dashboard</h1>
-      <p class="subtitle">Welcome to your personalized dashboard</p>
+      <p class="page-subtitle">Welcome to your personalized dashboard</p>
     </header>
     <div class="dashboard-content">
       <div class="chart-container">
