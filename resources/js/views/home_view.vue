@@ -41,11 +41,11 @@
   -->
   <div class="home page-view" role="main" aria-labelledby="page-title">
     <!-- Main heading with welcome message -->
-    <h1 id="page-title" class="page-title">Welcome to Theming App</h1>
+    <h1 id="page-title" class="page-title">Welcome to the Website Template</h1>
     
     <!-- Brief introduction -->
     <p class="lead page-subtitle">
-      This is the home view. Use the sidebar to navigate between different sections of the application.
+      This is the home view. Use the sidebar or navbar to navigate between different sections of the application.
     </p>
     
     <!-- Theme information card -->
