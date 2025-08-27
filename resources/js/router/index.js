@@ -87,7 +87,7 @@ const router = createRouter({
 // Simple navigation guard to set page title
 router.afterEach((to) => {
   if (to.meta.title) {
-    document.title = `${to.meta.title} | Theming App`;
+    document.title = `${to.meta.title} | Website Template`;
   }
 });
 
