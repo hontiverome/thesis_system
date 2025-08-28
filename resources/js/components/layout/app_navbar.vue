@@ -273,6 +273,7 @@ const currentPageTitle = computed(() => {
   return path.charAt(1).toUpperCase() + path.slice(2);
 });
 
+// Navigation items
 const navItems = [
   { path: '/', icon: 'mdi:home' },
   { path: '/dashboard', icon: 'mdi:view-dashboard' },

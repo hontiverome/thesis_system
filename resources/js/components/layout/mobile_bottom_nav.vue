@@ -50,6 +50,7 @@
 import { onMounted } from 'vue';
 import { loadIcons } from '@iconify/vue';
 
+// Navigation items
 const navItems = [
   { path: '/', text: 'Home', icon: 'mdi:home' },
   { path: '/dashboard', text: 'Dashboard', icon: 'mdi:view-dashboard' },
