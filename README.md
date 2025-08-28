@@ -20,7 +20,6 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 1. Clone the repository:
    ```bash
    git clone http://devhub.dost.gov.ph/jaohontiveros/website_template.git
-   cd website_template
    ```
 
 2. Install PHP dependencies:
@@ -130,7 +129,7 @@ Each view's styles are organized in `resources/css/app.css` with clear section c
 
 ## Theming
 
-The application supports dynamic theming with light/dark mode:
+The application supports dynamic theming:
 - Theme configuration: `resources/js/stores/theme.js`
 - Global styles: `resources/css/app.css`
 - Toggle theme in the application settings
@@ -140,3 +139,5 @@ The application supports dynamic theming with light/dark mode:
 - Responsive design for all screen sizes
 - Mobile-optimized navigation
 - Touch-friendly interface
+
+## Feel Free To Clean and Optimize the CSS
