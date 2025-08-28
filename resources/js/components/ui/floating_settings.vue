@@ -32,11 +32,6 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 
-<!--
- * System Name: Theming and UI Framework
- * Component: FloatingSettings
- * Purpose: Provides quick access to theme and layout settings via a floating button
--->
 <template>
   <div class="floating-settings">
     <button 

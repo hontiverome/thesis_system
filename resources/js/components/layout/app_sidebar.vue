@@ -32,16 +32,11 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <!-- 
-    Main Sidebar Component
-    Provides collapsible navigation with theme toggle functionality
-  -->
   <aside class="sidebar" 
          :data-layout-mode="layoutMode"
          :class="{ 'collapsed': isCollapsed }" 
          role="navigation"
          aria-label="Main navigation">
-
     <!-- Sidebar header with collapsible title and hamburger button -->
     <div class="sidebar-header">
       <!-- Hamburger button - only show in sidebar-only layout -->
@@ -52,7 +47,6 @@
               aria-label="Toggle sidebar">
         <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
       </button>
-      
       <!-- Title - only show when not in sidebar-only layout or when expanded -->
       <h2 v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" 
           class="sidebar-title" 
