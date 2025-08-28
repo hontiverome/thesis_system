@@ -1602,12 +1602,6 @@ body {
 /* ===================================
    Home View Styles
    =================================== */
-.home {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
 .home h1 {
   color: var(--text-color);
   margin-bottom: 1.5rem;

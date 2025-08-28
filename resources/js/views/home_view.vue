@@ -32,13 +32,6 @@
  * in this Software without prior written authorization of the copyright holder.
 -->
 <template>
-  <!-- 
-    Home View Component
-    Serves as the landing page and introduction to the application
-    - Welcome message and brief description
-    - Displays current theme information
-    - Provides guidance on theme switching
-  -->
   <div class="home page-view" role="main" aria-labelledby="page-title">
     <!-- Main heading with welcome message -->
     <h1 id="page-title" class="page-title">Welcome to the Website Template</h1>
