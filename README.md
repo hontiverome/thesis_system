@@ -116,6 +116,7 @@ Each view's styles are organized in `resources/css/app.css` with clear section c
 ### Routing
 - Routes are defined in `resources/js/router/index.js`
 - Add new routes by extending the `routes` array
+- Do not forget to add the new route buttons to navbar, sidebar, and mobile_bottom_navbar. They can be added near the comment named "Navigation Items" inside all three components.
 
 ### Views
 - Located in `resources/js/views/`
