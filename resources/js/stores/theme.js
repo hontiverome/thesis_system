@@ -72,9 +72,42 @@ export const useThemeStore = defineStore('theme', {
       const theme = this.availableThemes.find(t => t.id === themeId);
       if (!theme || this.currentTheme === themeId) return;
       
+      // Enable smooth color transitions BEFORE variables change
+      try {
+        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!prefersReduced) {
+          const root = document.documentElement;
+          root.classList.add('theme-transition');
+          // Remove any pending timer and schedule cleanup
+          window.clearTimeout(window.__themeTransitionTimer);
+          window.__themeTransitionTimer = window.setTimeout(() => {
+            root.classList.remove('theme-transition');
+          }, 400);
+
+          // Sidebar crossfade overlay using previous background color
+          const sidebars = document.querySelectorAll('.sidebar');
+          sidebars.forEach((sb) => {
+            try {
+              const cs = getComputedStyle(sb);
+              const prevBg = cs.backgroundColor || 'transparent';
+              sb.style.setProperty('--sidebar-prev-bg', prevBg);
+              sb.classList.add('sidebar-crossfade');
+              window.clearTimeout(sb.__sidebarCrossfadeTimer);
+              sb.__sidebarCrossfadeTimer = window.setTimeout(() => {
+                sb.classList.remove('sidebar-crossfade');
+                sb.style.removeProperty('--sidebar-prev-bg');
+                sb.__sidebarCrossfadeTimer = undefined;
+              }, 420);
+            } catch (_) { /* ignore */ }
+          });
+        }
+      } catch (_) {
+        // non-fatal
+      }
+
       // Update the theme in the store
       this.currentTheme = theme.id;
-      
+
       // Update the DOM
       document.documentElement.setAttribute('data-theme', theme.id);
       

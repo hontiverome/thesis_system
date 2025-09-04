@@ -56,6 +56,29 @@ app.use(pinia);
 const themeStore = useThemeStore();
 themeStore.initTheme();
 
+// Smoothly transition from current theme colors to next theme colors
+window.addEventListener('theme-changed', () => {
+  try {
+    // Respect reduced motion preference
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    const root = document.documentElement; // <html>
+    // Toggle a class that enables CSS transitions on color props
+    root.classList.add('theme-transition');
+
+    // Remove the class after transitions complete
+    window.clearTimeout(window.__themeTransitionTimer);
+    window.__themeTransitionTimer = window.setTimeout(() => {
+      root.classList.remove('theme-transition');
+    }, 400);
+  } catch (e) {
+    // Non-fatal: ignore animation errors
+    console.debug('Theme color transition skipped:', e);
+  }
+});
+
 // Use router
 app.use(router);
 

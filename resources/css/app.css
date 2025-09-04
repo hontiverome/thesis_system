@@ -351,6 +351,26 @@ body {
     justify-content: center;
   }
 
+  /* Sidebar crossfade overlay from previous background color */
+  @keyframes sidebar-crossfade-fadeout {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  .sidebar.sidebar-crossfade::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background: var(--sidebar-prev-bg, transparent);
+    pointer-events: none;
+    z-index: 2;
+    animation: sidebar-crossfade-fadeout 320ms ease forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar.sidebar-crossfade::after { animation: none; opacity: 0; }
+  }
+
   .sidebar-header {
     padding: 0rem 1.2rem;
     border-bottom: 1px solid var(--border-color);
@@ -2713,6 +2733,44 @@ input:disabled {
   margin-top: 0; 
 }
 
+/* ===================================
+   Theme Switch Fade Animation
+   =================================== */
+@keyframes theme-fade-keyframes {
+  from { opacity: 0.4; filter: saturate(85%); }
+  to   { opacity: 1;   filter: saturate(100%); }
+}
+
+/* Applied to #app briefly on theme change */
+.theme-fade {
+  animation: theme-fade-keyframes 320ms ease-in-out;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .theme-fade { animation: none !important; }
+}
+
+/* When theme is changing, smoothly transition color-related props */
+.theme-transition, /* <html> */
+.theme-transition body,
+.theme-transition #app,
+.theme-transition .page-view,
+.theme-transition .navbar,
+.theme-transition .sidebar,
+.theme-transition .card,
+.theme-transition .btn,
+.theme-transition .input,
+.theme-transition .profile-header-card {
+  transition:
+    background-color 260ms ease,
+    color 260ms ease,
+    border-color 260ms ease,
+    fill 260ms ease,
+    stroke 260ms ease,
+    box-shadow 260ms ease,
+    outline-color 260ms ease;
+}
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-
