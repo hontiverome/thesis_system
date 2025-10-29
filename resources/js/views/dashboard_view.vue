@@ -34,7 +34,15 @@
 
 <!-- Main Page Template -->
 <template>
-  <div class="page-view">
+  <div v-if="!isAuthenticated" class="auth-required">
+    <div class="auth-message">
+      <h2>Authentication Required</h2>
+      <p>Please log in to view the dashboard.</p>
+      <router-link to="/login" class="btn btn-primary">Log In</router-link>
+    </div>
+  </div>
+  
+  <div v-else class="page-view">
     <header class="page-header">
       <h1 id="page-title" class="page-title">Dashboard</h1>
       <p class="page-subtitle">Welcome to your personalized dashboard</p>
@@ -64,6 +72,8 @@ import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { Chart, registerables } from 'chart.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import { useThemeStore } from '@/stores/theme.js';
+import { useAuth } from '@/composables/useAuth';
+import { useUserStore } from '@/stores/user.js';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -73,6 +83,8 @@ Chart.defaults.animations = { duration: 0 };
 
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
+const { user, isAuthenticated } = useAuth();
+const userStore = useUserStore();
 const lineChart = ref(null);
 const pieChart = ref(null);
 let lineObserver = null;

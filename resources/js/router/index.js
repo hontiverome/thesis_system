@@ -33,8 +33,14 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
+import { useAuth } from '@/composables/useAuth';
+
+// Import route configurations
+import authRoutes from './routes/auth';
 
 const routes = [
+  // Auth routes (login, register, etc.)
+  ...authRoutes,
   {
     path: '/',
     name: 'home',
@@ -45,7 +51,10 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard_view.vue'),
-    meta: { title: 'Dashboard' }
+    meta: { 
+      title: 'Dashboard',
+      requiresAuth: true // Add auth requirement
+    }
   },
   {
     path: '/settings',
@@ -65,9 +74,10 @@ const routes = [
     component: () => import('@/views/help_view.vue'),
     meta: { title: 'Help' }
   },
+  // 404 route - keep this as the last route
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    redirect: '/404'
   }
 ];
 
@@ -84,7 +94,51 @@ const router = createRouter({
   }
 });
 
-// Simple navigation guard to set page title
+// Navigation guard for authentication
+router.beforeEach(async (to, from, next) => {
+  // Import useAuth here to avoid circular dependencies
+  const { useAuth } = await import('@/composables/useAuth');
+  const auth = useAuth();
+  
+  try {
+    // Initialize auth state if not already done
+    await auth.initAuth();
+    
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const guestOnly = to.matched.some(record => record.meta.guestOnly);
+    
+    console.log('Navigation guard:', {
+      to: to.path,
+      isAuthenticated: auth.isAuthenticated.value,
+      requiresAuth,
+      guestOnly
+    });
+
+    if (requiresAuth && !auth.isAuthenticated.value) {
+      // Redirect to login if trying to access protected route
+      console.log('Redirecting to login, requires auth');
+      next({ name: 'login', query: { redirect: to.fullPath } });
+      return;
+    } 
+    
+    if (guestOnly && auth.isAuthenticated.value) {
+      // Redirect to dashboard if trying to access guest-only route while logged in
+      console.log('Redirecting to dashboard, already authenticated');
+      next({ name: 'dashboard' });
+      return;
+    }
+    
+    // Proceed to the route
+    console.log('Proceeding to route');
+    next();
+    
+  } catch (error) {
+    console.error('Error in navigation guard:', error);
+    next(); // Continue with navigation
+  }
+});
+
+// Set page title
 router.afterEach((to) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} | Website Template`;

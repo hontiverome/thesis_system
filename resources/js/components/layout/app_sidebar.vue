@@ -130,7 +130,7 @@ import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
 import { useUserStore } from '@/stores/user';
 import { useThemeStore } from '@/stores/theme';
-import { loadIcons } from '@iconify/vue';
+import { Icon as IconifyIcon } from '@iconify/vue';
 import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
 const router = useRouter();
 const layoutStore = useLayoutStore();
@@ -211,20 +211,9 @@ const handleNavClick = () => {
   }
 };
 
-// Load required icons
+// No need to preload icons when using the Icon component directly
+// The Icon component will load icons on demand
 onMounted(() => {
-  loadIcons([
-    'mdi:home',
-    'mdi:view-dashboard',
-    'mdi:account',
-    'mdi:cog',
-    'mdi:help-circle',
-    'mdi:palette',
-    'mdi:account-circle',
-    'mdi:chevron-down',
-    'mdi:logout',
-  ]);
-  
   // Add click outside listener
   document.addEventListener('click', handleClickOutside);
 });

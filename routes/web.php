@@ -67,4 +67,9 @@ Route::get('/help', [PageController::class, 'help'])->name('help');
 Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 Route::get('/profile', [PageController::class, 'profile'])->name('profile');
 Route::get('/settings', [PageController::class, 'settings'])->name('settings');
+
+// Authentication routes
+Route::get('/login', function () {
+    return view('app'); // This should point to your Vue.js entry point
+})->name('login');
     

@@ -39,6 +39,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Template</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        window.Laravel = {!! json_encode([
+            'auth' => [
+                'user' => auth()->user() ? [
+                    'id' => auth()->id(),
+                    'name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                    // Add other user fields as needed
+                ] : null,
+                'isAuthenticated' => auth()->check()
+            ]
+        ]) !!};
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans">

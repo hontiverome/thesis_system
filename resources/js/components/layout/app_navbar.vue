@@ -170,6 +170,7 @@ import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import { useUserStore } from '@/stores/user.js';
 import { loadIcons } from '@iconify/vue';
+import { useAuth } from '@/composables/useAuth';
 
 // Click outside directive
 const vClickOutside = {
@@ -194,9 +195,11 @@ const router = useRouter();
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
+const auth = useAuth();
 
 // User menu state
 const isUserMenuOpen = ref(false);
+const loading = ref(false);
 
 // Toggle user menu
 const toggleUserMenu = () => {
@@ -219,10 +222,15 @@ const handleClickOutside = (event) => {
 // Handle logout
 const handleLogout = async () => {
   try {
-    await userStore.logout();
-    router.push('/');
+    loading.value = true;
+    await auth.logout();
+    userStore.clearUser();
+    closeUserMenu();
+    router.push({ name: 'login' });
   } catch (error) {
     console.error('Logout failed:', error);
+  } finally {
+    loading.value = false;
   }
 };
 

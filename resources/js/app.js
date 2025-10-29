@@ -32,25 +32,41 @@
  * in this Software without prior written authorization of the copyright holder.
 */
 import { createApp, h } from 'vue';
-import App from './App.vue';
 import { createPinia } from 'pinia';
-import { useThemeStore } from '@/stores/theme.js';
+import App from './App.vue';
 import router from './router';
+import { useAuth } from './composables/useAuth';
+import { useThemeStore } from '@/stores/theme.js';
 import '../css/app.css';
-import { Icon } from '@iconify/vue';
+import { Icon as IconifyIcon } from '@iconify/vue';
 import clickOutside from './directives/click_outside';
 
-const app = createApp(App);
-
-// Register the Icon component globally
-app.component('IconifyIcon', Icon);
-
+const app = createApp({
+    setup() {
+        // Get auth instance
+        const auth = useAuth();
+        
+        // Initialize auth when the app starts
+        auth.initAuth().then(() => {
+            console.log('Auth state initialized');
+        }).catch(err => {
+            console.error('Failed to initialize auth state:', err);
+        });
+        
+        // Return the auth instance to make it available in the template
+        return { auth };
+    },
+    render: () => h(App)
+});
 // Register the click-outside directive globally
 app.directive('click-outside', clickOutside);
 
 // Use Pinia for state management
 const pinia = createPinia();
-app.use(pinia);     
+app.use(pinia);
+
+// Register Iconify component globally with a unique name
+app.component('IconifyIcon', IconifyIcon);
 
 // Initialize theme
 const themeStore = useThemeStore();
