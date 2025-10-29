@@ -19,7 +19,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 
 1. Clone the repository:
    ```bash
-   git clone http://devhub.dost.gov.ph/jaohontiveros/website_template.git
+   git clone https://github.com/hontiverome/thesis_system.git
    ```
 
 2. Install PHP dependencies:
@@ -42,12 +42,20 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    cp .env.example .env
    php artisan key:generate
    ```
+6. Setup Test Account ( Requires a setup MySql Server)
+
+   ```bash
+    php create_test_user.php
+   ```
 
 ## Development Setup
 
 1. Start the development server:
    ```bash
    # Start PHP development server
+   php artisan serve
+
+   ( If not working test this):
    php -S 127.0.0.1:8000 -t public
    
    # In a separate terminal, start Vite
