@@ -46,7 +46,6 @@
                     'id' => auth()->id(),
                     'name' => auth()->user()->name,
                     'email' => auth()->user()->email,
-                    // Add other user fields as needed
                 ] : null,
                 'isAuthenticated' => auth()->check()
             ]
