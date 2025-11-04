@@ -89,6 +89,9 @@ website_template/
 The template includes several pre-built views in `resources/js/views/` that serve as starting points:
 - `home_view.vue` - Main landing page
 - `help_view.vue` - Help/Support page
+- `register_view.vue` - Register page
+- `dashboard_view.vue` - Dashboard page
+- `settings_view.vue` - Settings page
 
 These views are completely customizable and can be:
 - Modified to fit your content
@@ -96,17 +99,6 @@ These views are completely customizable and can be:
 - Used as references for creating new views
 
 To modify a view, simply edit the corresponding `.vue` file. To remove a view, delete the file and update the router configuration in `resources/js/router/index.js` to remove the associated route.
-
-### View Styling
-Each view's styles are organized in `resources/css/app.css` with clear section comments for easy navigation. Styles are categorized by view name for better maintainability:
-
-```css
-/* Home View Styles */
-.home-view { ... }
-
-/* Help View Styles */
-.help-view { ... }
-```
 
 ### Modifying Views
 1. To modify a view, simply edit the corresponding `.vue` file
