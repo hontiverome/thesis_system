@@ -22,7 +22,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/hontiverome/thesis_system.git](https://github.com/hontiverome/thesis_system.git)
+   git clone https://github.com/hontiverome/thesis_system.git
    ```
 
 2. Install PHP dependencies:
