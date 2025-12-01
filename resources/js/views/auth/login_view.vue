@@ -622,7 +622,6 @@ const handleLogin = async () => {
   max-height: 200px;
   overflow: auto;
   z-index: 1000;
-  display: none; /* Hidden by default, can be enabled in dev mode */
 }
 
 /* Animations */

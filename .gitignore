@@ -22,3 +22,18 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+
+# Windows specific (Critical for your team)
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS (In case a teammate joins on a Mac)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs (Don't commit error logs)
+*.log
+!/storage/logs/.gitignore
