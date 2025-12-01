@@ -143,19 +143,37 @@ When your feature is ready:
 5.  Once approved, merge into `dev`.
 
 ### 5. Branch Cleanup Policy
-To keep our repository clean, we follow these rules:
-1.  **Auto-Deletion:** We have enabled GitHub's "Automatically delete head branches" setting. Merged branches are deleted from the remote automatically.
-2.  **Local Cleanup:** After your branch is merged, delete it from your local machine:
-    ```bash
-    git checkout dev
-    git branch -d feat/your-branch-name
-    ```
-3.  **Pruning:** Run this command weekly to remove "ghost" branches that others have deleted:
-    ```bash
-    git fetch -p
-    ```
+To ensure we don't accidentally delete critical branches like `dev`, we delete branches manually after they are merged.
 
----
+**The Golden Rule:**
+1.  **NEVER delete `dev` or `main`.**
+2.  **ALWAYS delete your `feat/` branch after it is merged.**
+
+**How to delete safely:**
+
+**Step 1: Delete from GitHub (The Cloud)**
+After your Pull Request is merged and closed, you will see a "Delete Branch" button on the PR page. **Click it.**
+*(If you forgot to click it, run this command):*
+
+    git push origin --delete feat/fe/login-page
+
+**Step 2: Delete from your machine (Local)**
+GitHub deleting it doesn't remove it from your computer. You must do this to keep your workspace clean:
+
+    # 1. Switch to dev (you can't delete the branch you are standing on)
+    git checkout dev
+
+    # 2. Update dev to make sure git knows the work is saved
+    git pull origin dev
+
+    # 3. Delete your finished feature branch
+    git branch -d feat/fe/login-page
+
+**Step 3: Clean up "Ghost" Branches**
+This will update branch list
+
+    git fetch -p
+
 
 ## Project Structure
 
