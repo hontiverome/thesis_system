@@ -14,6 +14,8 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 - PHP 8.1 or higher
 - Composer
 - Node.js 16+ and npm 9+
+- MySQL Server or XAMPP
+- (make sure to edit the .env example file with correct credentials)
 
 ## Installation
 
