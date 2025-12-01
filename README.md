@@ -100,6 +100,8 @@ Create and switch to your new branch using the naming convention.
 ```bash
 # Syntax: git checkout -b [branch-name]
 git checkout -b feat/fe/login-page
+# Switching Branches
+git switch feat/fe/login-page
 ```
 
 **Step 3: Work and Commit**
