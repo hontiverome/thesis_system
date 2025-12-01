@@ -38,7 +38,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import authRoutes from './routes/auth';
 import mainRoutes from './routes/main';
 import dashboardRoutes from './routes/dashboard';
-import errorRoutes from './routes/errors';
 
 // Import route guards
 import { setupRouteGuards } from './routeGuards';
@@ -47,8 +46,7 @@ import { setupRouteGuards } from './routeGuards';
 const routes = [
   ...authRoutes,      // Authentication related routes
   ...mainRoutes,      // Main application routes
-  ...dashboardRoutes, // Dashboard and related routes
-  ...errorRoutes      // Error pages (404, etc.)
+  ...dashboardRoutes  // Dashboard and related routes
 ];
 
 // Create router instance
@@ -68,31 +66,15 @@ const router = createRouter({
         behavior: 'smooth',
         top: 100 // Offset for fixed headers if needed
       };
-    });
-
-    if (requiresAuth && !auth.isAuthenticated.value) {
-      // Redirect to login if trying to access protected route
-      console.log('Redirecting to login, requires auth');
-      next({ name: 'login', query: { redirect: to.fullPath } });
-      return;
-    } 
-    
-    if (guestOnly && auth.isAuthenticated.value) {
-      // Redirect to dashboard if trying to access guest-only route while logged in
-      console.log('Redirecting to dashboard, already authenticated');
-      next({ name: 'dashboard' });
-      return;
     }
     
-    // Proceed to the route
-    console.log('Proceeding to route');
-    next();
-    
-  } catch (error) {
-    console.error('Error in navigation guard:', error);
-    next(); // Continue with navigation
+    // Default scroll to top
+    return { top: 0, behavior: 'smooth' };
   }
 });
+
+// Setup route guards
+setupRouteGuards(router);
 
 // Set page title
 router.afterEach((to) => {
