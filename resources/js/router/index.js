@@ -2,7 +2,7 @@
  * System Name: Theming and UI Framework
  * Module Name: Router Configuration
  * Purpose Of this file: 
- * Defines the application's routes and their corresponding components.
+ * Main router configuration that combines all route modules and sets up navigation guards.
  * 
  * Author: Jerome Andrei O. Hontiveros
  * Copyright (C) 2025
@@ -33,85 +33,41 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
-import { useAuth } from '@/composables/useAuth';
 
-// Import route configurations
+// Import route modules
 import authRoutes from './routes/auth';
+import mainRoutes from './routes/main';
+import dashboardRoutes from './routes/dashboard';
+import errorRoutes from './routes/errors';
 
+// Import route guards
+import { setupRouteGuards } from './routeGuards';
+
+// Combine all routes
 const routes = [
-  // Auth routes (login, register, etc.)
-  ...authRoutes,
-  {
-    path: '/',
-    name: 'home',
-    component: () => import('@/views/home_view.vue'),
-    meta: { title: 'Home' }
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('@/views/dashboard_view.vue'),
-    meta: { 
-      title: 'Dashboard',
-      requiresAuth: true // Add auth requirement
-    }
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/views/settings_view.vue'),
-    meta: { title: 'Settings' }
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('@/views/profile_view.vue'),
-    meta: { title: 'Profile' }
-  },
-  {
-    path: '/help',
-    name: 'help',
-    component: () => import('@/views/help_view.vue'),
-    meta: { title: 'Help' }
-  },
-  // 404 route - keep this as the last route
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/404'
-  }
+  ...authRoutes,      // Authentication related routes
+  ...mainRoutes,      // Main application routes
+  ...dashboardRoutes, // Dashboard and related routes
+  ...errorRoutes      // Error pages (404, etc.)
 ];
 
+// Create router instance
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  // Improved scroll behavior
   scrollBehavior(to, from, savedPosition) {
-    // Always scroll to top when navigating to a new route
     if (savedPosition) {
       return savedPosition;
-    } else {
-      return { top: 0 };
     }
-  }
-});
-
-// Navigation guard for authentication
-router.beforeEach(async (to, from, next) => {
-  // Import useAuth here to avoid circular dependencies
-  const { useAuth } = await import('@/composables/useAuth');
-  const auth = useAuth();
-  
-  try {
-    // Initialize auth state if not already done
-    await auth.initAuth();
     
-    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-    const guestOnly = to.matched.some(record => record.meta.guestOnly);
-    
-    console.log('Navigation guard:', {
-      to: to.path,
-      isAuthenticated: auth.isAuthenticated.value,
-      requiresAuth,
-      guestOnly
+    // Scroll to top for new routes, but maintain position when using back/forward
+    if (to.hash) {
+      return { 
+        el: to.hash,
+        behavior: 'smooth',
+        top: 100 // Offset for fixed headers if needed
+      };
     });
 
     if (requiresAuth && !auth.isAuthenticated.value) {
