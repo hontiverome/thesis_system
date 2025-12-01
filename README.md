@@ -22,7 +22,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/hontiverome/thesis_system.git](https://github.com/hontiverome/thesis_system.git)
+   git clone https://github.com/hontiverome/thesis_system.git
    ```
 
 2. Install PHP dependencies:
@@ -143,6 +143,19 @@ When your feature is ready:
     * **Backend:** Must include a sample of the JSON response or Postman screenshot.
 4.  Request a review from at least one team member.
 5.  Once approved, merge into `dev`.
+
+### 5. Branch Cleanup Policy
+To keep our repository clean, we follow these rules:
+1.  **Auto-Deletion:** We have enabled GitHub's "Automatically delete head branches" setting. Merged branches are deleted from the remote automatically.
+2.  **Local Cleanup:** After your branch is merged, delete it from your local machine:
+    ```bash
+    git checkout dev
+    git branch -d feat/your-branch-name
+    ```
+3.  **Pruning:** Run this command weekly to remove "ghost" branches that others have deleted:
+    ```bash
+    git fetch -p
+    ```
 
 ---
 
