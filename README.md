@@ -5,6 +5,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 ## Table of Contents
 - [Installation](#installation)
 - [Development Setup](#development-setup)
+- [Collaboration & Git Workflow](#collaboration--git-workflow)
 - [Project Structure](#project-structure)
 - [Customizing Views](#customizing-views)
 - [Key Components](#key-components)
@@ -14,12 +15,14 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 - PHP 8.1 or higher
 - Composer
 - Node.js 16+ and npm 9+
+- MySQL Server or XAMPP
+- (make sure to edit the .env example file with correct credentials)
 
 ## Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/hontiverome/thesis_system.git
+   git clone [https://github.com/hontiverome/thesis_system.git](https://github.com/hontiverome/thesis_system.git)
    ```
 
 2. Install PHP dependencies:
@@ -42,10 +45,10 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    cp .env.example .env
    php artisan key:generate
    ```
-6. Setup Test Account ( Requires a setup MySql Server)
 
+6. Setup Test Account (Requires a setup MySql Server):
    ```bash
-    php create_test_user.php
+   php create_test_user.php
    ```
 
 ## Development Setup
@@ -55,7 +58,7 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
    # Start PHP development server
    php artisan serve
 
-   ( If not working test this):
+   # (If not working test this):
    php -S 127.0.0.1:8000 -t public
    
    # In a separate terminal, start Vite
@@ -65,6 +68,81 @@ A modern web application built with Laravel, Vue.js, and Vite, featuring a respo
 2. Access the application:
    - Development: http://127.0.0.1:8000
 
+## Collaboration & Git Workflow
+
+We follow a strict workflow to separate Frontend (FE) and Backend (BE) development and prevent conflicts.
+
+### 1. Branching Strategy
+**Never push directly to `main` or `dev`.** Always create a new branch for your task.
+
+**Branch Naming Convention:**
+Format: `type/stack/task-description`
+
+| Type | Stack | Description | **Example** |
+| :--- | :--- | :--- | :--- |
+| `feat` | `/fe/` | Frontend UI/Vue work | `feat/fe/login-form` |
+| `feat` | `/be/` | Backend API/Laravel work | `feat/be/user-auth-api` |
+| `fix` | `/fe/` or `/be/` | Bug fixes | `fix/fe/navbar-alignment` |
+| `docs` | `/gen/` | Documentation changes | `docs/gen/update-readme` |
+
+### 2. How to Branch (Step-by-Step Tutorial)
+Follow these exact commands every time you start a new task to ensure you are branching correctly.
+
+**Step 1: Get the latest code**
+Before creating your branch, switch to `dev` and pull the latest changes so you aren't working on old code.
+```bash
+git checkout dev
+git pull origin dev
+```
+
+**Step 2: Create your feature branch**
+Create and switch to your new branch using the naming convention.
+```bash
+# Syntax: git checkout -b [branch-name]
+git checkout -b feat/fe/login-page
+```
+
+**Step 3: Work and Commit**
+Make your changes, then stage and commit them.
+```bash
+git add .
+git commit -m "form: added username and password inputs"
+```
+
+**Step 4: Push to GitHub**
+Push your specific branch to the cloud.
+```bash
+git push -u origin feat/fe/login-page
+```
+*After pushing, go to GitHub to open the Pull Request.*
+
+### 3. Commit Messages
+Commits must be small, descriptive, and follow the **Context: Action** format.
+
+**Format:** `context: description`
+
+* **Context:** A one-word tag describing what you touched (e.g., `form`, `auth`, `api`, `db`, `style`).
+* **Description:** Short summary in lowercase.
+
+**Examples:**
+* ✅ `form: added username input field`
+* ✅ `api: updated login response json`
+* ✅ `db: seeded test admin user`
+* ✅ `style: fixed padding on mobile view`
+* ❌ `fixed stuff` (Too vague)
+* ❌ `Update Login.vue` (No context)
+
+### 4. Pull Requests (PR)
+When your feature is ready:
+1.  **Push** your branch to GitHub.
+2.  Open a Pull Request targeting the **`dev`** branch (NOT `main`).
+3.  **PR Description Requirements:**
+    * **Frontend:** Must include a screenshot of the UI change.
+    * **Backend:** Must include a sample of the JSON response or Postman screenshot.
+4.  Request a review from at least one team member.
+5.  Once approved, merge into `dev`.
+
+---
 
 ## Project Structure
 
@@ -82,7 +160,6 @@ website_template/
 ├── config/             # Configuration files
 └── database/           # Migrations and seeders
 ```
-
 
 ## Customizing Views
 
