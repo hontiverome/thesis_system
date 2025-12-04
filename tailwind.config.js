@@ -1,18 +1,10 @@
 /** @type {import('tailwindcss').Config} */
-// tailwind.config.js
 export default {
-    theme: {
-      extend: {
-        colors: {
-          border: '#e5e7eb', // or any hex/RGB/color you want
-        },
-      },
-    },
-  }
-  
-module.exports = {
   content: [
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+    './storage/framework/views/*.php',
     "./resources/**/*.blade.php",
+    './resources/js/**/*.vue',
     "./resources/**/*.js",
     "./resources/**/*.vue",
   ],
