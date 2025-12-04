@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class RoleSeeder extends Seeder
 {
@@ -15,14 +16,13 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        // Disable foreign key checks to truncate the table.
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
 
         // Truncate the table to start from a clean state.
         Role::truncate();
 
         // Re-enable foreign key checks.
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::enableForeignKeyConstraints();
 
         $roles = [
             ['name' => 'Student'],

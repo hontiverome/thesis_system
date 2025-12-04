@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Auth\{LoginController, RegisterController};
 
 // Public routes
 Route::post('/v1/login', [LoginController::class, 'login'])
