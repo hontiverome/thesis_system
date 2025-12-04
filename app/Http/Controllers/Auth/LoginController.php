@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Carbon;
@@ -13,24 +12,42 @@ use Illuminate\Support\Carbon;
 class LoginController extends Controller
 {
     /**
-     * Handle an authentication attempt.
+     * Handle an authentication attempt by determining the user type.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
     {
-        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+        if ($request->filled('student_number')) {
+            return $this->loginStudent($request);
+        }
+
+        if ($request->filled('faculty_id')) {
+            return $this->loginFaculty($request);
+        }
+
+        throw ValidationException::withMessages([
+            'login_type' => ['Either student_number or faculty_id must be provided.'],
+        ]);
+    }
+
+    /**
+     * Handle a student login attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function loginStudent(Request $request)
+    {
+        $request->validate([
             'student_number' => ['required', 'string'],
             'birth_month' => ['required', 'integer', 'min:1', 'max:12'],
             'birth_day' => ['required', 'integer', 'min:1', 'max:31'],
             'birth_year' => ['required', 'integer', 'digits:4'],
             'password' => ['required', 'string'],
+            'device_name' => ['required', 'string'],
         ]);
-
-        if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->errors()->toArray());
-        }
         
         // Combine and validate the birth date
         try {
@@ -41,26 +58,61 @@ class LoginController extends Controller
             ]);
         }
 
-        // Find the user by student number
         $user = User::where('id_number', $request->student_number)->first();
 
         // Verify the user, their birth date, and password
-        if (!$user || 
-            !$user->birth_date ||
-            !$user->birth_date->isSameDay($birthDate) || 
-            !Hash::check($request->password, $user->password)) {
+        if (!$user || !$user->birth_date || !$user->birth_date->isSameDay($birthDate) || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'student_number' => ['The provided credentials are incorrect.'],
             ]);
         }
-        
-        // Revoke all previous tokens
-        $user->tokens()->delete();
-        
-        // Create new token
-        $token = $user->createToken($request->device_name)->plainTextToken;
 
-        // Eager load roles for the response
+        return $this->authenticated($request, $user);
+    }
+
+    /**
+     * Handle a faculty login attempt.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function loginFaculty(Request $request)
+    {
+        $request->validate([
+            'faculty_id' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'device_name' => ['required', 'string'],
+        ]);
+
+        $user = User::where('id_number', $request->faculty_id)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'faculty_id' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+        
+        // Ensure the user has the 'Faculty' role
+        if (!$user->roles()->where('name', 'Faculty')->exists()) {
+            throw ValidationException::withMessages([
+                'faculty_id' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        return $this->authenticated($request, $user);
+    }
+
+    /**
+     * Send the response after the user was authenticated.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function authenticated(Request $request, User $user)
+    {
+        $user->tokens()->delete();
+        $token = $user->createToken($request->device_name)->plainTextToken;
         $user->load('roles');
 
         return response()->json([
@@ -78,7 +130,6 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        // Revoke the user's current token
         $request->user()->currentAccessToken()->delete();
         
         return response()->json(['message' => 'Logged out successfully.'], 200);
