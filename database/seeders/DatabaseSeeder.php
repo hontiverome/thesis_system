@@ -13,11 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            RoleSeeder::class,
         ]);
+
+        // Note: The default User::factory() calls have been removed
+        // because they rely on the 'name' attribute which no longer exists.
+        // You will need to update your UserFactory to use 'first_name' and 'last_name'
+        // if you wish to seed users automatically.
     }
 }

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Auth;
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Role; // Assuming you have a Role model
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -21,38 +22,50 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        // For this registration, we assume the role is always 'Student'.
-        $defaultRoleName = 'Student';
-
         $validator = Validator::make($request->all(), [
             'student_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
             'birth_month' => ['required', 'integer', 'min:1', 'max:12'],
-            'birth_day' => ['required', 'integer', 'min:1', 'max:31'],
+            'birth_day' => ['required', 'integer', 'min:1,', 'max:31'],
             'birth_year' => ['required', 'integer', 'digits:4'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'message' => 'The given data was invalid.',
-                'errors' => $validator->errors(),
-            ], 422);
+            return response()->json(['message' => 'The given data was invalid.', 'errors' => $validator->errors()], 422);
         }
 
-        // Find the role by name.
-        $role = Role::where('name', $defaultRoleName)->firstOrFail();
+        // Combine birth date parts and validate as a single date
+        try {
+            $birthDate = Carbon::createFromDate($request->birth_year, $request->birth_month, $request->birth_day)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'The given data was invalid.', 'errors' => ['birth_day' => ['The provided birth date is not a valid date.']]], 422);
+        }
 
         $email = $request->student_number . '@iskolarngbayan.pup.edu.ph';
+        
+        // Find the 'Student' role, or fail.
+        $studentRole = Role::where('name', 'Student')->first();
+        if (!$studentRole) {
+            return response()->json([
+                'message' => 'Registration service is currently unavailable.',
+                'errors' => ['role' => ['The default registration role could not be found. Please contact support.']],
+            ], 500);
+        }
 
-        $user = User::create([
-            'first_name' => 'New',
-            'last_name' => 'User',
-            'id_number' => $request->student_number,
-            'email' => $email,
-            'password' => Hash::make($request->password),
-        ]);
+        $user = DB::transaction(function () use ($request, $birthDate, $email, $studentRole) {
+            $user = User::create([
+                'first_name' => null,
+                'last_name' => null,
+                'id_number' => $request->student_number,
+                'birth_date' => $birthDate,
+                'email' => $email,
+                'password' => Hash::make($request->password),
+            ]);
+    
+            $user->roles()->attach($studentRole->id);
 
-        $user->roles()->attach($role->id);
+            return $user;
+        });
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
