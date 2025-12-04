@@ -25,7 +25,7 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'student_number' => ['required', 'string', 'max:50', 'unique:users,id_number'],
             'birth_month' => ['required', 'integer', 'min:1', 'max:12'],
-            'birth_day' => ['required', 'integer', 'min:1,', 'max:31'],
+            'birth_day' => ['required', 'integer', 'min:1', 'max:31'],
             'birth_year' => ['required', 'integer', 'digits:4'],
             'password' => ['required', 'confirmed', Password::defaults()],
         ]);
