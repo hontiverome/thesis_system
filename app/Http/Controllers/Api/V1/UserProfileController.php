@@ -18,13 +18,7 @@ class UserProfileController extends Controller
     {
         $user = $request->user()->load([
             'roles', 
-            'facultyDetail', 
-            'groups.advisers', 
-            'groups.proposal.defenses.panel',
-            'groups.proposal.approvals.user',
-            'submissions.proposal',
-            'groupsAsAdviser.users',
-            'defensePanels.defense.proposal.group.users'
+            'groups.proposal',
         ]);
 
         $profileData = [
@@ -39,7 +33,7 @@ class UserProfileController extends Controller
         if ($user->hasRole('student')) {
             $profileData['student_info'] = [
                 'student_id' => $user->id_number,
-                'group_code' => $user->groups->first()?->name ?? null,
+                'group_code' => $user->groups->first()?->group_code ?? null,
                 'year_level' => $user->groups->first()?->year_level ?? null,
                 'group_role' => $user->groups->first()?->pivot?->role ?? null,
                 'adviser' => $user->groups->first()?->advisers->first()?->full_name ?? null,

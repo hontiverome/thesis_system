@@ -98,7 +98,7 @@ class User extends Authenticatable
      */
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class)->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(Group::class, 'group_members', 'student_user_id', 'group_id')->withPivot('role')->withTimestamps();
     }
 
     /**
@@ -106,7 +106,7 @@ class User extends Authenticatable
      */
     public function submissions()
     {
-        return $this->hasMany(Submission::class);
+        return $this->hasMany(Submission::class, 'uploaded_by_user_id');
     }
 
     /**

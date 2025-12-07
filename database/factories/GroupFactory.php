@@ -23,6 +23,8 @@ class GroupFactory extends Factory
     {
         return [
             'name' => $this->faker->company,
+            'group_code' => $this->faker->unique()->regexify('[A-Z]{3}[0-9]{3}'),
+            'year_level' => $this->faker->numberBetween(1, 5),
         ];
     }
 }

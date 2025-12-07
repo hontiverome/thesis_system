@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enrollment_id')->constrained()->onDelete('cascade');
+            $table->foreignId('group_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('status')->default('pending'); // pending, approved, rejected
             $table->date('submission_date')->nullable();
