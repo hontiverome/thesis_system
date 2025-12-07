@@ -28,7 +28,7 @@ class RegistrationTest extends TestCase
     {
         $password = 'password123';
         $data = [
-            'student_number' => '2023-00001-ST-0',
+            'student_number' => '2023-00001-MN-0',
             'birth_month' => 1,
             'birth_day' => 1,
             'birth_year' => 2000,
@@ -48,19 +48,19 @@ class RegistrationTest extends TestCase
             ->assertJson([
                 'message' => 'Registration successful.',
                 'user' => [
-                    'email' => '2023-00001-ST-0@iskolarngbayan.pup.edu.ph',
-                    'roles' => ['Student'],
+                    'email' => '2023-00001-MN-0@iskolarngbayan.pup.edu.ph',
+                    'roles' => ['student'],
                 ],
                 'token_type' => 'Bearer',
             ]);
 
         $this->assertDatabaseHas('users', [
-            'id_number' => '2023-00001-ST-0',
-            'email' => '2023-00001-ST-0@iskolarngbayan.pup.edu.ph',
+            'id_number' => '2023-00001-MN-0',
+            'email' => '2023-00001-MN-0@iskolarngbayan.pup.edu.ph',
         ]);
 
-        $user = User::where('id_number', '2023-00001-ST-0')->first();
-        $this->assertTrue($user->roles->contains('name', 'Student'));
+        $user = User::where('id_number', '2023-00001-MN-0')->first();
+        $this->assertTrue($user->roles->contains('name', 'student'));
     }
 
     /**
@@ -93,11 +93,11 @@ class RegistrationTest extends TestCase
     public function test_registration_fails_if_student_number_is_not_unique()
     {
         // Create a user first
-        User::factory()->create(['id_number' => '2023-00001-ST-0']);
+        User::factory()->create(['id_number' => '2023-00001-MN-0']);
 
         $password = 'password123';
         $data = [
-            'student_number' => '2023-00001-ST-0', // Not unique
+            'student_number' => '2023-00001-MN-0',
             'birth_month' => 1,
             'birth_day' => 1,
             'birth_year' => 2000,

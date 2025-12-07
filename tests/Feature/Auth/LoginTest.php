@@ -25,14 +25,14 @@ class LoginTest extends TestCase
         $birthDate = Carbon::create(2000, 1, 15)->startOfDay();
         $password = 'password123';
         $user = User::factory()->create([
-            'id_number' => '2023-00002-ST-0',
+            'id_number' => '2023-00002-MN-0',
             'birth_date' => $birthDate,
             'password' => Hash::make($password),
         ]);
         $user->roles()->attach(Role::where('name', 'Student')->first());
 
         $response = $this->postJson('/api/v1/login', [
-            'student_number' => '2023-00002-ST-0',
+            'student_number' => '2023-00002-MN-0',
             'birth_month' => 1,
             'birth_day' => 15,
             'birth_year' => 2000,
@@ -47,7 +47,7 @@ class LoginTest extends TestCase
     {
         User::factory()->create(['password' => Hash::make('correct-password')]);
         $response = $this->postJson('/api/v1/login', [
-            'student_number' => '2023-00002-ST-0',
+            'student_number' => '2023-00002-MN-0',
             'birth_month' => 1, 'birth_day' => 15, 'birth_year' => 2000,
             'password' => 'wrong-password', 'device_name' => 'test-device',
         ]);
@@ -62,7 +62,8 @@ class LoginTest extends TestCase
             'id_number' => 'FAC-001',
             'password' => Hash::make($password),
         ]);
-        $faculty->roles()->attach(Role::where('name', 'Faculty')->first());
+        $facultyRole = Role::firstOrCreate(['name' => 'faculty']);
+        $faculty->roles()->attach($facultyRole);
 
         $response = $this->postJson('/api/v1/login', [
             'faculty_id' => 'FAC-001',
@@ -81,7 +82,8 @@ class LoginTest extends TestCase
             'id_number' => 'FAC-001',
             'password' => Hash::make('correct-password'),
         ]);
-        $faculty->roles()->attach(Role::where('name', 'Faculty')->first());
+        $facultyRole = Role::firstOrCreate(['name' => 'faculty']);
+        $faculty->roles()->attach($facultyRole);
 
         $response = $this->postJson('/api/v1/login', [
             'faculty_id' => 'FAC-001',
@@ -96,13 +98,13 @@ class LoginTest extends TestCase
     {
         $password = 'password123';
         $student = User::factory()->create([
-            'id_number' => '2023-00003-ST-0',
+            'id_number' => '2023-00003-MN-0',
             'password' => Hash::make($password),
         ]);
         $student->roles()->attach(Role::where('name', 'Student')->first());
 
         $response = $this->postJson('/api/v1/login', [
-            'faculty_id' => '2023-00003-ST-0',
+            'faculty_id' => '2023-00003-MN-0',
             'password' => $password,
             'device_name' => 'test-device',
         ]);
