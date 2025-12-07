@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
+use App\Models\FacultyDetail;
+use App\Models\Group;
+use App\Models\Submission;
+use App\Models\ProposalApproval;
+use App\Models\DefensePanel;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -66,6 +72,65 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    /**
+     * Check if the user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->roles->contains('name', $role);
+    }
+
+    /**
+     * Get the faculty details associated with the user.
+     */
+    public function facultyDetail()
+    {
+        return $this->hasOne(FacultyDetail::class);
+    }
+
+    /**
+     * The groups that belong to the user.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_members', 'student_user_id', 'group_id')->withPivot('role')->withTimestamps();
+    }
+
+    /**
+     * Get the submissions for the user.
+     */
+    public function submissions()
+    {
+        return $this->hasMany(Submission::class, 'uploaded_by_user_id');
+    }
+
+    /**
+     * Get the proposal approvals for the user.
+     */
+    public function proposalApprovals()
+    {
+        return $this->hasMany(ProposalApproval::class);
+    }
+
+    /**
+     * Get the defense panels for the user.
+     */
+    public function defensePanels()
+    {
+        return $this->hasMany(DefensePanel::class);
+    }
+
+    /**
+     * Get the groups the user is advising.
+     */
+    public function groupsAsAdviser(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_advisers', 'adviser_user_id', 'group_id')->withTimestamps();
     }
 
     /**

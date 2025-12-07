@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Api\V1\UserProfileController;
 
 // Public routes
 Route::post('/v1/login', [LoginController::class, 'login'])
@@ -40,4 +41,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
     Route::get('/user', function (Request $request) {
         return $request->user()->only('id', 'name', 'email'); // It's good practice to only return what's needed.
     })->name('user');
+    
+    Route::get('/users/me', [UserProfileController::class, 'show'])->name('users.me');
 });
