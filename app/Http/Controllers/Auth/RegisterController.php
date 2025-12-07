@@ -44,7 +44,7 @@ class RegisterController extends Controller
         $email = $request->student_number . '@iskolarngbayan.pup.edu.ph';
         
         // Find the 'Student' role, or fail.
-        $studentRole = Role::where('name', 'Student')->first();
+        $studentRole = Role::where('name', 'student')->first();
         if (!$studentRole) {
             return response()->json([
                 'message' => 'Registration service is currently unavailable.',

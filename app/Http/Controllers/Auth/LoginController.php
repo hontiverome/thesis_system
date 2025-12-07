@@ -92,8 +92,8 @@ class LoginController extends Controller
             ]);
         }
         
-        // Ensure the user has the 'Faculty' role
-        if (!$user->roles()->where('name', 'Faculty')->exists()) {
+        // Ensure the user has the 'faculty' role
+        if (!$user->roles()->where('name', 'faculty')->exists()) {
             throw ValidationException::withMessages([
                 'faculty_id' => ['The provided credentials are incorrect.'],
             ]);
