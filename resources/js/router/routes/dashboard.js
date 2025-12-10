@@ -41,6 +41,18 @@ const dashboardRoutes = [
       requiresAuth: true,
       layout: 'AppLayoutDefault' 
     }
+  },
+  // FIX: Add this missing block for User Management
+  {
+    path: '/settings/users',
+    name: 'user-management',
+    // IMPORTANT: Make sure this file actually exists! 👇
+    component: () => import('@/views/settings_view.vue'), 
+    meta: { 
+      title: 'User Management',
+      requiresAuth: true,
+      layout: 'AppLayoutDefault' 
+    }
   }
 ];
 

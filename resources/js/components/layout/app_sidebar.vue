@@ -60,11 +60,13 @@
     <nav class="sidebar-nav" aria-label="Primary">
       <ul role="menu">
         <!-- Dynamic navigation items -->
-        <li v-for="item in navItems" 
-            :key="item.path" 
-            role="none">
-          <router-link :to="item.path" 
-                      class="sidebar-nav nav-link" 
+        <template v-for="item in navItems" 
+            :key="item.path">
+          <li
+            role="none"
+            v-if="!item.capability || userStore.can(item.capability)">
+          <router-link :to="item.disabled ? '#' : item.path"
+                      class="['sidebar-nav nav-link', { 'disabled': item.disabled }]" 
                       @click="handleNavClick"
                       :title="item.text"
                       role="menuitem"
@@ -75,6 +77,7 @@
             <span class="text" v-if="!isCollapsed">{{ item.text }}</span>
           </router-link>
         </li>
+      </template>
       </ul>
     </nav>
     
@@ -197,11 +200,19 @@ const handleClickOutside = (event) => {
 
 // Navigation items
 const navItems = [
-  { path: '/', icon: 'mdi:home', text: 'Home' },
-  { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
-  { path: '/profile', icon: 'mdi:account', text: 'Profile' },
-  { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
-  { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
+{ 
+    text: 'Dashboard', 
+    path: '/dashboard', 
+    icon: 'mdi:view-dashboard',
+    capability: null // Public
+  },
+  { 
+    text: 'User Management', 
+    path: '/users', // File doesn't exist yet
+    icon: 'mdi:users', 
+    capability: 'user_management_access',
+    disabled: true // <--- Add a flag here
+  }
 ];
 
 // Close mobile sidebar after navigation on small screens
