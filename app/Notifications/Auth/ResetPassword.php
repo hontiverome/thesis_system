@@ -2,12 +2,16 @@
 
 namespace App\Notifications\Auth;
 
-use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
-use Illuminate\Support\Facades\Lang;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 
 class ResetPassword extends ResetPasswordNotification
 {
+    use Queueable;
+
     /**
      * Build the mail representation of the notification.
      *
@@ -16,29 +20,11 @@ class ResetPassword extends ResetPasswordNotification
      */
     public function toMail($notifiable)
     {
-        if (static::$toMailCallback) {
-            return call_user_func(static::$toMailCallback, $notifiable, $this->token);
-        }
-
-        $resetUrl = $this->resetUrl($notifiable);
-
         return (new MailMessage)
-            ->subject(Lang::get('Reset Password Notification'))
-            ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::get('Reset Password'), $resetUrl)
-            ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(Lang::get('If you did not request a password reset, no further action is required.'));
-    }
-
-    /**
-     * Get the reset URL for the given notifiable.
-     *
-     * @param  mixed  $notifiable
-     * @return string
-     */
-    protected function resetUrl($notifiable)
-    {
-        $appUrl = config('app.frontend_url', config('app.url'));
-        return $appUrl . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->getEmailForPasswordReset());
+            ->subject('Reset Password Notification')
+            ->line('You are receiving this email because we received a password reset request for your account.')
+            ->line('Your password reset token is: ' . $this->token)
+            ->line('This token will expire in ' . config('auth.passwords.'.config('auth.defaults.passwords').'.expire') . ' minutes.')
+            ->line('If you did not request a password reset, no further action is required.');
     }
 }
