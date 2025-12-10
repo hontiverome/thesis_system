@@ -27,8 +27,8 @@ class PasswordResetTest extends TestCase
     {
         $response = $this->postJson('/api/v1/auth/forgot-password', ['email' => 'nonexistent@example.com']);
 
-        $response->assertStatus(200);
-        $response->assertJson(['message' => __('passwords.sent')]);
+        $response->assertStatus(422);
+        $response->assertJson(['message' => __('passwords.user')]);
     }
 
     public function test_user_can_reset_password_with_valid_token()

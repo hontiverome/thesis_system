@@ -17,7 +17,7 @@ Route::post('/v1/auth/forgot-password', [PasswordResetController::class, 'forgot
     ->name('api.password.email');
 
 Route::post('/v1/auth/reset-password', [PasswordResetController::class, 'resetPassword'])
-    ->name('api.password.reset');
+    ->name('password.reset');
 
 // Test endpoint to verify CORS is working
 Route::get('/test', function (Request $request) {
