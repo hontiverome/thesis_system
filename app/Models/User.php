@@ -8,12 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
-use App\Models\FacultyDetail;
-use App\Models\Group;
-use App\Models\Submission;
-use App\Models\ProposalApproval;
-use App\Models\DefensePanel;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Notifications\Auth\ResetPassword;
 
 class User extends Authenticatable
 {
@@ -145,5 +140,16 @@ class User extends Authenticatable
             'password' => 'hashed',
             'birth_date' => 'date',
         ];
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
     }
 }

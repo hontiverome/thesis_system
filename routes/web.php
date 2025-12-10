@@ -72,4 +72,9 @@ Route::get('/settings', [PageController::class, 'settings'])->name('settings');
 Route::get('/login', function () {
     return view('app'); // This should point to your Vue.js entry point
 })->name('login');
+
+Route::get('/reset-password/{token}', function ($token) {
+    // This route is a dummy route to allow the password reset notification to generate a URL.
+    // The actual password reset is handled by the API.
+})->name('password.reset');
     

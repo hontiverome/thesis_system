@@ -2,15 +2,21 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
+use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController};
 use App\Http\Controllers\Api\V1\UserProfileController;
 
 // Public routes
-Route::post('/v1/login', [LoginController::class, 'login'])
-    ->name('api.login');
-
-Route::post('/v1/register', [RegisterController::class, 'register'])
-    ->name('api.register');
+Route::prefix('v1/auth')->group(function () {
+    Route::post('login', [LoginController::class, 'login'])
+        ->name('api.login');
+    Route::post('register', [RegisterController::class, 'register'])
+        ->name('api.register');
+    Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])
+        ->name('api.password.email');
+    Route::post('reset-password', [PasswordResetController::class, 'resetPassword'])
+        ->name('password.reset');
+});
 
 // Test endpoint to verify CORS is working
 Route::get('/test', function (Request $request) {
