@@ -18,6 +18,11 @@ Route::prefix('v1/auth')->group(function () {
         ->name('password.reset');
 });
 
+// Protected Auth routes
+Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
+    Route::post('logout', [LoginController::class, 'logout'])->name('api.logout');
+});
+
 // Test endpoint to verify CORS is working
 Route::get('/test', function (Request $request) {
     return response()->json([
@@ -40,9 +45,6 @@ Route::middleware('auth:sanctum')->get('/test-auth', function (Request $request)
 
 // Protected routes
 Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function () {
-    // Auth routes
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
     // User routes
     Route::get('/user', function (Request $request) {
         return $request->user()->only('id', 'name', 'email'); // It's good practice to only return what's needed.
