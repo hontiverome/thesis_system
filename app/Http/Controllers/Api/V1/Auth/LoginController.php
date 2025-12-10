@@ -67,6 +67,13 @@ class LoginController extends Controller
             ]);
         }
 
+        // Ensure the user has the 'student' role
+        if (!$user->roles()->where('name', 'student')->exists()) {
+            throw ValidationException::withMessages([
+                'student_number' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
         return $this->authenticated($request, $user);
     }
 
