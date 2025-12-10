@@ -34,11 +34,12 @@
 
 const mainRoutes = [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: () => import('@/views/home_view.vue'),
     meta: { 
       title: 'Home',
+      requiresAuth: true,  
       layout: 'AppLayoutDefault'
     }
   },
@@ -74,3 +75,4 @@ const mainRoutes = [
 ];
 
 export default mainRoutes;
+

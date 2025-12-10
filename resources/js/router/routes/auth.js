@@ -32,7 +32,57 @@
  * in this Software without prior written authorization of the copyright holder.
  */
 
+
 const authRoutes = [
+  // 1. Main Landing Page 
+  {
+    path: '/',
+    name: 'landing',
+    component: () => import('@/views/landing_view.vue'),
+    meta: { 
+      layout: 'blank',
+      guestOnly: true,
+      title: 'Welcome'
+    }
+  },
+
+  // 2. Access Portal
+  {
+    path: '/portal',
+    name: 'access-portal',
+    component: () => import('@/views/auth/access_portal_view.vue'),
+    meta: { 
+      layout: 'blank',
+      guestOnly: true,
+      title: 'Select Access Level'
+    }
+  },
+
+  // 3. Student Login Page
+  {
+    path: '/login/student',
+    name: 'login.student',
+    component: () => import('@/views/auth/student_login_view.vue'),
+    meta: { 
+      layout: 'blank',
+      guestOnly: true,
+      title: 'Student Login'
+    }
+  },
+
+  // 4. Faculty Login Page
+  {
+    path: '/login/faculty',
+    name: 'login.faculty',
+    component: () => import('@/views/auth/faculty_login_view.vue'),
+    meta: { 
+      layout: 'blank',
+      guestOnly: true,
+      title: 'Faculty Login'
+    }
+  },
+
+  // 5. Admin/Staff Login (original login)
   {
     path: '/login',
     name: 'login',
@@ -42,7 +92,16 @@ const authRoutes = [
       guestOnly: true // Only accessible when not logged in
     }
   },
-  // Add other auth-related routes here if needed
+    // 6. Register
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/auth/register_view.vue'),
+    meta: { 
+      title: 'Register',
+      guestOnly: true // Only accessible when not logged in
+    }
+  },
 ];
 
 export default authRoutes;

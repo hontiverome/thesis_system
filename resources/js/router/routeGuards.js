@@ -36,7 +36,7 @@ import { useAuth } from '@/composables/useAuth';
 
 export const setupRouteGuards = (router) => {
   router.beforeEach(async (to, from, next) => {
-    const { isAuthenticated, checkAuth } = useAuth();
+    const { checkAuth } = useAuth(); // isAuthenticated removed because it wasn't used
     
     // Check authentication status
     const isAuth = await checkAuth();
@@ -47,8 +47,9 @@ export const setupRouteGuards = (router) => {
       return;
     }
     
-    // Redirect to dashboard if already authenticated and trying to access auth pages
-    if ((to.name === 'login' || to.name === 'register') && isAuth) {
+    // Redirect to dashboard if already authenticated and trying to access auth / guest-only pages
+    // (e.g. landing, login, register, portal) -> use meta.guestOnly instead of only name checks
+    if (to.matched.some(record => record.meta.guestOnly) && isAuth) {
       next({ name: 'dashboard' });
       return;
     }
@@ -66,3 +67,4 @@ export const setupRouteGuards = (router) => {
     window.scrollTo(0, 0);
   });
 };
+

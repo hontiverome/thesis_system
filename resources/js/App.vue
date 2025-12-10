@@ -44,22 +44,22 @@
   <div class="app" :class="[currentTheme, layoutStore.layoutClasses]" :style="layoutStyles">
     <!-- Application Navigation Bar -->
     <transition name="navbar-slide" mode="out-in">
-      <AppNavbar v-if="layoutStore.layoutPreference !== 'sidebar'"
+      <AppNavbar v-if="!isBlankLayout && layoutStore.layoutPreference !== 'sidebar'"
                  @toggle-sidebar="handleToggleSidebar" />
     </transition>
     
     <!-- Sidebar Navigation (collapsible / off-canvas on mobile) -->
     <transition name="sidebar-fade">
-      <AppSidebar v-if="layoutStore.layoutPreference !== 'navbar'"
+      <AppSidebar v-if="!isBlankLayout && layoutStore.layoutPreference !== 'navbar'"
                   :isCollapsed="layoutStore.isSidebarCollapsed" />
     </transition>
 
     <!-- Backdrop overlay for mobile sidebar -->
-    <div v-if="layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
+    <div v-if="!isBlankLayout && layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
     
     <!-- Floating hamburger for sidebar-only layout on mobile (hidden when overlay is open) -->
     <button
-      v-if="layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
+      v-if="!isBlankLayout && layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
       class="floating-sidebar-toggle"
       @click="layoutStore.toggleMobileSidebar()"
       aria-label="Toggle sidebar"
@@ -76,7 +76,7 @@
     
     <!-- Bottom Mobile Navigation (for navbar-only layout) -->
     <transition name="bottom-nav-slide">
-      <MobileBottomNav v-if="layoutStore.layoutPreference === 'navbar'" />
+      <MobileBottomNav v-if="!isBlankLayout && layoutStore.layoutPreference === 'navbar'" />
     </transition>
     
     <!-- Floating Settings Button -->
@@ -89,6 +89,7 @@
  * Imports Vue's composition API functions and required dependencies
  */
 import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router'; // Added useRoute
 import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import AppNavbar from '@/components/layout/app_navbar.vue';
@@ -99,14 +100,12 @@ import FloatingSettings from '@/components/ui/floating_settings.vue';
 // Initialize the stores
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
+const route = useRoute(); // Initialize route
 
-// Component registration
-const components = {
-  AppNavbar,
-  AppSidebar,
-  FloatingSettings,
-  MobileBottomNav
-};
+// Determine if the current page requires a blank layout
+const isBlankLayout = computed(() => {
+  return route.meta.layout === 'blank';
+});
 
 /**
  * Computed Properties
@@ -128,6 +127,19 @@ const collapsedSidebarWidth = 60;  // Width of the collapsed sidebar in pixels
  * @type {ComputedRef<Object>}
  */
 const layoutStyles = computed(() => {
+  // Blank layout = 0values
+  if (isBlankLayout.value) {
+    return {
+      '--sidebar-width': '0px',
+      '--sidebar-collapsed-width': '0px',
+      '--mobile-bottom-nav-height': '0px',
+      '--header-height': '0px',
+      '--sidebar-opacity': '0',
+      '--sidebar-visibility': 'hidden',
+      '--navbar-display': 'none',
+      '--content-padding': '0px' // Remove padding for landing page
+    };
+  }
   const showSidebar = layoutStore.layoutPreference !== 'navbar';
   const collapsedPref = layoutStore.isSidebarCollapsed && showSidebar;
   const mobileOpen = layoutStore.isMobileSidebarOpen;
@@ -244,6 +256,12 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   box-sizing: border-box;
 }
 
+/* Allow full width for blank layouts */
+.content-wrapper.full-width {
+  max-width: 100%;
+  padding: 0;
+}
+
 /* 
  * Responsive Adjustments
  * Handles layout changes for different screen sizes
@@ -253,7 +271,8 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
     /* On mobile, remove sidebar margin for full-width content */
     margin-left: 0;
     /* Adjust padding for smaller screens */
-    padding: 1rem;
+    /* Only apply padding if NOT blank layout */
+    padding:var(--content-padding, 1rem);
   }
 
   /* Floating toggle visible only on mobile */
