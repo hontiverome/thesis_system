@@ -61,8 +61,18 @@ use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Vue landing page (SPA entry for '/')
+Route::get('/', function () {
+    return view('app'); 
+})->name('landing');
+
+// Vue portal page 
+Route::get('/portal', function () {
+    return view('app'); 
+})->name('portal');
+
 // Public routes - no authentication required
-Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('/home', [PageController::class, 'home'])->name('home');
 Route::get('/help', [PageController::class, 'help'])->name('help');
 Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 Route::get('/profile', [PageController::class, 'profile'])->name('profile');
