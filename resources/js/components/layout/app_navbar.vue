@@ -277,13 +277,13 @@ const currentThemeName = computed(() => {
  */
 const currentPageTitle = computed(() => {
   const path = route.path;
-  if (path === '/') return 'Home';
+  if (path === '/') return 'landing';
   return path.charAt(1).toUpperCase() + path.slice(2);
 });
 
 // Navigation items
 const navItems = [
-  { path: '/', icon: 'mdi:home' },
+  { path: '/home', icon: 'mdi:home' },
   { path: '/dashboard', icon: 'mdi:view-dashboard' },
   { path: '/profile', icon: 'mdi:account'},
   { path: '/settings', icon: 'mdi:cog'},
