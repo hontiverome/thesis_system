@@ -13,10 +13,9 @@ class DefensePanel extends Model
     protected $table = 'defense_panel';
 
     protected $fillable = [
-        'defense_id',
-        'user_id',
-        'status',
-        'evaluation',
+        'DefenseID',
+        'UserID',
+        'Status',
     ];
 
     public function defense(): BelongsTo

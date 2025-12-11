@@ -10,13 +10,21 @@ class Role extends Model
 {
     use HasFactory;
 
+    protected $table = 'Roles';
+
+    protected $primaryKey = 'RoleID';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'RoleName',
     ];
 
     /**
@@ -24,6 +32,6 @@ class Role extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'UserRoles', 'RoleID', 'UserID');
     }
 }

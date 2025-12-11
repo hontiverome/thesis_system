@@ -11,18 +11,18 @@ class DefenseEvaluation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'defense_id',
-        'panelist_user_id',
-        'verdict',
+        'DefenseID',
+        'PanelistUserID',
+        'Verdict',
     ];
 
     public function defense(): BelongsTo
     {
-        return $this->belongsTo(Defense::class);
+        return $this->belongsTo(Defense::class, 'DefenseID');
     }
 
     public function panelist(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'panelist_user_id');
+        return $this->belongsTo(User::class, 'PanelistUserID');
     }
 }

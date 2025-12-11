@@ -10,20 +10,29 @@ class Enrollment extends Model
 {
     use HasFactory;
 
+    protected $table = 'Enrollments';
+
+    protected $primaryKey = 'EnrollmentID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'group_id',
-        'course_id',
-        'school_year',
-        'semester',
+        'EnrollmentID',
+        'GroupID',
+        'CourseID',
+        'SchoolYear',
+        'Semester',
     ];
 
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class, 'GroupID', 'GroupID');
     }
 
     public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(Course::class, 'CourseID', 'CourseID');
     }
 }

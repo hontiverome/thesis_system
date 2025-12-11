@@ -11,18 +11,27 @@ class Course extends Model
 {
     use HasFactory;
 
+    protected $table = 'Courses';
+
+    protected $primaryKey = 'CourseID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'name',
-        'prerequisite_course_id',
+        'CourseID',
+        'CourseName',
+        'PrerequisiteCourseID',
     ];
 
     public function prerequisite(): BelongsTo
     {
-        return $this->belongsTo(Course::class, 'prerequisite_course_id');
+        return $this->belongsTo(Course::class, 'PrerequisiteCourseID', 'CourseID');
     }
 
     public function enrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class);
+        return $this->hasMany(Enrollment::class, 'CourseID', 'CourseID');
     }
 }
