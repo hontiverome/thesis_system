@@ -52,7 +52,7 @@ import { loadIcons } from '@iconify/vue';
 
 // Navigation items
 const navItems = [
-  { path: '/', text: 'Home', icon: 'mdi:home' },
+  { path: '/home', text: 'Home', icon: 'mdi:home' },
   { path: '/dashboard', text: 'Dashboard', icon: 'mdi:view-dashboard' },
   { path: '/profile', text: 'Profile', icon: 'mdi:account' },
   { path: '/settings', text: 'Settings', icon: 'mdi:cog' },
