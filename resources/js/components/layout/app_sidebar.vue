@@ -197,7 +197,7 @@ const handleClickOutside = (event) => {
 
 // Navigation items
 const navItems = [
-  { path: '/', icon: 'mdi:home', text: 'Home' },
+  { path: '/home', icon: 'mdi:home', text: 'Home' },
   { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
   { path: '/profile', icon: 'mdi:account', text: 'Profile' },
   { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
