@@ -9,10 +9,16 @@ class GroupAdviser extends Model
 {
     use HasFactory;
 
-    protected $table = 'group_advisers';
+    protected $table = 'GroupAdvisers';
+
+    public $incrementing = false;
+
+    protected $primaryKey = null;
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'group_id',
-        'adviser_user_id',
+        'GroupID',
+        'AdviserUserID',
     ];
 }

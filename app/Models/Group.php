@@ -12,20 +12,29 @@ class Group extends Model
 {
     use HasFactory;
 
+    protected $table = 'Groups';
+
+    protected $primaryKey = 'GroupID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'name',
-        'group_code',
-        'year_level',
+        'GroupID',
+        'GroupCode',
+        'YearLevel',
+        'AdviserUserID',
     ];
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'group_members', 'group_id', 'student_user_id')->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(User::class, 'GroupMembers', 'GroupID', 'StudentUserID')->withPivot('GroupRole');
     }
 
     public function advisers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'group_advisers', 'group_id', 'adviser_user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'GroupAdvisers', 'GroupID', 'AdviserUserID');
     }
 
     public function proposal(): HasOne
