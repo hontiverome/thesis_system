@@ -71,6 +71,16 @@ Route::get('/portal', function () {
     return view('app'); 
 })->name('portal');
 
+// Vue faculty login page 
+Route::get('/login/faculty', function () {
+    return view('app'); 
+})->name('faculty');
+
+// Vue student login page 
+Route::get('/login/student', function () {
+    return view('app'); 
+})->name('student');
+
 // Public routes - no authentication required
 Route::get('/home', [PageController::class, 'home'])->name('home');
 Route::get('/help', [PageController::class, 'help'])->name('help');
