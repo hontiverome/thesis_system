@@ -3,13 +3,19 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
-use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController};
 use App\Http\Controllers\Api\V1\UserProfileController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
-    Route::post('login', [LoginController::class, 'login'])
-        ->name('api.login');
+    // Student login
+    Route::post('login/student', [LoginController::class, 'login'])
+        ->name('api.login.student');
+
+    // Faculty login
+    Route::post('login/faculty', [FacultyLoginController::class, 'login'])
+        ->name('api.login.faculty');
+
     Route::post('register', [RegisterController::class, 'register'])
         ->name('api.register');
     Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])
