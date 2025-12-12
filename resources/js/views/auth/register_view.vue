@@ -120,15 +120,16 @@
 
 
 <script setup>
-import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios'; // Direct axios call since useAuth might only have login
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
-const router = useRouter();
-const loading = ref(false);
-const error = ref('');
+import logoImage from '../../../assets/PUP_logo.png'
+import bgImage from '../../../assets/access_bg.jpg'
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const router = useRouter()
+const loading = ref(false)
+const error = ref('')
 
 const form = reactive({
   student_number: '',
@@ -137,33 +138,27 @@ const form = reactive({
   birth_year: '',
   password: '',
   password_confirmation: ''
-});
+})
 
 const handleRegister = async () => {
-  loading.value = true;
-  error.value = '';
+  loading.value = true
+  error.value = ''
 
   try {
-    // Call the RegisterController endpoint
-    await axios.post('/api/v1/auth/register', form);
-    
-    // On success, redirect to login or dashboard
-    // Use 'login.student' to force them to login, or 'dashboard' if your API auto-logs them in
-    router.push({ name: 'login.student' }); 
-    alert('Registration successful! Please login.');
-    
+    await axios.post('/api/v1/auth/register', form)
+    router.push({ name: 'login.student' })
   } catch (err) {
-    if (err.response && err.response.data && err.response.data.errors) {
-       // Format validation errors (e.g., "The student number has already been taken.")
-       error.value = Object.values(err.response.data.errors).flat().join('\n');
+    if (err?.response?.data?.errors) {
+      error.value = Object.values(err.response.data.errors).flat().join('\n')
     } else {
-       error.value = err.response?.data?.message || 'Registration failed.';
+      error.value = err?.response?.data?.message || 'Registration failed.'
     }
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
+
 
 <style scoped>
 /* Reusing your auth styles */
