@@ -132,11 +132,10 @@ const goToAdmin = () => {
 }
 
 .tile {
-  min-height: 360px;
-  max-height: 360px;  
+  position: relative;
+  height: 360px;
+  height: 360px;  
   width: 100%;
-  padding: 2.25rem 1.75rem 1.75rem;
-  display:block;
 
   border:none;
   border-radius: 36px;
@@ -151,6 +150,13 @@ const goToAdmin = () => {
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
+.icon-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tile:hover {
   transform: translateY(-6px);
   box-shadow: 0 26px 50px rgba(123, 13, 13, 0.35);
@@ -162,30 +168,34 @@ const goToAdmin = () => {
   outline-offset: 6px;
 }
 .tile-icon-img {
-  width: 400px;
-  height: 400px;
+  max-width: 400px;
+  max-height: 400px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  margin-bottom: 1.25rem;
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.35));
 }
 .tile-icon {
-  font-size: 4.5rem; /* make icon big */
+  font-size: 4.5rem;
   line-height: 1;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
 }
 .tile:hover .tile-icon-img {
   transform: scale(1.05);
 }
 
-
 .tile-label {
-  margin-top: auto;
-  margin-bottom: 5rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22px;
+
+  text-align: center;
   font-size: 1.8rem;
   letter-spacing: 0.35em;
   font-weight: 700;
   font-style: italic;
-  padding-bottom: 0.75rem;
+  text-align: center;
 }
 
 .btn-back {
