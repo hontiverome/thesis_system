@@ -141,6 +141,15 @@ const goToPortal = () => {
   opacity:0.45;
 }
 
+.seal-image:active,
+.seal-image:focus-visible {
+  opacity: 1;
+  transform: scale(1.05);
+  filter:
+    drop-shadow(0 0 28px rgba(255,255,255,0.55))
+    drop-shadow(0 0 70px rgba(0,0,0,0.6));
+}
+
 :global(.main-content) {
   padding: 0 !important;
   margin: 0 !important;
@@ -181,5 +190,26 @@ const goToPortal = () => {
     font-size: 0.95rem;
     letter-spacing: 0.25rem;
   }
+
+  /* For mobile view (STC)*/
+  @media (max-width: 480px) {
+  .seal-wrapper {
+    bottom: 25vh;
+  }
+
+  .seal-image {
+    width: 200px;
+  }
+
+  .landing-title {
+    letter-spacing: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .landing-tagline {
+    font-size: 0.85rem;
+  }
+}
+
 }
 </style>
