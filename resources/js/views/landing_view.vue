@@ -8,13 +8,6 @@
         class= "hero-image"
       />
       </div>
-      
-      <div class="hero-bottom">
-        <div class="hero-bottom-inner">
-          <h1 class="landing-title">S I N T A N G&nbsp;&nbsp;P A A R A L A N </h1>
-          <p class="landing-tagline">“Mula Sa'Yo, Para sa Bayan”</p>
-        </div>
-      </div>    
       <div class="seal-wrapper">
         <img
           src="/assets/PUP_logo.png"
@@ -23,8 +16,14 @@
           @click="goToPortal"
           />
       </div>
+      <div class="hero-bottom">
+        <div class="hero-bottom-inner">
+          <h1 class="landing-title">S I N T A N G&nbsp;&nbsp;P A A R A L A N </h1>
+          <p class="landing-tagline">“Mula Sa'Yo, Para sa Bayan”</p>
+        </div>
+      </div>    
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -40,6 +39,7 @@ const goToPortal = () => {
 <style scoped>
 
 .hero-container {
+  position:relative;
   width: 100%;
   max-width: 1280px;
   cursor: pointer;
@@ -65,6 +65,7 @@ const goToPortal = () => {
   left: 50%;
   bottom: -12%;
   transform: translateX(-50%);
+  z-index: 10;
 }
 
 .seal-image {
@@ -99,6 +100,7 @@ const goToPortal = () => {
 
 .clickable-seal {
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; 
 }
 
 .clickable-seal:hover {
