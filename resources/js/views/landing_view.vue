@@ -13,7 +13,8 @@
           src="/assets/PUP_logo.png"
           alt="PUP Logo"
           class="seal-image"
-          @click="goToPortal"
+          :class="{'seal-zooming':isZooming}"
+          @click.stop="handleSealClick"
           />
       </div>
       <div class="hero-bottom">
@@ -27,13 +28,22 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const isZooming = ref(false);
 
-const goToPortal = () => {
-  router.push('/portal');
+const handleSealClick = () => {
+  if (isZooming.value) return;
+
+  isZooming.value = true;
+
+  setTimeout(() => {
+    router.push('/portal');
+  }, 450);
 };
+
 </script>
 
 <style scoped>
@@ -73,7 +83,6 @@ const goToPortal = () => {
   bottom: 30vh;
   transform: translateX(-50%);
   z-index: 6;
-  pointer-events:none
 }
 
 .seal-image {
@@ -82,13 +91,27 @@ const goToPortal = () => {
   border-radius: 50%;
   opacity: 0.65;
   transition:
-    opacity 0.25s ease,
-    transform 0.25s ease,
-    filter 0.25s ease;
+    opacity 0.45s ease,
+    transform 0.45s ease,
+    filter 0.45s ease;
   filter: drop-shadow(0 0 25px rgba(255,255,255,0.25))
           drop-shadow(0 0 60px rgba(0,0,0,0.35));
   pointer-events: auto; 
   will-change: transform, opacity;
+}
+
+.seal-zooming {
+  opacity: 1;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(8); /* zoom */
+  z-index: 9999;
+  filter: none;
+}
+
+.seal-zooming {
+  pointer-events: none;
 }
 
 /* Bottom maroon band */
