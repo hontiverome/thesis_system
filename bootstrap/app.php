@@ -33,9 +33,10 @@ return Application::configure(basePath: dirname(__DIR__))
         //     'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':60,1',
         // ]);    ]);
         
-        // Register admin middleware alias
+        // Register admin and adviser middleware aliases
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'adviser' => \App\Http\Middleware\AdviserMiddleware::class,
         ]);
         
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);

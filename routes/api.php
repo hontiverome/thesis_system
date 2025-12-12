@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\UserProfileController;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
 use App\Http\Controllers\Api\V1\AdminRoleController;
+use App\Http\Controllers\Api\V1\AdviserGroupController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -69,4 +70,24 @@ Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admi
     Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
     Route::put('/users/{userId}/role', [AdminRoleController::class, 'changeRole'])->name('users.role.change');
     Route::get('/roles/available', [AdminRoleController::class, 'getAvailableRoles'])->name('roles.available');
+});
+
+// Adviser routes
+Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.adviser.')->group(function () {
+    // F-012: Create new group
+    Route::post('/groups', [AdviserGroupController::class, 'createGroup'])->name('groups.create');
+    
+    // Group management
+    Route::delete('/groups/{groupId}', [AdviserGroupController::class, 'deleteGroup'])->name('groups.delete');
+    
+    // F-013: Group member management
+    Route::post('/groups/{groupId}/members', [AdviserGroupController::class, 'addMember'])->name('groups.members.add');
+    Route::delete('/groups/{groupId}/members/{studentUserId}', [AdviserGroupController::class, 'removeMember'])->name('groups.members.remove');
+    
+    // F-014: Set group leader
+    Route::put('/groups/{groupId}/leader', [AdviserGroupController::class, 'setGroupLeader'])->name('groups.leader.set');
+    
+    // Helper endpoints
+    Route::get('/students/available', [AdviserGroupController::class, 'getAvailableStudents'])->name('students.available');
+    Route::get('/groups/my', [AdviserGroupController::class, 'getMyGroups'])->name('groups.my');
 });
