@@ -7,13 +7,14 @@
         alt= "PUP Campus"
         class= "hero-image"
       />
-        <div class="logo-placeholder">LOGO</div> 
       </div>
       
-      <h1>SINTANG PAARALAN</h1>
-      <p>"Mula Sa'Yo, Para sa Bayan"</p>
-      
-      <div class="loader"></div>
+      <div class="hero-bottom">
+        <div class="hero-bottom-inner">
+          <h1 class="landing-title">S I N T A N G&nbsp;&nbsp;P A A R A L A N </h1>
+          <p class="landing-tagline">“Mula Sa'Yo, Para sa Bayan”</p>
+        </div>
+      </div>    
     </div>
   </div>
 </template>
