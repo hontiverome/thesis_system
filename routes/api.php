@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController};
 use App\Http\Controllers\Api\V1\UserProfileController;
+use App\Http\Controllers\Api\V1\AdviserCourseController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -57,4 +58,5 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
     })->name('user');
     
     Route::get('/users/me', [UserProfileController::class, 'show'])->name('users.me');
+    Route::get('/adviser/courses', [AdviserCourseController::class, 'getAdviserCourses']);
 });
