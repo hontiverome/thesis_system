@@ -82,24 +82,15 @@ const authRoutes = [
     }
   },
 
-  // 5. Admin/Staff Login (original login)
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/auth/login_view.vue'),
-    meta: { 
-      title: 'Login',
-      guestOnly: true // Only accessible when not logged in
-    }
-  },
-    // 6. Register
+  // 5. Register
   {
     path: '/register',
     name: 'register',
     component: () => import('@/views/auth/register_view.vue'),
     meta: { 
-      title: 'Register',
-      guestOnly: true // Only accessible when not logged in
+      layout: 'blank',
+      guestOnly: true,
+      title: 'Register'
     }
   },
 ];

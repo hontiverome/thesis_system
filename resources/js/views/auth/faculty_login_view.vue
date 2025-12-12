@@ -39,7 +39,7 @@
           <form class="login-form" @submit.prevent="handleLogin">
             <div class="field field-select">
               <input
-                v-model.trim="form.faculty_id"
+                v-model.trim="form.SchoolID"
                 type="text"
                 placeholder="FACULTY ID"
                 autocomplete="username"
@@ -89,13 +89,13 @@ import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
 
 const router = useRouter()
-const { login } = useAuth()
+const { facultyLogin } = useAuth()
 
 const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
-  faculty_id: '',
+  SchoolID: '',
   password: ''
 })
 
@@ -104,8 +104,14 @@ const handleLogin = async () => {
   error.value = ''
 
   try {
-    await login({ ...form })
-    router.push('/dashboard')
+    const response = await facultyLogin({ ...form })
+    
+    // Handle redirection if provided by API
+    if (response.redirect_to) {
+      router.push(response.redirect_to)
+    } else {
+      router.push('/dashboard') // fallback
+    }
   } catch (err) {
     error.value =
       err?.response?.data?.message ||

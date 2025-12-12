@@ -48,4 +48,9 @@ class Group extends Model
     {
         return $this->hasOne(Proposal::class);
     }
+
+    public function enrollment(): HasOne
+    {
+        return $this->hasOne(Enrollment::class, 'GroupID', 'GroupID');
+    }
 }

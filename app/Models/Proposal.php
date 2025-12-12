@@ -11,7 +11,18 @@ class Proposal extends Model
 {
     use HasFactory;
 
+    protected $table = 'Proposals';
+
+    protected $primaryKey = 'ProposalID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
+        'ProposalID',
         'EnrollmentID',
         'ResearchTitle',
         'SubmissionDate',

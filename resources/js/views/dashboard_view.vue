@@ -35,10 +35,8 @@
 <!-- Main Page Template -->
 <template>
   <div v-if="!isAuthenticated" class="auth-required">
-    <div class="auth-message">
-      <h2>Authentication Required</h2>
-      <p>Please log in to view the dashboard.</p>
-      <router-link to="/login" class="btn btn-primary">Log In</router-link>
+    <div class="loading-message">
+      <p>Redirecting to landing page...</p>
     </div>
   </div>
   
@@ -69,6 +67,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 import { Chart, registerables } from 'chart.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import { useThemeStore } from '@/stores/theme.js';
@@ -83,12 +82,23 @@ Chart.defaults.animations = { duration: 0 };
 
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
-const { user, isAuthenticated } = useAuth();
+const router = useRouter();
+const { user, isAuthenticated, initAuth } = useAuth();
 const userStore = useUserStore();
 const lineChart = ref(null);
 const pieChart = ref(null);
 let lineObserver = null;
 let pieObserver = null;
+
+// Redirect to landing page if not authenticated (with delay for debugging)
+watch(() => isAuthenticated.value, (authenticated) => {
+  console.log('Auth state changed:', authenticated);
+  if (!authenticated) {
+    setTimeout(() => {
+      router.push('/');
+    }, 1000); // Delay redirect for debugging
+  }
+}, { immediate: false }); // Don't run immediately
 
 // Get chart colors from CSS variables
 const getThemeColors = () => {
@@ -545,7 +555,23 @@ const handleResize = () => {
   setTimeout(updateCharts, 100);
 };
 
-onMounted(() => {
+onMounted(async () => {
+  console.log('Dashboard component mounting...');
+  
+  // Initialize authentication state
+  await initAuth();
+  console.log('Auth initialized. isAuthenticated:', isAuthenticated.value);
+  
+  // Check authentication status after init
+  if (!isAuthenticated.value) {
+    console.log('Not authenticated, redirecting...');
+    setTimeout(() => {
+      router.push('/');
+    }, 1000);
+    return;
+  }
+  
+  console.log('Authenticated, loading charts...');
   nextTick(() => setTimeout(ensureReadyAndCreate, 50));
   window.addEventListener('resize', handleResize, { passive: true });
   // Observe wrapper size changes to (re)create charts after layout transitions
@@ -596,4 +622,40 @@ onBeforeUnmount(() => {
   try { pieObserver && pieObserver.disconnect(); } catch (_) {}
 });
 </script>
+
+<style scoped>
+.auth-required {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.loading-message {
+  padding: 2rem;
+  text-align: center;
+}
+
+.loading-message p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .auth-links {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .user-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>
 

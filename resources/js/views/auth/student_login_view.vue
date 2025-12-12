@@ -50,7 +50,7 @@
             <!-- STUDENT NUMBER -->
             <div class="field">
               <input
-                v-model.trim="form.student_number"
+                v-model.trim="form.SchoolID"
                 type="text"
                 placeholder="STUDENT NUMBER"
                 autocomplete="username"
@@ -140,13 +140,13 @@ import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
 
 const router = useRouter()
-const { login } = useAuth()
+const { studentLogin } = useAuth()
 
 const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
-  student_number: '',
+  SchoolID: '',
   birth_month: '',
   birth_day: '',
   birth_year: '',
@@ -158,8 +158,18 @@ const handleLogin = async () => {
   error.value = ''
 
   try {
-    await login({ ...form })
-    router.push('/student-dashboard') // change if your student dashboard route differs
+    // Convert birth month and day to integers for API
+    const loginData = {
+      ...form,
+      birth_month: parseInt(form.birth_month),
+      birth_day: parseInt(form.birth_day),
+      birth_year: parseInt(form.birth_year)
+    }
+    
+    const response = await studentLogin(loginData)
+    
+    // Redirect to home for now
+    router.push('/home')
   } catch (err) {
     error.value =
       err?.response?.data?.message ||

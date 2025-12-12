@@ -18,16 +18,11 @@ class UserProfileController extends Controller
     {
         $user = $request->user()->load([
             'roles', 
-            'groups.enrollment.proposal',
-            'groups.enrollment.proposal.defenses',
-            'groups.enrollment.proposal.defenses.panel',
-            'groups.enrollment.proposal.defenses.evaluations',
-            'groups.enrollment.proposal.approvals',
-            'groups.enrollment.proposal.archive',
-            'submissions',
+            'groups',
+            'groups.users',
+            'groups.advisers',
             'facultyDetail',
             'groupsAsAdviser.users',
-            'defensePanels.defense.proposal.enrollment.group',
         ]);
 
         $profileData = [
