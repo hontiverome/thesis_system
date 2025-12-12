@@ -1,61 +1,44 @@
 <template>
-  <div class="auth-page page-view">
-    <div class="auth-container">
-      <header class="auth-header">
-        <div class="icon-header">Faculty</div> <!--PUP/CPE LOGO-->
-        <h1 class="page-title">Faculty Login</h1>
-        <p class="page-subtitle">Advisers, Panelists & Staff Portal</p>
-      </header>
-      
-      <form class="auth-form" @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label class="form-label">Faculty ID</label>
-          <div class="input-wrapper">
-            <i class="icon icon-badge"></i> <input
-              v-model="form.faculty_id"
-              type="text"
-              required
-              class="form-control"
-              placeholder="e.g., FAC-001"
-              :disabled="loading"
-            >
-          </div>
+  <div class="login-page" :style="{ backgroundImage: `url(${bgImage})` }">
+    <div class="login-wrapper">
+
+      <!-- LEFT PANEL -->
+      <div class="login-left">
+        <div class="school-header">
+          <img src="/images/pup-logo.png" alt="PUP Logo" class="school-logo" />
+          <span>POLYTECHNIC UNIVERSITY<br>OF THE PHILIPPINES</span>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <div class="input-wrapper">
-            <i class="icon icon-lock"></i>
-            <input
-              v-model="form.password"
-              type="password"
-              required
-              class="form-control"
-              placeholder="Enter your password"
-              :disabled="loading"
-            >
-          </div>
-        </div>
+        <h2 class="welcome-title">GREETINGS, FACULTY!</h2>
+        <p class="welcome-text">
+          Thank you for your dedication.<br>
+          Continue to your dashboard.
+        </p>
+      </div>
 
-        <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
-          <span v-if="loading">Verifying Access...</span>
-          <span v-else>Login as Faculty</span>
-        </button>
+      <!-- RIGHT PANEL -->
+      <div class="login-right">
+        <h1 class="login-title">FACULTY LOGIN</h1>
+        <p class="login-subtitle">T-SIS <span>ADVISER</span></p>
 
-        <div class="links-container">
-          <router-link :to="{ name: 'access-portal' }" class="link">Back to Portal</router-link>
-        </div>
-      </form>
+        <form class="login-form" @submit.prevent="handleLogin">
+          <input type="text" placeholder="FACULTY ID" required />
+          <input type="password" placeholder="PASSWORD" required />
 
-      <transition name="fade">
-        <div v-if="error" class="alert alert-error mt-3">
-          <i class="icon icon-alert-circle"></i>
-          {{ error }}
-        </div>
-      </transition>
+          <a class="forgot">FORGOT PASSWORD?</a>
+
+          <button type="submit" class="login-btn">LOGIN</button>
+        </form>
+
+        <footer class="login-footer">
+          2025 T-SIS | ALL RIGHTS RESERVED
+        </footer>
+      </div>
+
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, reactive } from 'vue';
