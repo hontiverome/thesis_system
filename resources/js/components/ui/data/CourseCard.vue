@@ -17,8 +17,8 @@ defineProps({
 
 <style scoped>
 .card-wrapper {
-  /* 💡 MODIFIED: Increased width to 400px to accommodate full titles */
-  width: 400px; 
+  /* Added for consistent sizing */
+  width: 300px; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,8 +35,8 @@ defineProps({
   height: 180px; 
   background-color: #ffffff; 
   border-radius: 20px;
-  border: 1px solid #F4F6F9; 
-  box-shadow: 0 4px 6px #F4F6F9; 
+  border: 1px solid #e0e0e0; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
 }
 
 .card-label {
@@ -47,13 +47,11 @@ defineProps({
   text-align: center;
   color: #000;
   letter-spacing: 0.5px;
-  max-width: 90%;
+  max-width: 100%;
   
-  /* Retained to enforce single line */
-  white-space: nowrap; 
-  /* Retained to hide any overflow if a title is EXTREMELY long */
-  overflow: hidden; 
-  
-  /* text-overflow: ellipsis is intentionally omitted */
+  /* --- The THREE properties required for single-line, hard-cut truncation --- */
+  white-space: nowrap;  /* 1. Prevents the text from wrapping */
+  overflow: visible;     /* 2. Hides any text that extends past the boundary */
+  text-overflow: clip;  /* 3. Explicitly ensures no ellipsis is shown */
 }
 </style>
