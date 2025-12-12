@@ -27,7 +27,7 @@ class AdviserMiddleware
 
         $user = Auth::user();
 
-        // Check if user has Adviser role (Super Admin is exempt)
+        // Check if user has Adviser role (Admin is exempt)
         if (!$user->hasRole('Adviser') && !$user->hasRole('Administrator')) {
             return response()->json([
                 'message' => 'Forbidden.',
@@ -35,7 +35,7 @@ class AdviserMiddleware
             ], 403);
         }
 
-        // For Super Admin, bypass all restrictions
+        // For Admin, bypass all restrictions
         if ($user->hasRole('Administrator')) {
             return $next($request);
         }

@@ -140,7 +140,6 @@ class AdminGroupController extends Controller
         try {
             $user = $request->user();
 
-            // Check if user is Super Admin
             if (!$user->hasRole('Administrator')) {
                 return response()->json([
                     'message' => 'Forbidden.',
@@ -222,11 +221,10 @@ class AdminGroupController extends Controller
         try {
             $user = $request->user();
 
-            // Check if user is Super Admin
-            if (!$user->hasRole('Super Admin')) {
+            if (!$user->hasRole('Administrator')) {
                 return response()->json([
                     'message' => 'Forbidden.',
-                    'error' => 'Only Super Admins can view available courses.'
+                    'error' => 'Only Admins can view available courses.'
                 ], 403);
             }
 
