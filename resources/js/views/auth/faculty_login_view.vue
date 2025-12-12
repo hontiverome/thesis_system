@@ -3,174 +3,353 @@
     <div class="login-wrapper">
 
       <!-- LEFT PANEL -->
-      <div class="login-left">
+      <section class="login-left" aria-label="Welcome panel">
         <div class="school-header">
-          <img src="/images/pup-logo.png" alt="PUP Logo" class="school-logo" />
-          <span>POLYTECHNIC UNIVERSITY<br>OF THE PHILIPPINES</span>
+          <div class="school-name">
+            POLYTECHNIC UNIVERSITY<br />
+            OF THE PHILIPPINES
+          </div>
+
+          <!-- optional logo (won't crash if you remove it) -->
+          <img v-if="logoImage" :src="logoImage" alt="Logo" class="school-logo" />
         </div>
 
-        <h2 class="welcome-title">GREETINGS, FACULTY!</h2>
-        <p class="welcome-text">
-          Thank you for your dedication.<br>
-          Continue to your dashboard.
-        </p>
-      </div>
+        <div class="left-content">
+          <h2 class="welcome-title">GREETINGS, FACULTY!</h2>
+          <p class="welcome-text">
+            Thank you for your dedication.<br />
+            Continue to your dashboard.
+          </p>
+        </div>
+      </section>
 
       <!-- RIGHT PANEL -->
-      <div class="login-right">
-        <h1 class="login-title">FACULTY LOGIN</h1>
-        <p class="login-subtitle">T-SIS <span>ADVISER</span></p>
+      <section class="login-right" aria-label="Login panel">
+        <div class="right-inner">
+          <h1 class="login-title">FACULTY LOGIN</h1>
 
-        <form class="login-form" @submit.prevent="handleLogin">
-          <input type="text" placeholder="FACULTY ID" required />
-          <input type="password" placeholder="PASSWORD" required />
+          <div class="brand-line">
+            <div class="tsis">T-SIS</div>
+            <div class="adviser">ADVISER</div>
+          </div>
 
-          <a class="forgot">FORGOT PASSWORD?</a>
+          <form class="login-form" @submit.prevent="handleLogin">
+            <div class="field field-select">
+              <input
+                v-model.trim="form.faculty_id"
+                type="text"
+                placeholder="FACULTY ID"
+                autocomplete="username"
+                :disabled="loading"
+                required
+              />
+              <span class="chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                  <path
+                    d="M6 9l6 6 6-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+            </div>
 
-          <button type="submit" class="login-btn">LOGIN</button>
-        </form>
+            <div class="field">
+              <input
+                v-model="form.password"
+                type="password"
+                placeholder="PASSWORD"
+                autocomplete="current-password"
+                :disabled="loading"
+                required
+              />
+            </div>
 
-        <footer class="login-footer">
-          2025 T-SIS | ALL RIGHTS RESERVED
-        </footer>
-      </div>
+            <div class="row">
+              <!-- Use your existing portal route name -->
+              <router-link :to="{ name: 'access-portal' }" class="forgot">
+                BACK TO PORTAL
+              </router-link>
+            </div>
+
+            <button class="login-btn" type="submit" :disabled="loading">
+              <span v-if="loading">LOGGING IN…</span>
+              <span v-else>LOGIN</span>
+            </button>
+
+            <transition name="fade">
+              <p v-if="error" class="error">{{ error }}</p>
+            </transition>
+          </form>
+
+          <footer class="login-footer">2025 T-SIS | ALL RIGHT RESERVED</footer>
+        </div>
+      </section>
 
     </div>
   </div>
 </template>
 
-
 <script setup>
-import { ref, reactive } from 'vue';
-import { useAuth } from '@/composables/useAuth';
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+import bgImage from '../../../assets/access_bg.jpg'
 
-const { login } = useAuth();
-const loading = ref(false);
-const error = ref('');
+const router = useRouter()
+const { login } = useAuth()
+
+const loading = ref(false)
+const error = ref('')
 
 const form = reactive({
-  faculty_id: '', // Backend expects 'faculty_id' to trigger faculty logic
+  faculty_id: '',
   password: ''
-});
+})
 
 const handleLogin = async () => {
-  loading.value = true;
-  error.value = '';
-  
+  loading.value = true
+  error.value = ''
+
   try {
-    // Pass the form data to useAuth.js
-    await login(form);
-    
-    // Redirect on success
-    window.location.href = '/dashboard';
+    await login({ ...form })
+    router.push('/dashboard')
   } catch (err) {
-    if (err.response && err.response.data && err.response.data.message) {
-         error.value = err.response.data.message;
-    } else if (err.message) {
-         error.value = err.message;
-    } else {
-         error.value = 'Login failed. Please check your Faculty ID and password.';
-    }
+    error.value =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Login failed. Please check your Faculty ID and password.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>
-/* Page Layout */
-.auth-page {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: var(--bg-color, #f3f4f6);
-  padding: 1rem;
+.login-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px;
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
 }
 
-.auth-container {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  border-radius: 12px;
-  padding: 2.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+.login-page::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.12);
+  pointer-events:none;
 }
 
-/* Header */
-.auth-header { text-align: center; margin-bottom: 2rem; }
-.icon-header { font-size: 3rem; margin-bottom: 0.5rem; }
-.page-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin: 0; }
-.page-subtitle { color: #6b7280; font-size: 0.95rem; margin-top: 0.5rem; }
-
-/* Forms */
-.form-group { margin-bottom: 1.5rem; }
-.form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #374151; font-size: 0.95rem; }
-.form-control {
-  width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.75rem; /* Left padding space for icon */
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-.form-control:focus { outline: none; border-color: #4f46e5; ring: 2px solid #4f46e5; }
-.form-control:disabled { background-color: #f3f4f6; cursor: not-allowed; }
-
-/* Icons in Inputs */
-.input-wrapper { position: relative; }
-.input-wrapper .icon {
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #9ca3af;
-  pointer-events: none;
-  font-style: normal;
-  /* If using iconify or similar, ensure basic styling here */
-  width: 1.25em; 
-  height: 1.25em;
-  background-size: contain; 
-}
-/* Fallback if no icon library: simple character or background */
-.icon-badge::before { content: '👤'; } 
-.icon-lock::before { content: '🔒:'; }
-.icon-alert-circle::before { content: '⚠️'; margin-right: 0.5rem; }
-
-/* Buttons */
-.btn-primary {
-  width: 100%;
-  background-color: #4f46e5;
-  color: white;
-  padding: 0.875rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-.btn-primary:hover:not(:disabled) { background-color: #4338ca; }
-.btn-primary:disabled { opacity: 0.7; cursor: wait; }
-
-/* Links */
-.links-container { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; }
-.link { color: #4f46e5; text-decoration: none; font-weight: 500; }
-.link:hover { text-decoration: underline; }
-
-/* Alerts */
-.alert-error {
-  background-color: #fef2f2;
-  color: #991b1b;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #fee2e2;
+.login-wrapper{
+  position:relative;
+  width:min(1120px, 100%);
+  min-height:620px;
+  display:grid;
+  grid-template-columns: 1.02fr 1fr;
+  gap:32px;
+  z-index:1;
 }
 
-/* Transitions */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.login-left{
+  background:#7b0a0a;
+  border-radius:52px;
+  padding:44px 48px;
+  color:#fff;
+  overflow:hidden;
+}
+
+.school-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.school-name{
+  letter-spacing:0.14em;
+  font-weight:700;
+  font-size:14px;
+  line-height:1.35;
+  text-transform:uppercase;
+  opacity:0.95;
+}
+
+.school-logo{
+  width:64px;
+  height:64px;
+  object-fit:contain;
+}
+
+.left-content{ margin-top:78px; }
+
+.welcome-title{
+  margin:0 0 18px;
+  font-size:56px;
+  line-height:1;
+  font-weight:500;
+  letter-spacing:0.04em;
+  text-transform:uppercase;
+  font-family:"Comic Sans MS","Segoe Print","Bradley Hand",cursive;
+}
+
+.welcome-text{
+  margin:0;
+  font-size:16px;
+  line-height:1.45;
+  opacity:0.92;
+}
+
+.login-right{
+  border-radius:52px;
+  padding:44px 52px;
+  background:rgba(255,255,255,0.62);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 18px 60px rgba(0,0,0,0.18);
+  display:flex;
+  align-items:center;
+}
+
+.right-inner{ width:100%; text-align:center; }
+
+.login-title{
+  margin:0;
+  font-size:42px;
+  letter-spacing:0.18em;
+  font-weight:700;
+  color:#7b0a0a;
+}
+
+.brand-line{ margin-top:10px; margin-bottom:36px; }
+
+.tsis{
+  font-size:34px;
+  letter-spacing:0.32em;
+  font-weight:500;
+  color:#111;
+}
+.adviser{
+  margin-top:4px;
+  font-size:11px;
+  letter-spacing:0.36em;
+  font-weight:700;
+  color:#2b82c5;
+}
+
+.login-form{
+  width:100%;
+  max-width:520px;
+  margin:0 auto;
+}
+
+.field{ position:relative; margin:18px 0; }
+
+.field input{
+  width:100%;
+  height:56px;
+  border-radius:14px;
+  border:none;
+  outline:none;
+  padding:0 18px;
+  background:rgba(255,255,255,0.92);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);
+  font-size:13px;
+  letter-spacing:0.24em;
+  text-transform:uppercase;
+  color:#111;
+}
+
+.field input::placeholder{ color:rgba(0,0,0,0.45); }
+
+.field input:focus{
+  box-shadow:
+    inset 0 0 0 2px rgba(123,10,10,0.35),
+    0 0 0 3px rgba(123,10,10,0.12);
+}
+
+.field input:disabled{ opacity:0.75; cursor:not-allowed; }
+
+.field-select input{ padding-right:46px; }
+
+.chev{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:rgba(0,0,0,0.55);
+}
+
+.row{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:8px;
+}
+
+.forgot{
+  font-size:11px;
+  letter-spacing:0.22em;
+  color:#222;
+  text-decoration:none;
+}
+.forgot:hover{ text-decoration:underline; }
+
+.login-btn{
+  width:100%;
+  height:58px;
+  margin-top:20px;
+  border:none;
+  border-radius:14px;
+  background:#7b0a0a;
+  color:#fff;
+  font-size:18px;
+  letter-spacing:0.38em;
+  font-weight:700;
+  cursor:pointer;
+  transition:transform .08s ease, opacity .2s ease;
+}
+.login-btn:hover:not(:disabled){ transform:translateY(-1px); }
+.login-btn:disabled{ opacity:0.75; cursor:wait; }
+
+.error{
+  margin:14px 0 0;
+  padding:10px 12px;
+  border-radius:10px;
+  background:rgba(255,240,240,0.85);
+  border:1px solid rgba(200,0,0,0.2);
+  color:#7b0a0a;
+  font-size:13px;
+}
+
+.login-footer{
+  margin-top:26px;
+  font-size:10px;
+  letter-spacing:0.32em;
+  color:rgba(0,0,0,0.55);
+}
+
+.fade-enter-active,.fade-leave-active{ transition:opacity .25s ease; }
+.fade-enter-from,.fade-leave-to{ opacity:0; }
+
+@media (max-width:980px){
+  .login-wrapper{ grid-template-columns:1fr; gap:18px; min-height:auto; }
+  .login-left,.login-right{ border-radius:34px; }
+  .left-content{ margin-top:36px; }
+  .welcome-title{ font-size:44px; }
+}
+
+@media (max-width:520px){
+  .login-page{ padding:16px; }
+  .login-left{ padding:28px 26px; }
+  .login-right{ padding:28px 26px; }
+  .login-title{ font-size:34px; }
+  .tsis{ font-size:28px; }
+}
 </style>
