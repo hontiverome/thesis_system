@@ -42,7 +42,7 @@ class AdminRoleController extends Controller
             'role_id.exists' => 'The selected role does not exist.',
         ]);
 
-        // Get available roles (exclude Student and Super Admin)
+        // Get available roles (exclude Student and Admin)
         $availableRoles = Role::whereNotIn('RoleName', ['Student', 'Administrator'])
             ->pluck('RoleID')
             ->toArray();
@@ -102,7 +102,7 @@ class AdminRoleController extends Controller
     }
 
     /**
-     * Get available roles for assignment (excluding Student and Super Admin).
+     * Get available roles for assignment (excluding Student and Admin).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse

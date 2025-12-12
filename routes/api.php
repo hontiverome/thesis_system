@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
 use App\Http\Controllers\Api\V1\AdminRoleController;
 use App\Http\Controllers\Api\V1\GroupPageController;
+use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
 
 // Public routes
@@ -71,6 +72,11 @@ Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admi
     Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
     Route::put('/users/{userId}/role', [AdminRoleController::class, 'changeRole'])->name('users.role.change');
     Route::get('/roles/available', [AdminRoleController::class, 'getAvailableRoles'])->name('roles.available');
+    
+    // F-017: Group Management
+    Route::get('/groups', [AdminGroupController::class, 'getGroupsWithCourses'])->name('groups.list');
+    Route::put('/groups/{groupId}/course', [AdminGroupController::class, 'assignCourse'])->name('groups.course.assign');
+    Route::get('/courses/available', [AdminGroupController::class, 'getAvailableCourses'])->name('courses.available');
 });
 
 // Adviser routes

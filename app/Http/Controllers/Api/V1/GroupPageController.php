@@ -91,8 +91,8 @@ class GroupPageController extends Controller
     {
         $user = $request->user();
 
-        // Check if user is an adviser or super admin
-        if (!$user->hasRole('Adviser') && !$user->hasRole('Super Admin')) {
+        // Check if user is an adviser or admin
+        if (!$user->hasRole('Adviser') && !$user->hasRole('Administrator')) {
             return response()->json([
                 'message' => 'Forbidden.',
                 'error' => 'This endpoint is for advisers only.'
@@ -108,8 +108,7 @@ class GroupPageController extends Controller
             ], 404);
         }
 
-        // Check if group belongs to adviser (unless super admin)
-        if (!$user->hasRole('Super Admin') && $group->AdviserUserID !== $user->UserID) {
+        if (!$user->hasRole('Administrator') && $group->AdviserUserID !== $user->UserID) {
             return response()->json([
                 'message' => 'Forbidden.',
                 'error' => 'You can only view your own groups.'
