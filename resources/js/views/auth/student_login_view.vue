@@ -173,6 +173,10 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-page {
+  width: 100vw;
+  height: 100wh;
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -250,7 +254,7 @@ const handleLogin = async () => {
 .left-content {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* ✅ centers REGISTER horizontally */
+  align-items: center;
   text-align: center;
 }
 
@@ -258,7 +262,8 @@ const handleLogin = async () => {
 .student-left {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-emphasis: center;
 }
 
 .welcome-title {
