@@ -1,9 +1,11 @@
 -- 1. Insert Roles
 INSERT INTO Roles (RoleID, RoleName) VALUES
 (1, 'Student'),
-(2, 'Faculty'),
-(3, 'Research Coordinator'),
-(4, 'Administrator');
+(2, 'GroupLeader'),
+(3, 'Adviser'),
+(4, 'Faculty'),
+(5, 'Research Coordinator'),
+(6, 'Administrator');
 
 -- 2. Insert 17 Users (12 Students, 5 Faculty/admin)
 INSERT INTO Users (UserID, SchoolID, FullName, Email, BirthDate, PasswordHash) VALUES
@@ -38,13 +40,20 @@ INSERT INTO UserRoles (UserID, RoleID) VALUES
 (101,1), (102,1), (103,1), (104,1), 
 (105,1), (106,1), (107,1), (108,1), 
 (109,1), (110,1), (111,1), (112,1),
+-- Group Leaders (selected from students)
+(101,2), -- Leader G1 becomes GroupLeader
+(105,2), -- Leader G2 becomes GroupLeader  
+(109,2), -- Leader G3 becomes GroupLeader
 -- Faculty
-(113,2), (113,3), -- Tokyo (Faculty + Coordinator)
-(114,2),          -- Jose (Faculty)
-(115,2),          -- Clara (Faculty)
-(116,2),          -- Sherlock (Faculty)
+(113,4), (113,5), -- Tokyo (Faculty + Coordinator)
+(114,4),          -- Jose (Faculty)
+(115,4),          -- Clara (Faculty)
+(116,4),          -- Sherlock (Faculty)
+-- Advisers (selected faculty)
+(113,3),          -- Tokyo also becomes Adviser
+(114,3),          -- Jose becomes Adviser
 -- Admin
-(117,4);          -- Admin
+(117,6);          -- Admin
 
 -- 4. Faculty Details
 INSERT INTO FacultyDetails (FacultyDetailID, UserID, FacultyType) VALUES 
