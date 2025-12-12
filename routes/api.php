@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController, PasswordController};
 use App\Http\Controllers\Api\V1\UserProfileController;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
+use App\Http\Controllers\Api\V1\AdminListController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -64,4 +65,5 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
 // Admin routes
 Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admin.')->group(function () {
     Route::post('/users', [CreateFacultyController::class, 'createFacultyUser'])->name('users.create');
+    Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
 });
