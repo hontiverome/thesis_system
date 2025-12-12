@@ -3,10 +3,13 @@
     <div class="navbar-container">
       
       <div class="navbar-branding">
-        <div class="logo-circle">
-          <span class="logo-text">LOGO</span> 
+        <div class="logo-image-container">
+          <img 
+            src="path/to/your/logo.png" 
+            alt="Polytechnic University of the Philippines Logo" 
+            class="pup-logo-img" 
+          />
         </div>
-
         <div class="university-info">
           <h1 class="uni-name">Polytechnic University of the Philippines</h1>
           <span class="system-name">T-SIS</span>
@@ -162,19 +165,30 @@ onUnmounted(() => {
   gap: 15px;
 }
 
-.logo-circle {
+/* START: Logo Image Styles (Replacing .logo-circle and .logo-text) */
+.logo-image-container {
   width: 45px;
   height: 45px;
-  background-color: #ffc107;
+  background-color: #800000; /* Use PUP red/maroon as the background */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  color: #800000;
-  font-size: 10px;
-  border: 2px solid white;
+  /* Retain the white border requested */
+  border: 2px solid white; 
+  /* Add padding to prevent the image from touching the border */
+  padding: 4px; 
+  box-sizing: border-box;
 }
+
+.pup-logo-img {
+  width: 100%;
+  height: 100%;
+  /* Ensures the image covers the container while preserving aspect ratio */
+  object-fit: contain; 
+}
+/* END: Logo Image Styles */
+
 
 .university-info {
   display: flex;
