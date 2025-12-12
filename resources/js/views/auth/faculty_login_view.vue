@@ -176,7 +176,7 @@ const handleLogin = async () => {
   height:64px;
   object-fit:contain;
 }
-
+/* Left Page */
 .left-content{ margin-top:78px; }
 
 .welcome-title{
@@ -195,6 +195,24 @@ const handleLogin = async () => {
   line-height:1.45;
   opacity:0.92;
 }
+
+.left-bottom{
+  position:absolute;
+  bottom:28px;
+  left:48px;
+}
+
+.back-portal{
+  font-size:11px;
+  letter-spacing:0.32em;
+  color:rgba(255,255,255,0.8);
+  text-decoration:none;
+}
+.back-portal:hover{
+  text-decoration:underline;
+}
+
+/* Right Page */
 
 .login-right{
   border-radius:52px;
