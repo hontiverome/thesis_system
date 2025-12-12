@@ -349,11 +349,99 @@ class AdviserGroupController extends Controller
     }
 
     /**
-     * Get adviser's groups with members.
+     * Delete a group.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string  $groupId
      * @return \Illuminate\Http\JsonResponse
      */
+    public function deleteGroup(Request $request, $groupId)
+    {
+        try {
+            $group = Group::findOrFail($groupId);
+
+            // Check if group belongs to adviser
+            if ($group->AdviserUserID !== $request->user()->UserID) {
+                return response()->json([
+                    'message' => 'Forbidden.',
+                    'error' => 'You can only delete your own groups.'
+                ], 403);
+            }
+
+            // Check if group has members
+            $memberCount = DB::table('GroupMembers')
+                ->where('GroupID', $groupId)
+                ->count();
+
+            if ($memberCount > 0) {
+                return response()->json([
+                    'message' => 'Validation failed.',
+                    'errors' => [
+                        'GroupID' => ['Cannot delete group with members. Remove all members first.']
+                    ]
+                ], 422);
+            }
+
+            // Check if Group has a proposal (through Enrollments)
+            $hasProposal = DB::table('Proposals')
+                ->join('Enrollments', 'Proposals.EnrollmentID', '=', 'Enrollments.EnrollmentID')
+                ->where('Enrollments.GroupID', $groupId)
+                ->exists();
+
+            if ($hasProposal) {
+                return response()->json([
+                    'message' => 'Validation failed.',
+                    'errors' => [
+                        'GroupID' => ['Cannot delete Group with existing proposals.']
+                    ]
+                ], 422);
+            }
+
+            DB::transaction(function () use ($groupId) {
+                // Delete GroupAdvisers records
+                DB::table('GroupAdvisers')
+                    ->where('GroupID', $groupId)
+                    ->delete();
+
+                // Delete GroupMembers records
+                DB::table('GroupMembers')
+                    ->where('GroupID', $groupId)
+                    ->delete();
+
+                // Delete the Group
+                DB::table('Groups')
+                    ->where('GroupID', $groupId)
+                    ->delete();
+            });
+
+            return response()->json([
+                'message' => 'Group deleted successfully.',
+                'data' => [
+                    'GroupID' => $groupId,
+                    'GroupCode' => $group->GroupCode,
+                ]
+            ], 200);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Group not found.',
+                'errors' => [
+                    'GroupID' => ['The specified group does not exist.']
+                ]
+            ], 404);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Group deletion failed.',
+                'errors' => [
+                    'server' => [
+                        'An unexpected error occurred.',
+                        $e->getMessage(),
+                    ],
+                ],
+            ], 500);
+        }
+    }
     public function getMyGroups(Request $request)
     {
         // Use direct database query to avoid model relationship issues
