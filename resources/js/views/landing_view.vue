@@ -1,7 +1,12 @@
 <template>
   <div class="landing-page">
-    <div class="content" @click="goToPortal">
-      <div class="logo-container">
+    <div class="hero-container" @click="goToPortal">
+      <div class="hero-image-wrapper">
+        <img
+        src= "/assets/campus.jpg"
+        alt= "PUP Campus"
+        class= "hero-image"
+      />
         <div class="logo-placeholder">LOGO</div> 
       </div>
       
