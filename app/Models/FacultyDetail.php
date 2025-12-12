@@ -18,6 +18,8 @@ class FacultyDetail extends Model
 
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'FacultyDetailID',
         'UserID',
