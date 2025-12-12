@@ -20,6 +20,11 @@
             Thank you for your dedication.<br />
             Continue to your dashboard.
           </p>
+        <div class="left-bottom">
+          <router-link :to="{ name: 'access-portal' }" class="back-portal">
+            BACK TO PORTAL
+          </router-link>
+        </div>
         </div>
       </section>
 
@@ -56,10 +61,7 @@
             </div>
 
             <div class="row">
-              <!-- Use your existing portal route name -->
-              <router-link :to="{ name: 'access-portal' }" class="forgot">
-                BACK TO PORTAL
-              </router-link>
+            <a href="#" class="forgot">FORGOT PASSWORD?</a>
             </div>
 
             <button class="login-btn" type="submit" :disabled="loading">
