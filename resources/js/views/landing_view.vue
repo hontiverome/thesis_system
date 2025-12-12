@@ -37,27 +37,61 @@ const goToPortal = () => {
 </script>
 
 <style scoped>
-.landing-page {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--bg-color, #f8f9fa);
+.hero-container {
+  width: 100%;
+  max-width: 1280px;
   cursor: pointer;
-  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
-.logo-placeholder {
-  width: 120px;
-  height: 120px;
-  background: var(--primary-color, #4F46E5);
+.hero-image-wrapper {
+  position: relative;
+  height: 55vh;
+  min-height: 260px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Seal */
+.seal-wrapper {
+  position: absolute;
+  left: 50%;
+  bottom: -12%;
+  transform: translateX(-50%);
+}
+
+.seal-image {
+  width: 220px;
   border-radius: 50%;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 2rem;
-  font-weight: bold;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.65);
 }
 
+/* Bottom maroon band */
+.hero-bottom {
+  background-color: #7a0000;
+  padding: 4.5rem 1rem 3rem;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-bottom-inner {
+  text-align: center;
+  color: #fff;
+}
+
+.landing-title {
+  letter-spacing: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.landing-tagline {
+  font-style: italic;
+  margin-top: 0.5rem;
+}
 </style>
