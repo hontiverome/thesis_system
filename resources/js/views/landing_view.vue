@@ -15,6 +15,13 @@
           <p class="landing-tagline">“Mula Sa'Yo, Para sa Bayan”</p>
         </div>
       </div>    
+      <div class="seal-wrapper">
+        <img
+          src="/assets/PUP_logo.png"
+          alt="PUP Logo"
+          class="seal-image"
+          />
+      </div>
     </div>
   </div>
 </template>
