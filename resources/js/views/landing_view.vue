@@ -38,6 +38,7 @@ const goToPortal = () => {
 </script>
 
 <style scoped>
+
 .hero-container {
   width: 100%;
   max-width: 1280px;
@@ -94,6 +95,14 @@ const goToPortal = () => {
 .landing-tagline {
   font-style: italic;
   margin-top: 0.5rem;
+}
+
+.clickable-seal {
+  cursor: pointer;
+}
+
+.clickable-seal:hover {
+  transform: scale(1.03);
 }
 
 @media (max-width: 768px) {
