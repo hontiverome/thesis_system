@@ -1,33 +1,45 @@
 <template>
   <div class="portal-page">
-    <div class="portal-container">
-      <h1 class="portal-title">Access Portal </h1>
-      <p class="portal-subtitle">Select User Type to Proceed </p>
-      
-      <div class="options-grid">
-        <div class="option-card" @click="selectType('faculty')">
-          <div class="icon-box">👨‍🏫</div> <!--FACULTY AVATAR-->
-          <h2>Faculty</h2>
-          <p>Advisers, Panelists, and Staff</p>
-        </div>
+    <div class="glass-panel">
+      <h1 class="portal-title">ACCESS PORTAL</h1>
+      <p class="portal-subtitle">Select your user type to proceed.</p>
 
-        <div class="option-card" @click="selectType('student')">
-          <div class="icon-box">👨‍🎓</div> <!--STUDENT AVATAR-->
-          <h2>Student</h2>
-          <p>Access your Thesis Dashboard</p>
-        </div>
+      <div class="options-grid">
+        <button class="tile" type="button" @click="selectType('faculty')">
+          <div class="tile-icon">👨‍🏫</div>
+          <div class="tile-label">FACULTY</div>
+        </button>
+
+        <button class="tile" type="button" @click="selectType('student')">
+          <div class="tile-icon">👨‍🎓</div>
+          <div class="tile-label">STUDENT</div>
+        </button>
       </div>
-      
-      <button class="btn-back" @click="$router.push('/')">Go Back</button>
+
+      <button class="btn-back" type="button" @click="router.push('/')">Go Back</button>
 
       <div class="admin-section">
-        <span class="text-muted">Administrator? </span>
-        <button class="btn-link" @click="goToAdmin">Login here</button>
+        <span class="text-muted">Administrator?</span>
+        <button class="btn-link" type="button" @click="goToAdmin">Login here</button>
       </div>
-
     </div>
   </div>
 </template>
+
+<script setup>
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const selectType = (type) => {
+  if (type === "student") router.push({ name: "login.student" });
+  if (type === "faculty") router.push({ name: "login.faculty" });
+};
+
+const goToAdmin = () => {
+  router.push({ name: "login" });
+};
+</script>
 
 <script setup>
 import { useRouter } from 'vue-router';
