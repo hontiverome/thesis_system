@@ -77,6 +77,9 @@ Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.
     // F-012: Create new group
     Route::post('/groups', [AdviserGroupController::class, 'createGroup'])->name('groups.create');
     
+    // Group management
+    Route::delete('/groups/{groupId}', [AdviserGroupController::class, 'deleteGroup'])->name('groups.delete');
+    
     // F-013: Group member management
     Route::post('/groups/{groupId}/members', [AdviserGroupController::class, 'addMember'])->name('groups.members.add');
     Route::delete('/groups/{groupId}/members/{studentUserId}', [AdviserGroupController::class, 'removeMember'])->name('groups.members.remove');
