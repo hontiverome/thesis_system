@@ -11,7 +11,14 @@ class Proposal extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    protected $primaryKey = 'ProposalID';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
+        'ProposalID',
         'EnrollmentID',
         'ResearchTitle',
         'SubmissionDate',
@@ -37,5 +44,22 @@ class Proposal extends Model
     public function group()
     {
         return $this->hasOneThrough(Group::class, Enrollment::class, 'EnrollmentID', 'GroupID', 'EnrollmentID', 'GroupID');
+    }
+
+    public function approvedProposal()
+    {
+        $totalVoters = $this->approvals()->count();
+
+        if ($totalVoters === 0) {
+            return false;
+        }
+
+        $approvedCount = $this->approvals()
+                                ->where('status', 'Approved')
+                                ->count();
+
+        $threshold = floor($totalVoters / 2) + 1;
+
+        return $approvedCount >= $threshold;
     }
 }

@@ -2,15 +2,23 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Laravel\Sanctum\Sanctum;
+use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController, PasswordController};
 use App\Http\Controllers\Api\V1\UserProfileController;
+use App\Http\Middleware\SudentVerification;
+use App\Services\StudentProposalService;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
 use App\Http\Controllers\Api\V1\AdminRoleController;
 use App\Http\Controllers\Api\V1\GroupPageController;
 use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
+use App\Http\Controllers\Api\V1\StudentController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -64,6 +72,40 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
     })->name('user');
     
     Route::get('/users/me', [UserProfileController::class, 'show'])->name('users.me');
+});
+
+
+// Student-only routes
+Route::prefix('v1/groups')->middleware(['auth:sanctum', 'student.verify'])->group(function () {
+     Route::post('/{groupId}/proposals', [StudentController::class, 'submitProposal']);
+     Route::get('/{groupId}/proposals', [StudentController::class, 'getProposalStatus']);
+     Route::get('/proposals/student/group', [StudentController::class, 'displayInfo']);
+     Route::post('/{groupId}/manuscript', [StudentController::class, 'submitProposal']);
+     Route::get('/{groupId}/approval-status', [StudentController::class, 'getEligibleProposals']);
+     Route::get('/faculty', [StudentProposalService::class, 'getFacultyList']);
+     Route::post('/{groupdId}/manuscript', [StudentController::class, 'submitManuscript']);
+     Route::post('/invitation', [StudentController::class, 'invitation']);
+     Route::post('/evaluation', [StudentController::class, 'evaluation']);
+     Route::get('/{id}/delete', [StudentController::class, 'delete']);
+     Route::post('{groupId}/select-title', [StudentController::class, 'selectTitleForDefense']);
+     Route::get('/{groupId}/defense', [StudentController::class, 'getDefenseVerdict']);
+});
+
+// Student API Tests
+Route::post('/student/test', function (Request $request) {
+    
+    $user = User::with('groups')->find(101); 
+    if (!$user) return response()->json(['error' => 'User 101 not found'], 404);
+    
+    Sanctum::actingAs($user, ['*']);
+    $groupId = $user->groups->first()->GroupID ?? 1; 
+    $internalRequest = Request::create(
+        "/api/v1/groups/{$groupId}/defense", 'GET',                     
+        $request->all()         
+    );
+    $response = app()->handle($internalRequest);
+
+    return $response;
 });
 
 // Admin routes

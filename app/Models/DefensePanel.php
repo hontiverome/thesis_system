@@ -33,4 +33,5 @@ class DefensePanel extends Model
     {
         return $this->belongsTo(User::class, 'PanelistUserID', 'UserID');
     }
+    
 }
