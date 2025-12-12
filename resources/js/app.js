@@ -40,6 +40,7 @@ import { useThemeStore } from '@/stores/theme.js';
 import '../css/app.css';
 import { Icon as IconifyIcon } from '@iconify/vue';
 import clickOutside from './directives/click_outside';
+import { vPermission } from './directives/vPermission';
 
 const app = createApp({
     setup() {
@@ -60,6 +61,7 @@ const app = createApp({
 });
 // Register the click-outside directive globally
 app.directive('click-outside', clickOutside);
+app.directive('permission', vPermission);
 
 // Use Pinia for state management
 const pinia = createPinia();
