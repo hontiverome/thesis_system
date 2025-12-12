@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
-use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController};
+use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController, PasswordController};
 use App\Http\Controllers\Api\V1\UserProfileController;
 
 // Public routes
@@ -27,6 +27,7 @@ Route::prefix('v1/auth')->group(function () {
 // Protected Auth routes
 Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('api.logout');
+    Route::put('password', [PasswordController::class, 'update'])->name('api.password.update');
 });
 
 // Test endpoint to verify CORS is working
