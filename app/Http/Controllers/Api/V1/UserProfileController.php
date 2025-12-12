@@ -18,61 +18,82 @@ class UserProfileController extends Controller
     {
         $user = $request->user()->load([
             'roles', 
-            'groups.proposal',
+            'groups.enrollment.proposal',
+            'groups.enrollment.proposal.defenses',
+            'groups.enrollment.proposal.defenses.panel',
+            'groups.enrollment.proposal.defenses.evaluations',
+            'groups.enrollment.proposal.approvals',
+            'groups.enrollment.proposal.archive',
+            'submissions',
+            'facultyDetail',
+            'groupsAsAdviser.users',
+            'defensePanels.defense.proposal.enrollment.group',
         ]);
 
         $profileData = [
             'basic_info' => [
-                'user_id' => $user->id,
-                'full_name' => $user->full_name,
-                'email' => $user->email,
-                'roles' => $user->roles->pluck('name'),
+                'UserID' => $user->UserID,
+                'SchoolID' => $user->SchoolID,
+                'FullName' => $user->FullName,
+                'Email' => $user->Email,
+                'BirthDate' => $user->BirthDate,
+                'Roles' => $user->roles->pluck('RoleName'),
             ],
         ];
 
         if ($user->hasRole('student')) {
             $profileData['student_info'] = [
-                'student_id' => $user->id_number,
-                'group_code' => $user->groups->first()?->group_code ?? null,
-                'year_level' => $user->groups->first()?->year_level ?? null,
-                'group_role' => $user->groups->first()?->pivot?->role ?? null,
-                'adviser' => $user->groups->first()?->advisers->first()?->full_name ?? null,
+                'StudentID' => $user->SchoolID,
+                'GroupCode' => $user->groups->first()?->GroupCode ?? null,
+                'YearLevel' => $user->groups->first()?->YearLevel ?? null,
+                'GroupRole' => $user->groups->first()?->pivot?->GroupRole ?? null,
+                'Adviser' => $user->groups->first()?->advisers->first()?->FullName ?? null,
             ];
 
-            if($user->groups->isNotEmpty() && $user->groups->first()->proposal) {
-                $proposal = $user->groups->first()->proposal;
+            if($user->groups->isNotEmpty() && $user->groups->first()->enrollment && $user->groups->first()->enrollment->proposal) {
+                $proposal = $user->groups->first()->enrollment->proposal;
                 $profileData['proposal_details'] = [
-                    'title' => $proposal->title,
-                    'status' => $proposal->status,
-                    'submission_date' => $proposal->submission_date,
-                    'deadline' => $proposal->deadline,
-                    'approvals' => $proposal->approvals->map(function ($approval) {
+                    'ResearchTitle' => $proposal->ResearchTitle,
+                    'Status' => $proposal->Status,
+                    'SubmissionDate' => $proposal->SubmissionDate,
+                    'Deadline' => $proposal->Deadline,
+                    'Approvals' => $proposal->approvals->map(function ($approval) {
                         return [
-                            'panelist' => $approval->user->full_name,
-                            'status' => $approval->status,
+                            'Approver' => $approval->approvedUser->FullName,
+                            'ApprovalRole' => $approval->ApprovalRole,
+                            'Status' => $approval->Status,
+                            'Remarks' => $approval->Remarks,
                         ];
                     }),
                 ];
 
-                $profileData['research_archive'] = [
-                    'abstract' => $proposal->abstract,
-                    'manuscript' => $proposal->manuscript_path,
-                    'published_date' => $proposal->published_date,
-                ];
+                if($proposal->archive) {
+                    $profileData['research_archive'] = [
+                        'AbstractFilePath' => $proposal->archive->AbstractFilePath,
+                        'FullManuscriptPath' => $proposal->archive->FullManuscriptPath,
+                        'PublishedDate' => $proposal->archive->PublishedDate,
+                    ];
+                }
 
                 if($proposal->defenses->isNotEmpty()){
                     $profileData['defense_details'] = $proposal->defenses->map(function ($defense){
                         return [
-                            'defense_date' => $defense->defense_date,
-                            'location' => $defense->location,
-                            'panel' => $defense->panel->map(function($panelist){
+                            'DefenseID' => $defense->DefenseID,
+                            'DefenseType' => $defense->DefenseType,
+                            'Schedule' => $defense->Schedule,
+                            'OverallVerdict' => $defense->OverallVerdict,
+                            'Panel' => $defense->panel->map(function($panelist){
                                 return [
-                                    'name' => $panelist->full_name,
-                                    'status' => $panelist->pivot->status,
-                                    'evaluation' => $panelist->pivot->evaluation,
+                                    'FullName' => $panelist->FullName,
+                                    'Status' => $panelist->pivot->Status,
                                 ];
                             }),
-                            'verdict' => $defense->verdict,
+                            'Evaluations' => $defense->evaluations->map(function($evaluation){
+                                return [
+                                    'Panelist' => $evaluation->panelistUser->FullName,
+                                    'Verdict' => $evaluation->Verdict,
+                                ];
+                            }),
                         ];
                     });
                 }
@@ -80,30 +101,50 @@ class UserProfileController extends Controller
 
             $profileData['submissions'] = $user->submissions->map(function($submission){
                 return [
-                    'file_type' => $submission->file_type,
-                    'submitted_at' => $submission->created_at,
-                    'proposal_title' => $submission->proposal->title,
+                    'FileID' => $submission->FileID,
+                    'FileType' => $submission->FileType,
+                    'FilePath' => $submission->FilePath,
+                    'ProposalID' => $submission->ProposalID,
+                    'DefenseID' => $submission->DefenseID,
                 ];
             });
 
         }
 
-        if ($user->hasRole('faculty')) {
+        if ($user->hasRole('faculty') || $user->hasRole('adviser') || $user->hasRole('research coordinator')) {
             $profileData['faculty_info'] = [
-                'faculty_type' => $user->facultyDetail?->faculty_type ?? null,
-                'groups_advised' => $user->groupsAsAdviser->map(function($group){
+                'FacultyType' => $user->facultyDetail?->FacultyType ?? null,
+                'GroupsAdvised' => $user->groupsAsAdviser->map(function($group){
                     return [
-                        'group_name' => $group->name,
-                        'members' => $group->users->pluck('full_name'),
+                        'GroupID' => $group->GroupID,
+                        'GroupCode' => $group->GroupCode,
+                        'YearLevel' => $group->YearLevel,
+                        'Members' => $group->users->map(function($member){
+                            return [
+                                'FullName' => $member->FullName,
+                                'GroupRole' => $member->pivot->GroupRole,
+                            ];
+                        }),
                     ];
                 }),
-                'defense_panels' => $user->defensePanels->map(function($panel){
+                'DefensePanels' => $user->defensePanels->map(function($panel){
                     return [
-                        'defense_date' => $panel->defense?->defense_date,
-                        'proposal_title' => $panel->defense?->proposal?->title,
-                        'group' => $panel->defense?->proposal?->group?->name,
+                        'DefenseID' => $panel->DefenseID,
+                        'DefenseType' => $panel->defense?->DefenseType,
+                        'Schedule' => $panel->defense?->Schedule,
+                        'ResearchTitle' => $panel->defense?->proposal?->ResearchTitle,
+                        'Group' => $panel->defense?->proposal?->enrollment?->group?->GroupCode,
+                        'Status' => $panel->pivot->Status,
                     ];
                 }),
+            ];
+        }
+
+        if ($user->hasRole('administrator')) {
+            $profileData['admin_info'] = [
+                'SystemAccess' => 'full',
+                'CanCreateFaculty' => true,
+                'CanManageUsers' => true,
             ];
         }
 

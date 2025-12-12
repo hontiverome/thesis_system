@@ -3,13 +3,25 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
-use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController};
+use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController, PasswordController};
 use App\Http\Controllers\Api\V1\UserProfileController;
+use App\Http\Controllers\Api\V1\CreateFacultyController;
+use App\Http\Controllers\Api\V1\AdminListController;
+use App\Http\Controllers\Api\V1\AdminRoleController;
+use App\Http\Controllers\Api\V1\GroupPageController;
+use App\Http\Controllers\Api\V1\AdminGroupController;
+use App\Http\Controllers\Api\V1\AdviserGroupController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
-    Route::post('login', [LoginController::class, 'login'])
-        ->name('api.login');
+    // Student login
+    Route::post('login/student', [LoginController::class, 'login'])
+        ->name('api.login.student');
+
+    // Faculty login
+    Route::post('login/faculty', [FacultyLoginController::class, 'login'])
+        ->name('api.login.faculty');
+
     Route::post('register', [RegisterController::class, 'register'])
         ->name('api.register');
     Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword'])
@@ -21,6 +33,7 @@ Route::prefix('v1/auth')->group(function () {
 // Protected Auth routes
 Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('api.logout');
+    Route::put('password', [PasswordController::class, 'update'])->name('api.password.update');
 });
 
 // Test endpoint to verify CORS is working
@@ -51,4 +64,48 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
     })->name('user');
     
     Route::get('/users/me', [UserProfileController::class, 'show'])->name('users.me');
+});
+
+// Admin routes
+Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admin.')->group(function () {
+    Route::post('/users', [CreateFacultyController::class, 'createFacultyUser'])->name('users.create');
+    Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
+    Route::put('/users/{userId}/role', [AdminRoleController::class, 'changeRole'])->name('users.role.change');
+    Route::get('/roles/available', [AdminRoleController::class, 'getAvailableRoles'])->name('roles.available');
+    
+    // F-017: Group Management
+    Route::get('/groups', [AdminGroupController::class, 'getGroupsWithCourses'])->name('groups.list');
+    Route::put('/groups/{groupId}/course', [AdminGroupController::class, 'assignCourse'])->name('groups.course.assign');
+    Route::get('/courses/available', [AdminGroupController::class, 'getAvailableCourses'])->name('courses.available');
+});
+
+// Adviser routes
+Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.adviser.')->group(function () {
+    // F-012: Create new group
+    Route::post('/groups', [AdviserGroupController::class, 'createGroup'])->name('groups.create');
+    
+    // Group management
+    Route::delete('/groups/{groupId}', [AdviserGroupController::class, 'deleteGroup'])->name('groups.delete');
+    
+    // F-013: Group member management
+    Route::post('/groups/{groupId}/members', [AdviserGroupController::class, 'addMember'])->name('groups.members.add');
+    Route::delete('/groups/{groupId}/members/{studentUserId}', [AdviserGroupController::class, 'removeMember'])->name('groups.members.remove');
+    
+    // F-014: Set group leader
+    Route::put('/groups/{groupId}/leader', [AdviserGroupController::class, 'setGroupLeader'])->name('groups.leader.set');
+    
+    // Helper endpoints
+    Route::get('/students/available', [AdviserGroupController::class, 'getAvailableStudents'])->name('students.available');
+    Route::get('/groups/my', [AdviserGroupController::class, 'getMyGroups'])->name('groups.my');
+});
+
+// F-015 Group Page routes
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+    // Student group page
+    Route::get('/groups/my-group', [GroupPageController::class, 'getMyGroup'])->name('groups.my-group');
+    
+    // Adviser group page (requires adviser middleware)
+    Route::get('/adviser/groups/{groupId}', [GroupPageController::class, 'getGroupPage'])
+        ->middleware(['adviser'])
+        ->name('adviser.groups.page');
 });

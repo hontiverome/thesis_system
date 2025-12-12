@@ -10,19 +10,30 @@ class DefenseEvaluation extends Model
 {
     use HasFactory;
 
+    protected $table = 'DefenseEvaluations';
+
+    protected $primaryKey = 'EvaluationID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
-        'defense_id',
-        'panelist_user_id',
-        'verdict',
+        'EvaluationID',
+        'DefenseID',
+        'PanelistUserID',
+        'Verdict',
     ];
 
     public function defense(): BelongsTo
     {
-        return $this->belongsTo(Defense::class);
+        return $this->belongsTo(Defense::class, 'DefenseID');
     }
 
-    public function panelist(): BelongsTo
+    public function panelistUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'panelist_user_id');
+        return $this->belongsTo(User::class, 'PanelistUserID');
     }
 }

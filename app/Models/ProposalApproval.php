@@ -11,11 +11,11 @@ class ProposalApproval extends Model
     use HasFactory;
 
     protected $fillable = [
-        'proposal_id',
-        'approved_user_id',
-        'approval_role',
-        'status',
-        'remarks',
+        'ProposalID',
+        'ApprovedUserID',
+        'ApprovalRole',
+        'Status',
+        'Remarks',
     ];
 
     public function proposal(): BelongsTo
@@ -25,6 +25,6 @@ class ProposalApproval extends Model
 
     public function approvedUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'approved_user_id');
+        return $this->belongsTo(User::class, 'ApprovedUserID');
     }
 }

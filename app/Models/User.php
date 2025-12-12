@@ -15,18 +15,27 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $table = 'Users';
+
+    protected $primaryKey = 'UserID';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'id_number',
-        'email',
-        'password',
-        'birth_date',
+        'SchoolID',
+        'FullName',
+        'Email',
+        'BirthDate',
+        'PasswordHash',
     ];
 
     /**
@@ -35,7 +44,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'PasswordHash',
         'remember_token',
     ];
 
@@ -45,28 +54,17 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $appends = [
-        'full_name',
     ];
 
-    /**
-     * Get the user's full name.
-     *
-     * @return ?string
-     */
-    public function getFullNameAttribute(): ?string
-    {
-        if ($this->first_name && $this->last_name) {
-            return "{$this->first_name} {$this->last_name}";
-        }
-        return null;
-    }
+
+
 
     /**
      * The roles that belong to the user.
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class, 'UserRoles', 'UserID', 'RoleID');
     }
 
     /**
@@ -77,7 +75,11 @@ class User extends Authenticatable
      */
     public function hasRole(string $role): bool
     {
-        return $this->roles->contains('name', $role);
+        $needle = strtolower($role);
+
+        return $this->roles->contains(function ($r) use ($needle) {
+            return strtolower($r->RoleName) === $needle;
+        });
     }
 
     /**
@@ -85,7 +87,7 @@ class User extends Authenticatable
      */
     public function facultyDetail()
     {
-        return $this->hasOne(FacultyDetail::class);
+        return $this->hasOne(FacultyDetail::class, 'UserID');
     }
 
     /**
@@ -93,7 +95,7 @@ class User extends Authenticatable
      */
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class, 'group_members', 'student_user_id', 'group_id')->withPivot('role')->withTimestamps();
+        return $this->belongsToMany(Group::class, 'GroupMembers', 'StudentUserID', 'GroupID')->withPivot('GroupRole');
     }
 
     /**
@@ -101,7 +103,7 @@ class User extends Authenticatable
      */
     public function submissions()
     {
-        return $this->hasMany(Submission::class, 'uploaded_by_user_id');
+        return $this->hasMany(Submission::class, 'UploadedByUserID');
     }
 
     /**
@@ -109,15 +111,15 @@ class User extends Authenticatable
      */
     public function proposalApprovals()
     {
-        return $this->hasMany(ProposalApproval::class);
+        return $this->hasMany(ProposalApproval::class, 'ApprovedUserID');
     }
 
     /**
      * Get the defense panels for the user.
      */
-    public function defensePanels()
+    public function defensePanels(): BelongsToMany
     {
-        return $this->hasMany(DefensePanel::class);
+        return $this->belongsToMany(Defense::class, 'DefensePanel', 'PanelistUserID', 'DefenseID')->withPivot('Status');
     }
 
     /**
@@ -125,7 +127,7 @@ class User extends Authenticatable
      */
     public function groupsAsAdviser(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class, 'group_advisers', 'adviser_user_id', 'group_id')->withTimestamps();
+        return $this->belongsToMany(Group::class, 'GroupAdvisers', 'AdviserUserID', 'GroupID');
     }
 
     /**
@@ -136,9 +138,8 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'birth_date' => 'date',
+            'PasswordHash' => 'hashed',
+            'BirthDate' => 'date',
         ];
     }
 

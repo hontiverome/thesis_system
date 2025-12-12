@@ -9,19 +9,43 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordResetMail;
+
 class PasswordResetController extends Controller
 {
     public function forgotPassword(Request $request)
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $user = User::where('Email', $request->email)->first();
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return response()->json(['message' => __($status)]);
+        if (!$user) {
+            return response()->json(['message' => 'We can\'t find a user with that email address.'], 404);
         }
 
-        return response()->json(['message' => __($status)], 422);
+        $token = Str::random(60);
+
+        DB::table('PasswordResets')->insert([
+            'UserID' => $user->UserID,
+            'ResetToken' => $token,
+            'CreatedAt' => now(),
+            'ExpiresAt' => now()->addHours(1),
+        ]);
+
+        // Attempt to send mail if mailer is configured; ignore failures in dev
+        try {
+            Mail::to($user->Email)->send(new PasswordResetMail($token));
+        } catch (\Throwable $e) {
+            // For now, silently ignore mail errors so API remains usable without mail setup
+        }
+
+        // FOR DEVELOPMENT
+        return response()->json([
+            'message' => 'We have generated a password reset token.',
+            'reset_token' => $token,
+        ]);
     }
 
     public function resetPassword(Request $request)
@@ -29,22 +53,35 @@ class PasswordResetController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => ['required', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',],
+        ], [
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            'password.min' => 'The password must be at least 8 characters.',
+            'password.regex' => 'The password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
         ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->save();
-            }
-        );
+        $user = User::where('Email', $request->email)->first();
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json(['message' => __($status)]);
+        if (!$user) {
+            return response()->json(['message' => 'We can\'t find a user with that email address.'], 404);
+        }
+        
+        $resetRecord = DB::table('PasswordResets')
+            ->where('UserID', $user->UserID)
+            ->where('ResetToken', $request->token)
+            ->first();
+
+        if (!$resetRecord || $resetRecord->IsUsed || now()->isAfter($resetRecord->ExpiresAt)) {
+            return response()->json(['message' => 'This password reset token is invalid.'], 400);
         }
 
-        return response()->json(['message' => __($status)], 400);
+        $user->forceFill([
+            'PasswordHash' => $request->password
+        ])->save();
+
+        DB::table('PasswordResets')->where('ResetID', $resetRecord->ResetID)->update(['IsUsed' => true]);
+
+        return response()->json(['message' => 'Your password has been reset!']);
     }
 }

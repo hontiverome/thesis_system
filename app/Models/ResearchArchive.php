@@ -11,10 +11,10 @@ class ResearchArchive extends Model
     use HasFactory;
 
     protected $fillable = [
-        'proposal_id',
-        'abstract_file_path',
-        'full_manuscript_path',
-        'published_date',
+        'ProposalID',
+        'AbstractFilePath',
+        'FullManuscriptPath',
+        'PublishedDate',
     ];
 
     public function proposal(): BelongsTo

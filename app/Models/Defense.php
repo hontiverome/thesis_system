@@ -5,32 +5,49 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Defense extends Model
 {
     use HasFactory;
 
+    protected $table = 'Defenses';
+
+    protected $primaryKey = 'DefenseID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
-        'enrollment_id',
-        'proposal_id',
-        'defense_type',
-        'schedule',
-        'overall_verdict',
+        'DefenseID',
+        'EnrollmentID',
+        'ProposalID',
+        'DefenseType',
+        'Schedule',
+        'OverallVerdict',
     ];
 
     public function enrollment(): BelongsTo
     {
-        return $this->belongsTo(Enrollment::class);
+        return $this->belongsTo(Enrollment::class, 'EnrollmentID');
     }
 
     public function proposal(): BelongsTo
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->belongsTo(Proposal::class, 'ProposalID');
     }
 
     public function panel(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'defense_panel')->withPivot('status', 'evaluation')->withTimestamps();
+        return $this->belongsToMany(User::class, 'DefensePanel', 'DefenseID', 'PanelistUserID')->withPivot('Status');
+    }
+
+    public function evaluations(): HasMany
+    {
+        return $this->hasMany(DefenseEvaluation::class, 'DefenseID', 'DefenseID');
     }
 }

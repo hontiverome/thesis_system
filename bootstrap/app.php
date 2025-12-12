@@ -33,6 +33,13 @@ return Application::configure(basePath: dirname(__DIR__))
         //     'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class.':60,1',
         // ]);    ]);
         
+        // Register admin, adviser, and group leader middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'adviser' => \App\Http\Middleware\AdviserMiddleware::class,
+            'group_leader' => \App\Http\Middleware\GroupLeaderMiddleware::class,
+        ]);
+        
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
@@ -42,5 +49,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'message' => 'Unauthenticated.',
+                    'error' => 'Invalid or expired token. Please login again.'
+                ], 401);
+            }
+        });
     })->create();

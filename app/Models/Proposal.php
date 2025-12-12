@@ -12,28 +12,30 @@ class Proposal extends Model
     use HasFactory;
 
     protected $fillable = [
-        'enrollment_id',
-        'title',
-        'status',
-        'submission_date',
-        'deadline',
-        'abstract',
-        'manuscript_path',
-        'published_date',
+        'EnrollmentID',
+        'ResearchTitle',
+        'SubmissionDate',
+        'Deadline',
+        'Status',
     ];
 
     public function enrollment(): BelongsTo
     {
-        return $this->belongsTo(Enrollment::class);
+        return $this->belongsTo(Enrollment::class, 'EnrollmentID');
     }
 
     public function approvals(): HasMany
     {
-        return $this->hasMany(ProposalApproval::class);
+        return $this->hasMany(ProposalApproval::class, 'ProposalID');
     }
 
     public function defenses(): HasMany
     {
-        return $this->hasMany(Defense::class);
+        return $this->hasMany(Defense::class, 'ProposalID');
+    }
+
+    public function group()
+    {
+        return $this->hasOneThrough(Group::class, Enrollment::class, 'EnrollmentID', 'GroupID', 'EnrollmentID', 'GroupID');
     }
 }
