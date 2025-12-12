@@ -21,6 +21,8 @@
         <div class="hero-bottom-inner">
           <h1 class="landing-title">S I N T A N G&nbsp;&nbsp;P A A R A L A N </h1>
           <p class="landing-tagline">“Mula Sa'Yo, Para sa Bayan”</p>
+          <div class="transition-overlay" :class="{ 'transition-overlay--active': isZooming }">
+          </div>
         </div>
       </div>    
       </div>
@@ -41,7 +43,7 @@ const handleSealClick = () => {
 
   setTimeout(() => {
     router.push('/portal');
-  }, 450);
+  }, 1000);
 };
 
 </script>
@@ -54,7 +56,7 @@ const handleSealClick = () => {
   margin: 0;
   padding: 0;
 }
-
+/* Campus bg */
 .hero-container {
   position:relative;
   width: 100%;
@@ -91,9 +93,9 @@ const handleSealClick = () => {
   border-radius: 50%;
   opacity: 0.65;
   transition:
-    opacity 0.45s ease,
-    transform 0.45s ease,
-    filter 0.45s ease;
+    opacity 0.9s ease,
+    transform 0.9s ease,
+    filter 0.9s ease;
   filter: drop-shadow(0 0 25px rgba(255,255,255,0.25))
           drop-shadow(0 0 60px rgba(0,0,0,0.35));
   pointer-events: auto; 
@@ -102,10 +104,7 @@ const handleSealClick = () => {
 
 .seal-zooming {
   opacity: 1;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) scale(8); /* zoom */
+  transform: scale(8);        
   z-index: 9999;
   filter: none;
 }
@@ -154,6 +153,8 @@ const handleSealClick = () => {
    text-shadow: 0 2px 10px rgba(0,0,0,0.35);
 }
 
+/* Logo to bee clickable */
+
 .clickable-seal {
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -172,6 +173,26 @@ const handleSealClick = () => {
     drop-shadow(0 0 28px rgba(255,255,255,0.55))
     drop-shadow(0 0 70px rgba(0,0,0,0.6));
 }
+
+/* Transisition animation */
+
+.transition-overlay {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  backdrop-filter: blur(0px);
+  background: rgba(0, 0, 0, 0);
+  transition: transform 0.9s cubic-bezier(0.2, 0.9, 0.2, 1);
+  pointer-events: none;
+  z-index: 9998; 
+}
+
+.transition-overlay--active {
+  opacity: 1;
+  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.15);
+}
+
 
 :global(.main-content) {
   padding: 0 !important;
