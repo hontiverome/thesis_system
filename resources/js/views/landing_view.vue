@@ -1,6 +1,6 @@
 <template>
   <div class="landing-page">
-    <div class="hero-container" @click="goToPortal">
+    <div class="hero-container">
       <div class="hero-image-wrapper">
         <img
         src= "/assets/campus.jpg"
@@ -20,6 +20,7 @@
           src="/assets/PUP_logo.png"
           alt="PUP Logo"
           class="seal-image"
+          @click="goToPortal"
           />
       </div>
     </div>
