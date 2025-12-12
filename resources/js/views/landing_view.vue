@@ -38,74 +38,114 @@ const goToPortal = () => {
 
 <style scoped>
 
+.landing-page{
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
 .hero-container {
   position:relative;
   width: 100%;
-  max-width: 1280px;
-  cursor: pointer;
+  height: 100vh;
+  max-width: none;
+  cursor: default;
   overflow: hidden;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
 }
 
 .hero-image-wrapper {
-  position: relative;
-  height: 55vh;
-  min-height: 260px;
+  position: absolute;
+  inset:0
 }
 
 .hero-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display:block
 }
 
 /* Seal */
 .seal-wrapper {
   position: absolute;
   left: 50%;
-  bottom: -12%;
-  transform: translateX(-50%);
-  z-index: 10;
+  bottom: 50vh;
+  transform: translateX(-50%,50%);
+  z-index: 5;
+  pointer-events:none
 }
 
 .seal-image {
-  width: 220px;
+  width: 400px;
+  max-width: 70vw;
   border-radius: 50%;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.65);
+  opacity: 0.35;
+  filter: drop-shadow(0 0 25px rgba(255,255,255,0.25))
+          drop-shadow(0 0 60px rgba(0,0,0,0.35));
+  pointer-events: auto; 
 }
 
 /* Bottom maroon band */
 .hero-bottom {
-  background-color: #7a0000;
-  padding: 4.5rem 1rem 3rem;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 50vh;
+    background: linear-gradient(
+    to bottom,
+    rgba(122, 0, 0, 0) 0%,
+    rgba(122, 0, 0, 0.85) 18%,
+    #7a0000 45%,
+    #7a0000 100%
+  );
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .hero-bottom-inner {
   text-align: center;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  transform: translateY(55px);
 }
 
 .landing-title {
   letter-spacing: 0.6rem;
   font-size: 1.4rem;
   font-weight: 600;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+  margin: 0;
 }
 
 .landing-tagline {
   font-style: italic;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
+   text-shadow: 0 2px 10px rgba(0,0,0,0.35);
 }
 
 .clickable-seal {
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease; 
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .clickable-seal:hover {
   transform: scale(1.03);
+  opacity:0.45;
 }
+
+:global(.main-content) {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+:global(.content-wrapper) {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
 
 @media (max-width: 768px) {
   .seal-image {
