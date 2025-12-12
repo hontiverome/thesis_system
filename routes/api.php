@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, Facul
 use App\Http\Controllers\Api\V1\UserProfileController;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
+use App\Http\Controllers\Api\V1\AdminRoleController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -66,4 +67,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
 Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admin.')->group(function () {
     Route::post('/users', [CreateFacultyController::class, 'createFacultyUser'])->name('users.create');
     Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
+    Route::put('/users/{userId}/role', [AdminRoleController::class, 'changeRole'])->name('users.role.change');
+    Route::get('/roles/available', [AdminRoleController::class, 'getAvailableRoles'])->name('roles.available');
 });
