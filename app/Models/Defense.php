@@ -5,13 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Defense extends Model
 {
     use HasFactory;
 
+    protected $table = 'Defenses';
+
+    protected $primaryKey = 'DefenseID';
+
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
+        'DefenseID',
         'EnrollmentID',
         'ProposalID',
         'DefenseType',
@@ -36,6 +48,6 @@ class Defense extends Model
 
     public function evaluations(): HasMany
     {
-        return $this->hasMany(DefenseEvaluation::class, 'DefenseID');
+        return $this->hasMany(DefenseEvaluation::class, 'DefenseID', 'DefenseID');
     }
 }
