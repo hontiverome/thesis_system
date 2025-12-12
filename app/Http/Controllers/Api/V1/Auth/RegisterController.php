@@ -25,7 +25,7 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'SchoolID' => ['required', 'string', 'max:50', 'unique:Users,SchoolID'],
             'FirstName' => ['required', 'string', 'max:100'],
-            'MiddleInitial' => ['nullable', 'string', 'max:100'],
+            'MiddleName' => ['nullable', 'string', 'max:100'],
             'Surname' => ['required', 'string', 'max:100'],
             'Email' => ['required', 'string', 'email', 'max:100', 'unique:Users,Email'],
             'birth_month' => ['required', 'integer', 'min:1', 'max:12'],
@@ -40,7 +40,7 @@ class RegisterController extends Controller
 
         try {
             $birthDate = Carbon::createFromDate($request->birth_year, $request->birth_month, $request->birth_day)->startOfDay();
-            $fullName = $request->FirstName . ' ' . ($request->MiddleInitial ? $request->MiddleInitial . '. ' : '') . $request->Surname;
+            $fullName = $request->FirstName . ' ' . ($request->MiddleName ? $request->MiddleName . ' ' : '') . $request->Surname;
 
             $user = DB::transaction(function () use ($request, $birthDate, $fullName) {
                 $user = User::create([
