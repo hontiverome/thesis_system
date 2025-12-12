@@ -12,13 +12,60 @@
           </div>
 
           <form class="register-form" @submit.prevent="handleRegister">
-            <!-- Student number -->
+            <!-- First Row: School ID and First Name -->
+            <div class="form-row">
+              <div class="field">
+                <input
+                  v-model.trim="form.SchoolID"
+                  type="text"
+                  placeholder="SCHOOL ID"
+                  autocomplete="username"
+                  :disabled="loading"
+                  required
+                />
+              </div>
+              <div class="field">
+                <input
+                  v-model.trim="form.FirstName"
+                  type="text"
+                  placeholder="FIRST NAME"
+                  autocomplete="given-name"
+                  :disabled="loading"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Second Row: Middle Name and Surname -->
+            <div class="form-row">
+              <div class="field">
+                <input
+                  v-model.trim="form.MiddleName"
+                  type="text"
+                  placeholder="MIDDLE NAME (OPTIONAL)"
+                  autocomplete="additional-name"
+                  :disabled="loading"
+                />
+              </div>
+              <div class="field">
+                <input
+                  v-model.trim="form.Surname"
+                  type="text"
+                  placeholder="SURNAME"
+                  autocomplete="family-name"
+                  :disabled="loading"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Email Field (Full Width) -->
             <div class="field">
               <input
-                v-model.trim="form.student_number"
-                type="text"
-                placeholder="STUDENT NUMBER"
-                autocomplete="username"
+                v-model.trim="form.Email"
+                type="email"
+                placeholder="EMAIL"
+                autocomplete="email"
                 :disabled="loading"
                 required
               />
@@ -85,12 +132,21 @@
               <span v-else>REGISTER</span>
             </button>
 
-            <transition name="fade">
-              <p v-if="error" class="error">{{ error }}</p>
-            </transition>
+            <!-- Success Message -->
+            <div v-if="success" class="success-message">
+              <p>Registration successful! Please proceed to <router-link to="/login/student" class="login-link">student login</router-link> to access your account.</p>
+            </div>
 
-            <footer class="register-footer">©2025 T-SIS | ALL RIGHT RESERVED</footer>
+            <!-- Error Message -->
+            <div v-if="error" class="error">
+              <p>{{ error }}</p>
+            </div>
           </form>
+
+          <transition name="fade">
+          </transition>
+
+          <footer class="register-footer">2025 T-SIS | ALL RIGHT RESERVED</footer>
         </div>
       </section>
 
@@ -130,9 +186,14 @@ import bgImage from '../../../assets/access_bg.jpg'
 const router = useRouter()
 const loading = ref(false)
 const error = ref('')
+const success = ref(false)
 
 const form = reactive({
-  student_number: '',
+  SchoolID: '',
+  FirstName: '',
+  MiddleName: '',
+  Surname: '',
+  Email: '',
   birth_month: '',
   birth_day: '',
   birth_year: '',
@@ -143,10 +204,20 @@ const form = reactive({
 const handleRegister = async () => {
   loading.value = true
   error.value = ''
+  success.value = false
 
   try {
-    await axios.post('/api/v1/auth/register', form)
-    router.push({ name: 'login.student' })
+    // Convert birth date fields to integers for API
+    const formData = {
+      ...form,
+      birth_month: parseInt(form.birth_month),
+      birth_day: parseInt(form.birth_day),
+      birth_year: parseInt(form.birth_year)
+    }
+    
+    await axios.post('/api/v1/auth/register', formData)
+    success.value = true
+    loading.value = false
   } catch (err) {
     if (err?.response?.data?.errors) {
       error.value = Object.values(err.response.data.errors).flat().join('\n')
@@ -186,7 +257,7 @@ const handleRegister = async () => {
   width:min(1120px, 100%);
   min-height:620px;
   display:grid;
-  grid-template-columns: 1fr 1.02fr; /* form left, welcome right */
+  grid-template-columns: 1.3fr 0.8fr; 
   gap:32px;
   z-index:1;
 }
@@ -225,6 +296,12 @@ const handleRegister = async () => {
   width:100%;
   max-width:520px;
   margin:0 auto;
+}
+
+.form-row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:16px;
 }
 
 .field{ position:relative; margin:18px 0; }
@@ -306,6 +383,27 @@ const handleRegister = async () => {
   color:#7b0a0a;
   font-size:13px;
   white-space:pre-wrap;
+}
+
+.success-message{
+  margin:14px 0 0;
+  padding:10px 12px;
+  border-radius:10px;
+  background:rgba(240,255,240,0.85);
+  border:1px solid rgba(0,200,0,0.2);
+  color:#0a7b0a;
+  font-size:13px;
+  text-align:center;
+}
+
+.login-link{
+  color:#7b0a0a;
+  text-decoration:underline;
+  font-weight:600;
+}
+
+.login-link:hover{
+  color:#5a0808;
 }
 
 .register-footer{
