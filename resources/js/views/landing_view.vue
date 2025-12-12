@@ -94,4 +94,26 @@ const goToPortal = () => {
   font-style: italic;
   margin-top: 0.5rem;
 }
+
+@media (max-width: 768px) {
+  .seal-image {
+    width: 170px;
+  }
+
+  .landing-title {
+    letter-spacing: 0.35rem;
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .seal-image {
+    width: 140px;
+  }
+
+  .landing-title {
+    font-size: 0.95rem;
+    letter-spacing: 0.25rem;
+  }
+}
 </style>
