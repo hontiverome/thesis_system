@@ -45,7 +45,8 @@ function createAuth() {
     // Fetch user data from the server
     const fetchUser = async () => {
         try {
-            const response = await axios.get('/api/user');
+            // ⚡️ FIX: Updated URL to v1
+            const response = await axios.get('/api/v1/user');
             user.value = response.data;
         } catch (err) {
             console.error('Failed to fetch user:', err);
@@ -62,68 +63,34 @@ function createAuth() {
         error.value = null;
         
         try {
-            const response = await axios.post('/api/login', {
-                ...credentials,
+            await axios.get('/sanctum/csrf-cookie');
+
+            // ⚡️ FIX: Send exactly what the backend error asked for
+            const payload = {
+                SchoolID: credentials.student_number, // Map 'student_number' to 'SchoolID'
+                birth_month: parseInt(credentials.birth_month),
+                birth_day: parseInt(credentials.birth_day),
+                birth_year: parseInt(credentials.birth_year),
+                password: credentials.password,       // Send password too
                 device_name: 'web-browser'
-            });
+            };
+
+            // Post to the STUDENT route
+            const response = await axios.post('/api/v1/auth/login/student', payload);
             
             if (!response.data || !response.data.token) {
                 throw new Error('No token received from server');
             }
             
-            // Store the token and user data
             const { token, user: userData } = response.data;
-            
-            // Set the token in axios and localStorage
             setAuthToken(token);
-            
-            // Update the user object
             user.value = userData;
             
-            // Return the response data for the component to use
             return { token, user: userData };
+
         } catch (err) {
             console.error('Auth error:', err);
-            console.log('Full error response:', err.response?.data);
-            
-            // Handle different error statuses
-            if (err.response) {
-                // Server responded with a status code outside 2xx
-                if (err.response.status === 422) {
-                    // Log the full response for debugging
-                    console.log('422 Response data:', err.response.data);
-                    
-                    // Handle different 422 response formats
-                    const responseData = err.response.data;
-                    
-                    // Laravel validation errors
-                    if (responseData.errors) {
-                        error.value = Object.values(responseData.errors).flat().join(' ');
-                    } 
-                    // Laravel validation message
-                    else if (responseData.message) {
-                        error.value = responseData.message;
-                    }
-                    // Fallback for other 422 responses
-                    else {
-                        error.value = 'Invalid input. Please check your email and password.';
-                    }
-                } else if (err.response.status === 401) {
-                    error.value = 'Invalid email or password. Please try again.';
-                } else if (err.response.data?.message) {
-                    error.value = err.response.data.message;
-                } else {
-                    error.value = `Server error (${err.response.status}): ${err.response.statusText}`;
-                }
-            } else if (err.request) {
-                // Request was made but no response received
-                error.value = 'Unable to connect to the server. Please check your internet connection.';
-            } else {
-                // Something happened in setting up the request
-                error.value = 'An unexpected error occurred. Please try again.';
-            }
-            
-            // Re-throw the error so the calling component can handle it if needed
+            error.value = err.response?.data?.message || 'Login failed.';
             throw err;
         } finally {
             loading.value = false;
@@ -133,7 +100,8 @@ function createAuth() {
     // Logout method
     const logout = async () => {
         try {
-            await axios.post('/api/logout');
+            // ⚡️ FIX: Updated URL to v1
+            await axios.post('/api/v1/auth/logout');
         } catch (err) {
             console.error('Logout error:', err);
         } finally {
@@ -147,7 +115,8 @@ function createAuth() {
     // Check auth status
     const checkAuth = async () => {
         try {
-            const response = await axios.get('/api/user');
+            // ⚡️ FIX: Updated URL to v1
+            const response = await axios.get('/api/v1/user');
             user.value = response.data;
             return true;
         } catch (err) {

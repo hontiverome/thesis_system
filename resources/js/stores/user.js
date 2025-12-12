@@ -276,33 +276,38 @@ export const useUserStore = defineStore('user', () => {
   async function login(credentials) {
     isLoading.value = true;
     error.value = null;
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // In a real app, this would be an API call to your backend
-      // const response = await api.login(credentials);
-      
-      // Mock response
-      authToken.value = 'mock-jwt-token';
-      localStorage.setItem('authToken', authToken.value);
-      isAuthenticated.value = true;
-      
-      // Update last login time
-      user.value.lastLogin = new Date().toISOString();
-      user.value.updatedAt = new Date().toISOString();
-      saveUserToStorage();
-      
-      return { success: true };
+        await axios.get('/sanctum/csrf-cookie');
+
+        // 1. MAP INPUTS: Convert student_number to email
+        const payload = {
+            email: credentials.email || credentials.student_number, 
+            password: credentials.password,
+            device_name: 'web-browser'
+        };
+
+        // 2. CORRECT URL: Point to v1/auth/login
+        console.log("Attempting login to: /api/v1/auth/login"); // Check your console for this!
+        const response = await axios.post('/api/v1/auth/login', payload);
+
+        // 3. SUCCESS
+        const data = response.data; 
+        if (data.token) {
+            token.value = data.token;
+            localStorage.setItem('auth_token', data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            user.value = cleanUser(data.user || data); 
+            return { success: true, user: user.value };
+        }
     } catch (err) {
-      console.error('Login failed:', err);
-      error.value = err.message || 'Login failed. Please check your credentials.';
-      return { success: false, error: error.value };
+        console.error('Login failed:', err);
+        error.value = err.response?.data?.message || 'Login failed.';
+        return { success: false, error: error.value };
     } finally {
-      isLoading.value = false;
+        isLoading.value = false;
     }
-  }
+}
 
   async function register(userData) {
     isLoading.value = true;
