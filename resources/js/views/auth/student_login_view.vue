@@ -1,70 +1,149 @@
 <template>
-  <div class="auth-page page-view">
-    <div class="auth-container">
-      <header class="auth-header">
-        <div class="icon-header">👨‍🎓</div>
-        <h1 class="page-title">Student Login</h1>
-        <p class="page-subtitle">Enter your details to access the student dashboard</p>
-      </header>
-      
-      <form class="auth-form" @submit.prevent="handleLogin">
-        <div class="form-group">
-          <label class="form-label">Student Number</label>
-          <div class="input-wrapper">
-            <i class="icon icon-user"></i>
-            <input v-model="form.student_number" type="text" required class="form-control" placeholder="e.g., 2023-00001-MN-0" :disabled="loading">
+  <div class="login-page" :style="{ backgroundImage: `url(${bgImage})` }">
+    <div class="login-wrapper">
+      <!-- LEFT PANEL -->
+      <section class="login-left" aria-label="Welcome panel">
+        <!-- Back icon (top-left) -->
+        <router-link :to="{ name: 'access-portal' }" class="back-icon" aria-label="Back to portal">
+          ‹
+        </router-link>
+
+        <div class="school-header">
+          <div class="school-name">
+            POLYTECHNIC UNIVERSITY<br />
+            OF THE PHILIPPINES
+          </div>
+
+          <img :src="logoImage" alt="PUP Logo" class="school-logo" />
+        </div>
+
+        <div class="left-content student-left">
+          <h2 class="welcome-title">WELCOME BACK!</h2>
+
+          <div class="sub-cta">
+            <div class="sub-cta-title">DON'T HAVE AN ACCOUNT?</div>
+          </div>
+
+          <router-link :to="{ name: 'register' }" class="register-btn">
+            REGISTER
+          </router-link>
+
+          <!-- Bottom "Back to Portal" -->
+          <div class="left-bottom">
+            <router-link :to="{ name: 'access-portal' }" class="back-portal">
+              BACK TO PORTAL
+            </router-link>
           </div>
         </div>
+      </section>
 
-        <div class="form-group">
-          <label class="form-label">Birth Date</label>
-          <div class="date-grid">
-            <select v-model="form.birth_month" class="form-control" required :disabled="loading">
-              <option value="" disabled selected>Month</option>
-              <option v-for="m in 12" :key="m" :value="m">{{ m }}</option>
-            </select>
-            <input v-model="form.birth_day" type="number" min="1" max="31" class="form-control text-center" placeholder="Day" required :disabled="loading">
-            <input v-model="form.birth_year" type="number" min="1900" :max="new Date().getFullYear()" class="form-control text-center" placeholder="Year" required :disabled="loading">
+      <!-- RIGHT PANEL -->
+      <section class="login-right" aria-label="Login panel">
+        <div class="right-inner">
+          <h1 class="login-title">STUDENT LOGIN</h1>
+
+          <div class="brand-line">
+            <div class="tsis">T-SIS</div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <div class="input-wrapper">
-            <i class="icon icon-lock"></i>
-            <input v-model="form.password" type="password" required class="form-control" placeholder="Enter your password" :disabled="loading">
-          </div>
-        </div>
+          <form class="login-form" @submit.prevent="handleLogin">
+            <!-- STUDENT NUMBER -->
+            <div class="field">
+              <input
+                v-model.trim="form.student_number"
+                type="text"
+                placeholder="STUDENT NUMBER"
+                autocomplete="username"
+                :disabled="loading"
+                required
+              />
+            </div>
 
-        <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
-          <span v-if="loading">Logging in...</span>
-          <span v-else>Login</span>
-        </button>
+            <!-- BIRTH DATE (MONTH / DAY / YEAR) -->
+            <div class="date-row">
+              <select
+                v-model="form.birth_month"
+                class="date-input"
+                :disabled="loading"
+                required
+              >
+                <option value="" disabled> BIRTH MONTH </option>
+                <option v-for="m in 12" :key="m" :value="String(m).padStart(2, '0')">
+                  {{ String(m).padStart(2, '0') }}
+                </option>
+              </select>
 
-        <div class="links-container">
-          <router-link :to="{ name: 'register' }" class="link">Create Account</router-link>
-          <span class="divider">•</span>
-          <router-link :to="{ name: 'access-portal' }" class="link">Back to Portal</router-link>
-        </div>
-      </form>
+              <input
+                v-model.trim="form.birth_day"
+                type="number"
+                min="1"
+                max="31"
+                class="date-input"
+                placeholder="BIRTH DAY"
+                :disabled="loading"
+                required
+              />
 
-      <transition name="fade">
-        <div v-if="error" class="alert alert-error mt-3">
-          <i class="icon icon-alert-circle"></i>
-          {{ error }}
+              <input
+                v-model.trim="form.birth_year"
+                type="number"
+                min="1900"
+                :max="new Date().getFullYear()"
+                class="date-input"
+                placeholder="BIRTH YEAR"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="field">
+              <input
+                v-model="form.password"
+                type="password"
+                placeholder="PASSWORD"
+                autocomplete="current-password"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <div class="row">
+              <a href="#" class="forgot" @click.prevent>
+                FORGOT PASSWORD?
+              </a>
+            </div>
+
+            <button class="login-btn" type="submit" :disabled="loading">
+              <span v-if="loading">LOGGING IN…</span>
+              <span v-else>LOGIN</span>
+            </button>
+
+            <transition name="fade">
+              <p v-if="error" class="error">{{ error }}</p>
+            </transition>
+          </form>
+
+          <footer class="login-footer">2025 T-SIS | ALL RIGHT RESERVED</footer>
         </div>
-      </transition>
+      </section>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
-import { useAuth } from '@/composables/useAuth';
+import { reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 
-const { login } = useAuth();
-const loading = ref(false);
-const error = ref('');
+import logoImage from '../../../assets/PUP_logo.png'
+import bgImage from '../../../assets/access_bg.jpg'
+
+const router = useRouter()
+const { login } = useAuth()
+
+const loading = ref(false)
+const error = ref('')
 
 const form = reactive({
   student_number: '',
@@ -72,47 +151,327 @@ const form = reactive({
   birth_day: '',
   birth_year: '',
   password: ''
-});
+})
 
 const handleLogin = async () => {
-  loading.value = true;
-  error.value = '';
-  
+  loading.value = true
+  error.value = ''
+
   try {
-    await login(form);
-    // CRITICAL: Redirect to the STUDENT SPECIFIC dashboard
-    // Using window.location.href ensures the Navbar loads correctly
-    window.location.href = '/student-dashboard'; 
+    await login({ ...form })
+    router.push('/student-dashboard') // change if your student dashboard route differs
   } catch (err) {
-    if (err.response && err.response.data && err.response.data.message) {
-         error.value = err.response.data.message;
-    } else {
-         error.value = 'Login failed. Please check your credentials.';
-    }
+    error.value =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Login failed. Please check your credentials.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 </script>
 
 <style scoped>
-/* Keep your existing styles here */
-.auth-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: var(--bg-color, #f3f4f6); padding: 1rem; }
-.auth-container { width: 100%; max-width: 440px; background: white; border-radius: 12px; padding: 2.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
-.auth-header { text-align: center; margin-bottom: 2rem; }
-.icon-header { font-size: 3rem; margin-bottom: 0.5rem; }
-.page-title { font-size: 1.5rem; font-weight: 700; color: #111827; }
-.page-subtitle { color: #6b7280; font-size: 0.95rem; margin-top: 0.5rem; }
-.form-group { margin-bottom: 1.5rem; }
-.form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-.form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; }
-.date-grid { display: grid; grid-template-columns: 2fr 1fr 1.2fr; gap: 0.75rem; }
-.input-wrapper { position: relative; }
-.input-wrapper .icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #9ca3af; }
-.input-wrapper input { padding-left: 2.75rem; }
-.btn-primary { width: 100%; background-color: #4f46e5; color: white; padding: 0.875rem; border-radius: 0.5rem; font-weight: 600; border: none; cursor: pointer; }
-.links-container { margin-top: 1.5rem; text-align: center; font-size: 0.9rem; }
-.link { color: #4f46e5; text-decoration: none; }
-.divider { margin: 0 0.5rem; color: #d1d5db; }
-.alert-error { background-color: #fef2f2; color: #991b1b; padding: 0.75rem; border-radius: 0.5rem; margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem; border: 1px solid #fee2e2; }
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+
+.login-wrapper {
+  position: relative;
+  width: min(1120px, 100%);
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: 1.02fr 1fr;
+  gap: 32px;
+  z-index: 1;
+}
+
+/* LEFT */
+.login-left {
+  position: relative;
+  background: #7b0a0a;
+  border-radius: 52px;
+  padding: 44px 48px;
+  color: #fff;
+  overflow: hidden;
+}
+
+.back-icon {
+  position: absolute;
+  top: 24px;
+  left: 22px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  color: rgba(255,255,255,0.9);
+  font-size: 34px;
+  line-height: 1;
+}
+
+.school-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.school-name {
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.35;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+
+.school-logo {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* ✅ centers REGISTER horizontally */
+  text-align: center;
+}
+
+
+.student-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.welcome-title {
+  margin: 0 0 18px;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  font-family: "Comic Sans MS","Segoe Print","Bradley Hand",cursive;
+}
+
+.sub-cta {
+  margin-top: 12px;
+  margin-bottom: 22px;
+}
+
+.sub-cta-title {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  height: 56px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.95);
+  color: #2b2b2b;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-decoration: none;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.25);
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.register-btn:hover {
+  transform: translateY(-1px);
+}
+
+.left-bottom {
+  position: absolute;
+  bottom: 28px;
+  left: 48px;
+}
+
+.back-portal {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+}
+.back-portal:hover { text-decoration: underline; }
+
+/* RIGHT */
+.login-right {
+  border-radius: 52px;
+  padding: 44px 52px;
+  background: rgba(255,255,255,0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+}
+
+.right-inner { width: 100%; text-align: center; }
+
+.login-title {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  color: #7b0a0a;
+}
+
+.brand-line { margin-top: 10px; margin-bottom: 36px; }
+
+.tsis {
+  font-size: 34px;
+  letter-spacing: 0.32em;
+  font-weight: 500;
+  color: #111;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.field { position: relative; margin: 18px 0; }
+
+.field input {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  padding: 0 18px;
+  background: rgba(255,255,255,0.92);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  font-size: 13px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #111;
+}
+.field input::placeholder { color: rgba(0,0,0,0.45); }
+.field input:focus {
+  box-shadow: inset 0 0 0 2px rgba(123,10,10,0.35),
+              0 0 0 3px rgba(123,10,10,0.12);
+}
+.field input:disabled { opacity: 0.75; cursor: not-allowed; }
+
+/* DATE GRID */
+.date-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1.2fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.date-input {
+  width: 100%;
+  height: 56px;
+  border-radius: 14px;
+  border: none;
+  outline: none;
+  padding: 0 18px;
+  background: rgba(255,255,255,0.92);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #111;
+}
+
+.date-input:focus {
+  box-shadow: inset 0 0 0 2px rgba(123,10,10,0.35),
+              0 0 0 3px rgba(123,10,10,0.12);
+}
+
+.date-input:disabled { opacity: 0.75; cursor: not-allowed; }
+
+.row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.forgot {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: #222;
+  text-decoration: none;
+}
+.forgot:hover { text-decoration: underline; }
+
+.login-btn {
+  width: 100%;
+  height: 58px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 14px;
+  background: #7b0a0a;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 0.38em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .08s ease, opacity .2s ease;
+}
+.login-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.login-btn:disabled { opacity: 0.75; cursor: wait; }
+
+.error {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,240,240,0.85);
+  border: 1px solid rgba(200,0,0,0.2);
+  color: #7b0a0a;
+  font-size: 13px;
+}
+
+.login-footer {
+  margin-top: 26px;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  color: rgba(0,0,0,0.55);
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity .25s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+@media (max-width: 980px) {
+  .login-wrapper { grid-template-columns: 1fr; gap: 18px; min-height: auto; }
+  .login-left, .login-right { border-radius: 34px; }
+  .left-content { margin-top: 36px; }
+  .welcome-title { font-size: 44px; }
+}
+
+@media (max-width: 520px) {
+  .login-page { padding: 16px; }
+  .login-left { padding: 28px 26px; }
+  .login-right { padding: 28px 26px; }
+  .login-title { font-size: 34px; }
+  .tsis { font-size: 28px; }
+  .register-btn { min-width: 200px; }
+}
 </style>
