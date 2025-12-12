@@ -10,21 +10,27 @@ class DefensePanel extends Model
 {
     use HasFactory;
 
-    protected $table = 'defense_panel';
+    protected $table = 'DefensePanel';
+
+    protected $primaryKey = ['DefenseID', 'PanelistUserID'];
+
+    public $incrementing = false;
+
+    public $timestamps = false;
 
     protected $fillable = [
         'DefenseID',
-        'UserID',
+        'PanelistUserID',
         'Status',
     ];
 
     public function defense(): BelongsTo
     {
-        return $this->belongsTo(Defense::class);
+        return $this->belongsTo(Defense::class, 'DefenseID', 'DefenseID');
     }
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'PanelistUserID', 'UserID');
     }
 }
