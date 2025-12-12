@@ -31,7 +31,7 @@ class RegisterController extends Controller
             'birth_month' => ['required', 'integer', 'min:1', 'max:12'],
             'birth_day' => ['required', 'integer', 'min:1', 'max:31'],
             'birth_year' => ['required', 'integer', 'digits:4'],
-            'password' => ['required', 'confirmed', Password::defaults()],
+            'password' => ['required', 'confirmed', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/',],
         ]);
 
         if ($validator->fails()) {
