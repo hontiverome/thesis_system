@@ -30,7 +30,6 @@
 
           <div class="brand-line">
             <div class="tsis">T-SIS</div>
-            <div class="adviser">ADVISER</div>
           </div>
 
           <form class="login-form" @submit.prevent="handleLogin">
@@ -235,13 +234,6 @@ const handleLogin = async () => {
   letter-spacing:0.32em;
   font-weight:500;
   color:#111;
-}
-.adviser{
-  margin-top:4px;
-  font-size:11px;
-  letter-spacing:0.36em;
-  font-weight:700;
-  color:#2b82c5;
 }
 
 .login-form{
