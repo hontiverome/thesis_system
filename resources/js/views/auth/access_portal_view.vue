@@ -68,20 +68,20 @@ const goToAdmin = () => {
 
 <style scoped>
 .portal-page {
-  min-height: 100vh;
+  position:fixed;
+  inset:0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  /* Background Image */
-  --bg-image: url("/images/bg.jpg"); /* <-- change this */
-  background-image: var(--bg-image);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
   padding: 2rem;
-  position: relative;
+  margin: 0;
+  z-index: 0;
 }
 
 /* Optional: darken background slightly for readability */
