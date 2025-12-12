@@ -70,9 +70,9 @@ const goToPortal = () => {
 .seal-wrapper {
   position: absolute;
   left: 50%;
-  bottom: 50vh;
-  transform: translateX(-50%,50%);
-  z-index: 5;
+  bottom: 30vh;
+  transform: translateX(-50%);
+  z-index: 6;
   pointer-events:none
 }
 
@@ -80,10 +80,15 @@ const goToPortal = () => {
   width: 400px;
   max-width: 70vw;
   border-radius: 50%;
-  opacity: 0.35;
+  opacity: 0.65;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    filter 0.25s ease;
   filter: drop-shadow(0 0 25px rgba(255,255,255,0.25))
           drop-shadow(0 0 60px rgba(0,0,0,0.35));
   pointer-events: auto; 
+  will-change: transform, opacity;
 }
 
 /* Bottom maroon band */
@@ -146,6 +151,15 @@ const goToPortal = () => {
   max-width: 100% !important;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .seal-image:hover {
+    opacity: 1;              /* full visibility */
+    transform: scale(1.08);  /* slightly bigger */
+    filter:
+      drop-shadow(0 0 28px rgba(255,255,255,0.55))
+      drop-shadow(0 0 70px rgba(0,0,0,0.6));
+  }
+}
 
 @media (max-width: 768px) {
   .seal-image {
