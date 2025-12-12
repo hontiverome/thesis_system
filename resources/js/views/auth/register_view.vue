@@ -1,82 +1,123 @@
 <template>
-  <div class="auth-page">
-    <div class="auth-card">
-      <div class="auth-header">
-        <div class="icon-avatar">📝</div>
-        <h1>Student Registration</h1>
-        <p>Create your account using your Student Number</p>
-      </div>
+  <div class="register-page" :style="{ backgroundImage: `url(${bgImage})` }">
+    <div class="register-wrapper">
 
-      <form @submit.prevent="handleRegister">
-        <div class="form-group">
-          <label>Student Number</label>
-          <input 
-            v-model="form.student_number"
-            type="text" 
-            class="form-control" 
-            placeholder="202X-XXXXX-MN-0"
-            required
-          >
-          <small class="form-text">Your email will be auto-generated as @iskolarngbayan.pup.edu.ph</small>
+      <!-- LEFT PANEL (FORM) -->
+      <section class="register-left" aria-label="Registration form">
+        <div class="left-inner">
+          <h1 class="register-title">REGISTRATION</h1>
+
+          <div class="brand-line">
+            <div class="tsis">T-SIS</div>
+          </div>
+
+          <form class="register-form" @submit.prevent="handleRegister">
+            <!-- Student number -->
+            <div class="field">
+              <input
+                v-model.trim="form.student_number"
+                type="text"
+                placeholder="STUDENT NUMBER"
+                autocomplete="username"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <!-- Birth date -->
+            <div class="date-row">
+              <select v-model="form.birth_month" class="date-input" :disabled="loading" required>
+                <option value="" disabled>BIRTH MONTH</option>
+                <option v-for="m in 12" :key="m" :value="String(m).padStart(2, '0')">
+                  {{ String(m).padStart(2, '0') }}
+                </option>
+              </select>
+
+              <input
+                v-model.trim="form.birth_day"
+                type="number"
+                min="1"
+                max="31"
+                class="date-input"
+                placeholder="BIRTH DAY"
+                :disabled="loading"
+                required
+              />
+
+              <input
+                v-model.trim="form.birth_year"
+                type="number"
+                min="1900"
+                :max="new Date().getFullYear()"
+                class="date-input"
+                placeholder="BIRTH YEAR"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <input
+                v-model="form.password"
+                type="password"
+                placeholder="PASSWORD"
+                autocomplete="new-password"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <!-- Confirm password -->
+            <div class="field">
+              <input
+                v-model="form.password_confirmation"
+                type="password"
+                placeholder="RE-PASSWORD"
+                autocomplete="new-password"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <button class="register-btn" type="submit" :disabled="loading">
+              <span v-if="loading">CREATING…</span>
+              <span v-else>REGISTER</span>
+            </button>
+
+            <transition name="fade">
+              <p v-if="error" class="error">{{ error }}</p>
+            </transition>
+
+            <footer class="register-footer">©2025 T-SIS | ALL RIGHT RESERVED</footer>
+          </form>
         </div>
+      </section>
 
-        <div class="form-group">
-          <label>Birth Date</label>
-          <div class="date-row">
-            <select v-model="form.birth_month" class="form-control" required>
-              <option value="" disabled>Month</option>
-              <option v-for="(m, index) in months" :key="index" :value="index + 1">{{ m }}</option>
-            </select>
-            <select v-model="form.birth_day" class="form-control" required>
-              <option value="" disabled>Day</option>
-              <option v-for="d in 31" :key="d" :value="d">{{ d }}</option>
-            </select>
-            <input 
-              v-model="form.birth_year" 
-              type="number" 
-              class="form-control" 
-              placeholder="Year"
-              min="1900"
-              max="2100"
-              required
-            >
+      <!-- RIGHT PANEL (WELCOME) -->
+      <section class="register-right" aria-label="Welcome panel">
+        <div class="school-header">
+          <img :src="logoImage" alt="PUP Logo" class="school-logo" />
+          <div class="school-name">
+            POLYTECHNIC UNIVERSITY<br />
+            OF THE PHILIPPINES
           </div>
         </div>
 
-        <div class="form-group">
-          <label>Password</label>
-          <input 
-            v-model="form.password"
-            type="password" 
-            class="form-control" 
-            required
-          >
+        <div class="right-content">
+          <h2 class="welcome-title">HELLO, WELCOME!</h2>
+          <div class="sub-cta-title">ALREADY HAVE AN ACCOUNT?</div>
+
+          <router-link :to="{ name: 'login.student' }" class="signin-btn">
+            SIGN IN
+          </router-link>
         </div>
+      </section>
 
-        <div class="form-group">
-          <label>Confirm Password</label>
-          <input 
-            v-model="form.password_confirmation"
-            type="password" 
-            class="form-control" 
-            required
-          >
-        </div>
-
-        <button type="submit" class="btn-primary" :disabled="loading">
-          {{ loading ? 'Creating Account...' : 'Register' }}
-        </button>
-
-        <div class="login-link">
-          Already have an account? 
-          <router-link :to="{ name: 'login.student' }">Login here</router-link>
-        </div>
-
-        <div v-if="error" class="alert-error">{{ error }}</div>
-      </form>
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { reactive, ref } from 'vue';
