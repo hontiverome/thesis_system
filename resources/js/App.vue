@@ -68,8 +68,8 @@
     </button>
 
     <!-- Main Content Area -->
-    <main class="main-content" role="main">
-      <div class="content-wrapper">
+    <main class="main-content" :class="{ 'blank-main' : isBlankLayout}" role="main">
+      <div class="content-wrapper" :class="{'full-width':isBlankLayout}">
         <router-view :key="$route.fullPath" />
       </div>
     </main>
@@ -240,6 +240,18 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   transition: margin-left var(--transition-duration), margin-top var(--transition-duration), padding-bottom var(--transition-duration);
   /* Theme-aware background color */
   background-color: var(--bg-color);
+}
+.blank-main {
+  padding: 0 !important;
+  background: transparent !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  min-height: 100vh !important;
+}
+
+.content-wrapper.full-width {
+  max-width: 100% !important;
+  padding: 0 !important;
 }
 
 /* 
