@@ -11,12 +11,12 @@
 </template>
 
 <script setup>
-// *** CRITICAL FIX: Import the Iconify component ***
+// This is the correct way to handle icons using the installed library.
 import { Icon as IconifyIcon } from '@iconify/vue'; 
 
 const props = defineProps({
   name: {
-    type: String, // e.g., 'mdi:magnify'
+    type: String, // e.g., 'mdi:chevron-left'
     required: true
   },
   size: {
@@ -35,5 +35,6 @@ const props = defineProps({
   display: inline-block;
   /* Ensures the icon container is a square of the specified size */
   line-height: 1;
+  vertical-align: middle;
 }
 </style>

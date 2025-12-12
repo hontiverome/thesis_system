@@ -15,10 +15,7 @@
 </template>
 
 <style scoped>
-/* ----------------------------------------------------
- * START: Hero Section Styles
- * ----------------------------------------------------
- */
+
 .hero-section {
   width: 100%;
   height: 100vh;
@@ -109,12 +106,6 @@
     padding: 0 10px; /* Add padding to prevent text touching screen edges */
   }
 }
-
-/* ----------------------------------------------------
- * END: Hero Section Styles
- * START: Base Card Styles 
- * ----------------------------------------------------
- */
 
 .base-card {
   background-color: #f4f6f9;
