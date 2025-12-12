@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\UserProfileController;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
 use App\Http\Controllers\Api\V1\AdminRoleController;
+use App\Http\Controllers\Api\V1\GroupPageController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
 
 // Public routes
@@ -90,4 +91,15 @@ Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.
     // Helper endpoints
     Route::get('/students/available', [AdviserGroupController::class, 'getAvailableStudents'])->name('students.available');
     Route::get('/groups/my', [AdviserGroupController::class, 'getMyGroups'])->name('groups.my');
+});
+
+// F-015 Group Page routes
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+    // Student group page
+    Route::get('/groups/my-group', [GroupPageController::class, 'getMyGroup'])->name('groups.my-group');
+    
+    // Adviser group page (requires adviser middleware)
+    Route::get('/adviser/groups/{groupId}', [GroupPageController::class, 'getGroupPage'])
+        ->middleware(['adviser'])
+        ->name('adviser.groups.page');
 });
