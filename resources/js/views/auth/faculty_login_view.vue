@@ -9,9 +9,8 @@
             POLYTECHNIC UNIVERSITY<br />
             OF THE PHILIPPINES
           </div>
-
-          <!-- optional logo (won't crash if you remove it) -->
-          <img v-if="logoImage" :src="logoImage" alt="Logo" class="school-logo" />
+            <!-- Added Logo -->
+          <img :src="logoImage" alt="PUP Logo" class="school-logo" />
         </div>
 
         <div class="left-content">
@@ -86,6 +85,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
 
 const router = useRouter()
@@ -178,6 +178,12 @@ const handleLogin = async () => {
 }
 /* Left Page */
 .left-content{ margin-top:78px; }
+
+.school-logo{
+  width:64px;
+  height:64px;
+  object-fit:contain;
+}
 
 .welcome-title{
   margin:0 0 18px;
