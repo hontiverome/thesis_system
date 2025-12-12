@@ -33,32 +33,14 @@
                 {{ userStore.userInitials }}
               </div>
             </div>
-            <div class="user-info">
-              <span class="user-name">{{ userStore.user?.firstName || 'User' }}</span>
-              <span class="user-email hidden">{{ userStore.user?.email || '' }}</span>
-            </div>
-            <IconifyIcon class="icon-chevron" :class="{ 'rotate-180': isUserMenuOpen }" icon="mdi:chevron-down" width="16" height="16" />
+            <IconifyIcon class="icon-chevron" :class="{ 'rotate-180': isUserMenuOpen }" icon="mdi:chevron-down" />
           </button>
           
-          <!-- Dropdown Menu -->
           <div v-if="isUserMenuOpen" class="user-dropdown active">
             <div class="user-dropdown-header">
-              <div class="user-avatar-container">
-                <template v-if="userStore.user?.avatar">
-                  <img :src="userStore.user.avatar" :alt="userStore.user.firstName || 'User'" class="user-avatar" />
-                </template>
-                <div v-else class="user-avatar-initials">
-                  {{ userStore.userInitials }}
-                </div>
-              </div>
               <div class="user-info">
                 <div class="user-name">{{ userStore.user?.firstName }} {{ userStore.user?.lastName || '' }}</div>
                 <div class="user-email">{{ userStore.user?.email || '' }}</div>
-                <div class="user-status">
-                  <span class="status-badge" :class="userStore.user?.status || 'active'">
-                    {{ userStore.statusOptions.find(s => s.value === (userStore.user?.status || 'active'))?.label || 'Active' }}
-                  </span>
-                </div>
               </div>
             </div>
             <ul class="user-dropdown-menu">
@@ -85,60 +67,19 @@
           </div>
         </div>
       </div>
+
     </div>
   </header>
 </template>
 
 <script setup>
-// Import required Vue composition API functions and stores
-import { computed, onMounted, ref, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useThemeStore } from '@/stores/theme.js';
+import { onMounted, ref, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout.js';
 import { useUserStore } from '@/stores/user.js';
 import { loadIcons } from '@iconify/vue';
 import { useAuth } from '@/composables/useAuth';
 
-// Click outside directive
-const vClickOutside = {
-  beforeMount(el, binding) {
-    el.clickOutsideEvent = function(event) {
-      if (!(el === event.target || el.contains(event.target))) {
-        binding.value();
-      }
-    };
-    document.addEventListener('click', el.clickOutsideEvent);
-  },
-  unmounted(el) {
-    document.removeEventListener('click', el.clickOutsideEvent);
-  },
-};
-
-// Define the events this component emits to parent components
-defineEmits(['toggle-sidebar']);
-
-const route = useRoute();
-const router = useRouter();
-const themeStore = useThemeStore();
-const layoutStore = useLayoutStore();
-const userStore = useUserStore();
-const auth = useAuth();
-
-// User menu state
-const isUserMenuOpen = ref(false);
-const loading = ref(false);
-
-// Toggle user menu
-const toggleUserMenu = () => {
-  isUserMenuOpen.value = !isUserMenuOpen.value;
-};
-
-// Close user menu
-const closeUserMenu = () => {
-  isUserMenuOpen.value = false;
-};
-
-// Close menu when clicking outside
 const handleClickOutside = (event) => {
   const userMenu = document.querySelector('.user-menu');
   if (userMenu && !userMenu.contains(event.target)) {
@@ -146,103 +87,289 @@ const handleClickOutside = (event) => {
   }
 };
 
-// Handle logout
+const router = useRouter();
+const layoutStore = useLayoutStore();
+const userStore = useUserStore();
+const auth = useAuth();
+
+const isUserMenuOpen = ref(false);
+
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+};
+
+const closeUserMenu = () => {
+  isUserMenuOpen.value = false;
+};
+
 const handleLogout = async () => {
   try {
-    loading.value = true;
     await auth.logout();
     userStore.clearUser();
     closeUserMenu();
     router.push({ name: 'login' });
   } catch (error) {
     console.error('Logout failed:', error);
-  } finally {
-    loading.value = false;
   }
 };
 
-// Theme handling using computed property for two-way binding
-const currentTheme = computed({
-  get: () => themeStore.currentTheme,
-  set: (value) => {
-    if (value) {
-      themeStore.setTheme(value);
-    }
-  }
-});
-
-// Get available themes from store
-const availableThemes = computed(() => themeStore.availableThemes);
-
-// Get current theme icon
-const currentThemeIcon = computed(() => {
-  const theme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
-  if (!theme) return 'mdi:theme-light-dark';
-  
-  const icons = {
-    'light': 'mdi:weather-sunny',
-    'dark': 'mdi:weather-night',
-    'blue': 'mdi:water',
-    'green': 'mdi:leaf',
-    'midnight': 'mdi:weather-night',
-    'dost': 'mdi:theme-light-dark'
-  };
-  
-  return icons[theme.id] || 'mdi:theme-light-dark';
-});
-
-// Get current theme name
-const currentThemeName = computed(() => {
-  const theme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
-  return theme ? theme.name : 'Theme';
-});
-
-/**
- * Computed property that generates a display-friendly title based on the current route
- * - Handles the root path ('/') specially by returning 'Home'
- * @returns {string} Formatted page title
- */
-const currentPageTitle = computed(() => {
-  const path = route.path;
-  if (path === '/') return 'Home';
-  return path.charAt(1).toUpperCase() + path.slice(2);
-});
-
-// Navigation items
-const navItems = [
-  { path: '/', icon: 'mdi:home' },
-  { path: '/dashboard', icon: 'mdi:view-dashboard' },
-  { path: '/profile', icon: 'mdi:account'},
-  { path: '/settings', icon: 'mdi:cog'},
-  { path: '/help', icon: 'mdi:help-circle' },
-];
-
 onMounted(() => {
-  // Load all icons
   loadIcons([
-    'mdi:menu', 
-    'mdi:account', 
-    'mdi:chevron-down',
-    'mdi:theme-light-dark',
-    'mdi:weather-sunny',
-    'mdi:weather-night',
-    'mdi:water',
-    'mdi:leaf',
-    'mdi:home',
-    'mdi:view-dashboard',
-    'mdi:account',
-    'mdi:cog',
-    'mdi:help-circle',
-    'mdi:palette',
-    'mdi:logout'
+    'mdi:account', 'mdi:chevron-down', 'mdi:cog', 'mdi:logout'
   ]);
-  
-  // Add click outside listener
   document.addEventListener('click', handleClickOutside);
 });
 
-// Clean up event listener
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 </script>
+
+<style scoped>
+/* Import the Sorts Mill Goudy font */
+@import url('https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy&display=swap');
+
+/* PUP COLOR PALETTE */
+.pup-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  margin: 0;
+  
+  background-color: #800000;
+  color: white;
+  height: 80px; 
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.navbar-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* --- Left Section --- */
+.navbar-branding {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-circle {
+  width: 45px;
+  height: 45px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #800000;
+  font-size: 10px;
+  border: 2px solid white;
+}
+
+.university-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Updated Font Styles */
+.uni-name {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin: 0;
+  line-height: 1;
+  color: #FFFFFF;
+  letter-spacing: 0.5px;
+}
+
+.system-name {
+  font-family: 'Sorts Mill Goudy', serif;
+  font-size: 1rem;
+  margin-top: 4px;
+  font-weight: normal;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+}
+
+/* --- Right Section --- */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-right: 10px;
+}
+
+.top-links {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-link {
+  color: #ffc107;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.header-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.separator {
+  color: white;
+  font-weight: 300;
+  font-size: 1.2rem;
+  margin-top: -2px;
+}
+
+/* --- User Menu --- */
+.user-menu {
+  position: relative;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  gap: 8px;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.user-button:hover {
+  background-color: rgba(255,255,255, 0.1);
+}
+
+.user-label-text {
+  font-weight: bold;
+  margin-right: 5px;
+  color: white;
+}
+
+.user-avatar-container {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #eee;
+  border: 2px solid white;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffc107;
+  color: #800000;
+  font-weight: bold;
+}
+
+/* --- Dropdown Styles --- */
+.user-dropdown {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 220px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  border: 1px solid #e0e0e0;
+  overflow: hidden;
+  color: #333; 
+}
+
+.user-dropdown-header {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.user-dropdown-menu {
+  list-style: none;
+  padding: 8px 0;
+  margin: 0;
+}
+
+.user-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.user-dropdown-item:hover {
+  background-color: #f0f0f0;
+  color: #800000;
+}
+
+.divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 8px 0;
+}
+
+.logout {
+  color: #dc3545;
+}
+
+.logout:hover {
+  background-color: #fff1f1;
+  color: #dc3545;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .uni-name {
+    font-size: 1rem; 
+  }
+  .top-links {
+    display: none; 
+  }
+  .user-label-text {
+    display: none;
+  }
+}
+</style>
