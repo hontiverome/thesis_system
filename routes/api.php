@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\V1\AdviserGroupController;
 use App\Http\Controllers\Api\V1\AdviserCourseController;
 use App\Http\Controllers\Api\V1\AdviserProposalController;
 use App\Http\Controllers\Api\V1\AdviserPanelController;
+use App\Http\Controllers\Api\V1\AdviserDefenseController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -114,6 +115,15 @@ Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.
     // Panel Evaluation (Judging)
     Route::get('/panel/defenses', [AdviserPanelController::class, 'getDefensesToEvaluate']);
     Route::post('/panel/defenses/{defenseId}/verdict', [AdviserPanelController::class, 'submitVerdict']);
+
+    // F-020: Defense Management
+    Route::get('/defenses', [AdviserDefenseController::class, 'getGroupDefenses']); // List
+    Route::put('/defenses/{defenseId}/status', [AdviserDefenseController::class, 'updateDefenseStatus']); // Update Status
+
+    // F-021: Document Management
+    Route::post('/defenses/{defenseId}/documents', [AdviserDefenseController::class, 'uploadDocument']); // Upload
+    Route::get('/defenses/{defenseId}/documents', [AdviserDefenseController::class, 'getDefenseDocuments']); // View Files
+    Route::delete('/documents/{fileId}', [AdviserDefenseController::class, 'deleteDocument']); // Delete File
 });
 
 // F-015 Group Page routes
@@ -127,3 +137,4 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         ->name('adviser.groups.page');
 });
 
+Route::get('v1/adviser/defenses', [AdviserDefenseController::class, 'getGroupDefenses']);
