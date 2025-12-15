@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
 use App\Http\Controllers\Api\V1\AdviserCourseController;
 use App\Http\Controllers\Api\V1\AdviserProposalController;
+use App\Http\Controllers\Api\V1\AdviserPanelController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -105,6 +106,14 @@ Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.
 
     // F-018: Proposal Management
     Route::get('/proposals', [AdviserProposalController::class, 'getProposals']);
+
+    // F-019: Panel Management
+    Route::get('/panel/invitations', [AdviserPanelController::class, 'getPanelInvitations']);
+    Route::post('/panel/invitations/{defenseId}/respond', [AdviserPanelController::class, 'respondToInvitation']);
+
+    // Panel Evaluation (Judging)
+    Route::get('/panel/defenses', [AdviserPanelController::class, 'getDefensesToEvaluate']);
+    Route::post('/panel/defenses/{defenseId}/verdict', [AdviserPanelController::class, 'submitVerdict']);
 });
 
 // F-015 Group Page routes
@@ -118,6 +127,3 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         ->name('adviser.groups.page');
 });
 
-Route::get('v1/adviser/courses', [AdviserCourseController::class, 'getAdviserCourses']);
-Route::get('v1/adviser/groups', [AdviserGroupController::class, 'getAdviserGroups']);
-Route::get('v1/adviser/proposals', [AdviserProposalController::class, 'getProposals']);
