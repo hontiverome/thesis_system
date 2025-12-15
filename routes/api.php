@@ -137,4 +137,3 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
         ->name('adviser.groups.page');
 });
 
-Route::get('v1/adviser/defenses', [AdviserDefenseController::class, 'getGroupDefenses']);
