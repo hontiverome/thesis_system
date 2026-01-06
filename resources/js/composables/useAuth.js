@@ -1,63 +1,68 @@
-import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import { ref } from 'vue';
 
-// Store the auth instance
 let authInstance = null;
 
-// Create the auth instance
 function createAuth() {
-    const user = ref(window.Laravel?.auth?.user || null);
-    const isAuthenticated = computed(() => !!user.value);
+    const store = useUserStore();
+    const { 
+        user, 
+        isAuthenticated,
+        isAdmin,
+        isStudent,
+        isFaculty,
+        isAdviser,
+        isResearchCoordinator 
+    } = storeToRefs(store);
     const loading = ref(false);
     const error = ref(null);
-    const initialized = ref(false);
-    
-    // Initialize axios headers with token from localStorage if it exists
-    const initAuth = async () => {
-        if (initialized.value) {
-            return Promise.resolve();
-        }
+
+    // --- 1. AUTHORIZATION LOGIC ---
+    const isAuthorized = (requiredRoles) => {
+        if (!store.user) return false;
         
-        const token = localStorage.getItem('auth_token');
-        if (token && !axios.defaults.headers.common['Authorization']) {
-            setAuthToken(token);
-            try {
-                await fetchUser();
-            } catch (err) {
-                console.error('Failed to fetch user:', err);
-                // Clear invalid token
-                localStorage.removeItem('auth_token');
-                delete axios.defaults.headers.common['Authorization'];
-                user.value = null;
-            }
+        if (Array.isArray(requiredRoles)) {
+            return requiredRoles.some(role => store.hasRole(role));
         }
-        
-        initialized.value = true;
-        return Promise.resolve();
+        return store.hasRole(requiredRoles);
     };
-    
-    // Set auth token in axios and localStorage
-    const setAuthToken = (token) => {
-        localStorage.setItem('auth_token', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    // Check if user has a specific permission (wraps store.can)
+    // Also returns true if user is Admin (handled by store)
+    const can = (permission) => {
+        return store.can(permission);
     };
-    
-    // Fetch user data from the server
+
+    const checkRole = isAuthorized;
+
+    // --- 2. FETCH USER ---
     const fetchUser = async () => {
         try {
-            // ⚡️ FIX: Updated URL to v1
             const response = await axios.get('/api/v1/user');
-            user.value = response.data;
+            store.setUser(response.data);
+            return true;
         } catch (err) {
-            console.error('Failed to fetch user:', err);
-            // Clear invalid token
-            localStorage.removeItem('auth_token');
-            delete axios.defaults.headers.common['Authorization'];
-            user.value = null;
+            store.clearUser();
+            return false;
         }
     };
 
-    // Login method
+    // --- 3. CHECK AUTH ---
+    const checkAuth = async () => {
+        if (store.isAuthenticated) return true;
+
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            return await fetchUser();
+        }
+
+        return false;
+    };
+
+    // --- 4. LOGIN ---
     const login = async (credentials) => {
         loading.value = true;
         error.value = null;
@@ -65,92 +70,82 @@ function createAuth() {
         try {
             await axios.get('/sanctum/csrf-cookie');
 
-            // ⚡️ FIX: Send exactly what the backend error asked for
             const payload = {
-                SchoolID: credentials.student_number, // Map 'student_number' to 'SchoolID'
+                SchoolID: credentials.student_number, 
                 birth_month: parseInt(credentials.birth_month),
                 birth_day: parseInt(credentials.birth_day),
                 birth_year: parseInt(credentials.birth_year),
-                password: credentials.password,       // Send password too
+                password: credentials.password,
                 device_name: 'web-browser'
             };
 
-            // Post to the STUDENT route
             const response = await axios.post('/api/v1/auth/login/student', payload);
             
-            if (!response.data || !response.data.token) {
-                throw new Error('No token received from server');
-            }
-            
-            const { token, user: userData } = response.data;
-            setAuthToken(token);
-            user.value = userData;
-            
-            return { token, user: userData };
+            if (!response.data.token) throw new Error('No token received');
+
+            store.setToken(response.data.token);
+            store.setUser(response.data.user);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+
+            return { success: true, user: response.data.user };
 
         } catch (err) {
-            console.error('Auth error:', err);
-            error.value = err.response?.data?.message || 'Login failed.';
+            console.error('Login error:', err);
+            if (err.response?.status === 422) {
+                error.value = err.response.data.message || 'Invalid credentials.';
+            } else {
+                error.value = err.response?.data?.message || 'Login failed.';
+            }
             throw err;
         } finally {
             loading.value = false;
         }
     };
 
-    // Logout method
+    // --- 5. LOGOUT ---
     const logout = async () => {
         try {
-            // ⚡️ FIX: Updated URL to v1
             await axios.post('/api/v1/auth/logout');
-        } catch (err) {
-            console.error('Logout error:', err);
+        } catch (e) {
+            console.warn('Logout server error:', e);
         } finally {
-            // Clear auth state
-            user.value = null;
-            localStorage.removeItem('auth_token');
+            store.clearUser();
             delete axios.defaults.headers.common['Authorization'];
         }
     };
 
-    // Check auth status
-    const checkAuth = async () => {
-        try {
-            // ⚡️ FIX: Updated URL to v1
-            const response = await axios.get('/api/v1/user');
-            user.value = response.data;
-            return true;
-        } catch (err) {
-            user.value = null;
-            return false;
+    // --- 6. INIT AUTH (Fixes the App Crash) ---
+    const initAuth = async () => {
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // We can optionally fetch the user here if needed, 
+            // but usually checkAuth() handles that in the router.
         }
     };
-
-    // Initialize auth when the composable is first used
-    initAuth();
     
+    // Auto-run init logic
+    initAuth();
+
     return {
-        user,
-        isAuthenticated,
-        loading,
-        error,
-        initialized,
-        initAuth,
-        login,
+        // State
+        user, loading, error, isAuthenticated,
+        isAdmin, isStudent, isFaculty, isAdviser, isResearchCoordinator, // <--- ADDED
+        
+        // Methods
+        login, 
         logout,
-        checkAuth,
+        checkRole,     // <--- UPDATED
+        isAuthorized,  // <--- UPDATED
+        can,           // <--- ADDED
+        checkAuth, 
         fetchUser,
-        setAuthToken
+        initAuth
     };
 }
 
-// Export the useAuth function
 export function useAuth() {
-    // Create the instance if it doesn't exist
-    if (!authInstance) {
-        authInstance = createAuth();
-    }
+    if (!authInstance) authInstance = createAuth();
     return authInstance;
 }
-
-// Default export for backward compatibility
 export default useAuth;

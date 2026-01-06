@@ -154,7 +154,6 @@
 
     <!-- Debug Info (Development Only) -->
     <div v-if="isDev" class="debug-info">
-      <pre>{{ { loading, error, successMessage, form: { ...form, password: form.password ? '••••••' : '' } } }}</pre>
     </div>
   </div>
 </template>

@@ -33,7 +33,7 @@
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
-
+import { useAuth } from '@/composables/useAuth'; 
 // Import route modules
 import authRoutes from './routes/auth';
 import mainRoutes from './routes/main';
@@ -74,7 +74,39 @@ const router = createRouter({
 });
 
 // Setup route guards
-setupRouteGuards(router);
+// setupRouteGuards(router);
+
+// --- NEW ROUTER GUARD IMPLEMENTATION ---
+router.beforeEach(async (to, from, next) => {
+  // 1. Initialize Auth Logic
+  const { isAuthenticated, checkRole, initAuth } = useAuth();
+  
+  // Ensure Axios headers are set before we check anything
+  await initAuth();
+
+  // 2. Check if route requires Authentication
+  // (Looks for meta: { requiresAuth: true } in your route files)
+  if (to.meta.requiresAuth && !isAuthenticated.value) {
+    // User is NOT logged in -> Redirect to Login
+    // We save the page they wanted to visit in 'redirect' query
+    return next({ path: '/login', query: { redirect: to.fullPath } });
+  }
+
+  // 3. Check Role/Permissions
+  // (Looks for meta: { roles: ['admin', 'student'] } in your route files)
+  if (to.meta.roles) {
+    const hasAccess = checkRole(to.meta.roles);
+    
+    if (!hasAccess) {
+      // User is logged in but doesn't have the right role -> Redirect to 403
+      // Ensure you have a route named 'Unauthorized' or change this path
+      return next({ path: '/unauthorized' }); 
+    }
+  }
+
+  // 4. Allow Navigation
+  next();
+});
 
 // Set page title
 router.afterEach((to) => {
