@@ -1,31 +1,10 @@
-import { useUserStore } from '@/stores/user';
-
-
+// Simple version that won't crash your app
 export const vPermission = {
-  // 1. Run when the element first appears
   mounted(el, binding) {
-    checkPermission(el, binding);
-  },
-
-
-  // 2. Run again if the data changes (ROBUSTNESS)
-  updated(el, binding) {
-    checkPermission(el, binding);
+    // We will add real logic later when the User Store is ready.
+    // For now, this lets the app run without errors.
+    if (binding.value) {
+        console.log('Permission check required:', binding.value);
+    }
   }
 };
-
-
-// Helper function to avoid repeating code
-function checkPermission(el, binding) {
-  const userStore = useUserStore();
-  const requiredCapability = binding.value;
-
-
-  if (!userStore.can(requiredCapability)) {
-    // Hide it if not allowed
-    el.style.display = 'none';
-  } else {
-    // Show it if allowed (restores it if it was previously hidden)
-    el.style.display = '';
-  }
-}

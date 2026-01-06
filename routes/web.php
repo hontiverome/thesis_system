@@ -59,7 +59,6 @@
 
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 // Public routes - no authentication required
 Route::get('/', [PageController::class, 'home'])->name('home');
@@ -72,4 +71,8 @@ Route::get('/settings', [PageController::class, 'settings'])->name('settings');
 Route::get('/login', function () {
     return view('app'); // This should point to your Vue.js entry point
 })->name('login');
-    
+
+// Add this line so Laravel allows the browser to visit this URL
+Route::get('/test-components', function () {
+    return view('app'); 
+});
