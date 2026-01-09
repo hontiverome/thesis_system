@@ -29,7 +29,7 @@ export default {
 }
 
 .card-header {
-  color: #E48217;
+  color: #800000;
   padding: 40px 0 20px 40px;
   font-family: Arial, sans-serif;
   font-size: 1.9em;

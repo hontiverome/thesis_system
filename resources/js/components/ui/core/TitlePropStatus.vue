@@ -1,35 +1,28 @@
 <template>
-  <div class="status-table">
-    
-    <div class="table-header">
-      <div class="col-title">Title</div>
-      <div class="col-status">Status</div>
-      <div class="col-menu"></div> </div>
-
-    <div 
-      v-for="(item, index) in tableData" 
-      :key="index" 
-      class="table-row"
-    >
-      <div class="col-title row-text">
-        {{ item.title }}
+  <div class="table-container">
+    <div class="status-table">
+      <div class="table-header">
+        <div class="col-title">Title</div>
+        <div class="col-status">Status</div>
+        <div class="col-approval">Approval Rate</div>
       </div>
 
-      <div class="col-status row-text">
-        {{ item.status }}
+      <div class="info-row">
+        <div class="col-title">Submitted</div>
+        <div class="col-status">Accepted/Rejected</div>
+        <div class="col-approval">%</div>
       </div>
 
-      <div class="col-menu">
-        <button class="menu-btn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-            <circle cx="12" cy="5" r="2" fill="currentColor" />
-            <circle cx="12" cy="12" r="2" fill="currentColor" />
-            <circle cx="12" cy="19" r="2" fill="currentColor" />
-          </svg>
-        </button>
+      <div 
+        v-for="(item, index) in tableData" 
+        :key="index" 
+        class="table-row"
+      >
+        <div class="col-title row-text bold-text">{{ item.title }}</div>
+        <div class="col-status row-text">{{ item.status }}</div>
+        <div class="col-approval row-text">{{ item.rate }}</div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -38,11 +31,12 @@ export default {
   name: 'StatusTable',
   data() {
     return {
-      // You can replace this later with data from your database
       tableData: [
-        { title: 'Proposal Title 1', status: 'Submitted' },
-        { title: 'Proposal Title 2', status: 'Pending' },
-        { title: 'Proposal Title 3', status: 'Approved' }
+        { 
+          title: 'Proposal Title 1', 
+          status: 'Submitted', 
+          rate: '50%' 
+        }
       ]
     }
   }
@@ -50,79 +44,78 @@ export default {
 </script>
 
 <style scoped>
-/* --- CONTAINER --- */
+.table-container {
+  width: 100%;
+  /* Shadow matching the image */
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
 .status-table {
   width: 100%;
-  font-family: 'Arial', sans-serif;
-}
-
-/* --- SHARED COLUMN WIDTHS --- */
-/* These classes ensure the Header and Rows align perfectly */
-.col-title {
-  flex: 6; /* 60% */
-  text-align: left;
-  padding-left: 40px; /* Matches the indentation in your design */
-}
-
-.col-status {
-  flex: 3; /* 30% */
-  text-align: left;
-}
-
-.col-menu {
-  flex: 1; /* 10% */
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-/* --- HEADER STYLES --- */
+/* --- COLUMN WIDTHS (60% - 20% - 20%) --- */
+.col-title { 
+  flex: 6; 
+  padding-left: 40px; 
+}
+
+.col-status { 
+  flex: 2; 
+  text-align: left; 
+}
+
+.col-approval { 
+  flex: 2; 
+  text-align: center; 
+  padding-right: 20px;
+}
+
+/* --- HEADER --- */
 .table-header {
-  background-color: #800000; /* Dark Maroon */
-  color: #FFFFFF;
+  background-color: #800000; /* Maroon */
+  color: white;
   display: flex;
-  width: 100%;
-  padding: 15px 0;
-  font-weight: bold;
+  padding: 18px 0;
+  font-weight: 600;
   font-size: 1.1rem;
-  letter-spacing: 0.5px;
 }
 
-/* --- ROW STYLES --- */
-.table-row {
+/* --- SUB-HEADER INFO ROW --- */
+.info-row {
   background-color: #FFFFFF;
-  border-bottom: 1px solid #E0E0E0; /* Grey separator line */
   display: flex;
-  width: 100%;
+  padding: 12px 0;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+/* --- DATA ROW --- */
+.table-row {
+  display: flex;
   padding: 20px 0;
   align-items: center;
-  transition: background-color 0.2s ease;
-}
-
-.table-row:hover {
-  background-color: #F9FAFB; /* Subtle hover effect */
+  background-color: #F9FAFB; /* Light gray row background from image */
 }
 
 .row-text {
-  color: #333333;
-  font-weight: 500;
-  font-size: 0.95rem;
+  color: #333;
+  font-size: 1rem;
 }
 
-/* --- BUTTON STYLES --- */
-.menu-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #000000;
-  padding: 8px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.bold-text {
+  font-weight: 700;
 }
 
-.menu-btn:hover {
-  background-color: #EEEEEE;
+/* Remove table container margins if needed to fit parent */
+@media (max-width: 768px) {
+  .col-title { padding-left: 20px; }
 }
 </style>

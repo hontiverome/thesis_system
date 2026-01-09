@@ -19,15 +19,14 @@ export default {
   name: 'SubNavbar',
   data() {
     return {
-      activeTab: 'SUBMISSION', // Default active tab
-      navItems: ['SUBMISSION', 'GRADES', 'FEEDBACK', 'PANEL STATUS']
+      /* Updated to Title Case */
+      activeTab: 'Submission',
+      navItems: ['Submission', 'Feedback']
     }
   },
   methods: {
     selectTab(item) {
       this.activeTab = item;
-      // Optional: Emit event to parent if needed
-      // this.$emit('change', item);
     }
   }
 }
@@ -35,51 +34,48 @@ export default {
 
 <style scoped>
 .sub-nav {
-  background-color: #008BA3; 
-  width: 100%;
-  padding: 12px 0;
+  background-color: #E48319; 
+  width: 100%; 
+  padding: 12px 0; 
   display: flex;
-  
-  /* MOVED TO LEFT */
   justify-content: flex-start; 
-  padding-left: 40px; /* Adjust this to move the whole list further right/left */
-
+  padding-left: 40px; 
   position: relative;
   z-index: 10;
+  box-sizing: border-box;
 }
 
 .nav-list {
   display: flex;
-  
-  /* MOVED TO LEFT */
+  flex-direction: row; 
   justify-content: flex-start;
-  
-  /* Spacing between the words */
-  gap: 200px; 
-  
-  width: auto; /* Changed from 100% to auto so it doesn't stretch */
+  gap: 80px; 
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .nav-item {
-  color: #FFFFFF;
+  color: #ffffff; 
   font-family: 'Source Sans Pro', Arial, sans-serif;
-  font-weight: bold;
-  font-size: 0.9rem;
-  letter-spacing: 1.5px;
+  font-weight: 750; 
+  font-size: 1rem; /* Slightly larger as Title Case looks smaller than Uppercase */
+  letter-spacing: 1.2px;
   cursor: pointer;
-  text-transform: uppercase;
-  transition: color 0.2s ease;
+  
+  /* REMOVED text-transform: uppercase */
+  
+  transition: all 0.3s ease;
+  line-height: 1; 
 }
 
-/* Active State (Red) */
+/* Active State (Dark Red) */
 .nav-item.active {
-  color: #800000; 
+  color: #720000; 
 }
 
 .nav-item:hover {
-  opacity: 0.8;
+  color: #720000;
+  opacity: 0.9;
 }
 </style>
