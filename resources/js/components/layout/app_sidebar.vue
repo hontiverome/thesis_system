@@ -2,42 +2,44 @@
   <aside class="sidebar-container">
     <div class="sidebar-label">Courses</div>
 
-    <div class="course-section">
-      <div class="course-header" @click="toggleDropdown">
+    <div v-for="course in courses" :key="course.id" class="course-section">
+      <div 
+        class="course-header" 
+        @click="handleHeaderClick(course)"
+      >
+        <h2 class="course-title">{{ course.title }}</h2>
         
-        <div class="header-col left">
-          <span class="home-icon" v-html="homeIcon"></span>
-        </div>
-
-        <div class="header-col center">
-          <h2 class="course-title">MOR</h2>
-        </div>
-        
-        <div class="header-col right">
-          <div class="header-controls">
-            <span class="chevron" :class="{ rotated: !isOpen }">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
-              </svg>
-            </span>
-            <div class="vertical-divider" :class="{ active: isOpen }"></div>
-          </div>
+        <div class="header-controls">
+          <span 
+            v-if="course.items" 
+            class="chevron" 
+            :class="{ rotated: !openSections.includes(course.id) }"
+          >
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+            </svg>
+          </span>
+          
+          <div 
+            class="vertical-divider" 
+            :class="{ active: activeCourse === course.id }"
+          ></div>
         </div>
       </div>
 
-      <nav v-show="isOpen" class="course-nav">
+      <nav 
+        v-if="course.items" 
+        v-show="openSections.includes(course.id)" 
+        class="course-nav"
+      >
         <button 
+          v-for="item in course.items"
+          :key="item"
           class="nav-btn" 
-          @click="setActive('PROPOSAL')"
-          :class="{ 'btn-active': activeItem === 'PROPOSAL', 'btn-inactive': activeItem !== 'PROPOSAL' }">
-          PROPOSAL
-        </button>
-        
-        <button 
-          class="nav-btn" 
-          @click="setActive('CHAPTERS 1-3')"
-          :class="{ 'btn-active': activeItem === 'CHAPTERS 1-3', 'btn-inactive': activeItem !== 'CHAPTERS 1-3' }">
-          CHAPTERS 1-3
+          @click.stop="setActiveItem(course.id, item)"
+          :class="{ 'btn-active': activeItems[course.id] === item, 'btn-inactive': activeItems[course.id] !== item }"
+        >
+          {{ item }}
         </button>
       </nav>
     </div>
@@ -45,24 +47,43 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 
-const props = defineProps({
-  homeIcon: {
-    type: String,
-    default: `<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>`
-  }
+const courses = [
+  { id: 'mor', title: 'MOR', items: ['PROPOSAL', 'CHAPTERS 1-3'] },
+  { id: 'dp1', title: 'DP1' },
+  { id: 'dp2', title: 'DP2' }
+];
+
+// Tracks which header currently has the red line
+const activeCourse = ref('mor'); 
+
+// Tracks which sections are expanded (MOR starts open)
+const openSections = ref(['mor']); 
+
+// Tracks sub-item selection for MOR
+const activeItems = reactive({
+  mor: 'PROPOSAL',
+  dp1: '',
+  dp2: ''
 });
 
-const isOpen = ref(true);
-const activeItem = ref('PROPOSAL');
+const handleHeaderClick = (course) => {
+  activeCourse.value = course.id;
 
-const toggleDropdown = () => {
-  isOpen.value = !isOpen.value;
+  // If it has items (MOR), handle the expand/collapse logic
+  if (course.items) {
+    if (openSections.value.includes(course.id)) {
+      openSections.value = openSections.value.filter(item => item !== course.id);
+    } else {
+      openSections.value.push(course.id);
+    }
+  }
 };
 
-const setActive = (val) => {
-  activeItem.value = val;
+const setActiveItem = (courseId, val) => {
+  activeCourse.value = courseId; // Ensure red line stays on MOR when sub-item clicked
+  activeItems[courseId] = val;
 };
 </script>
 
@@ -78,6 +99,8 @@ const setActive = (val) => {
   z-index: 100;
   box-sizing: border-box;
   font-family: sans-serif;
+  overflow-y: auto;
+  border-right: 1px solid #eee;
 }
 
 .sidebar-label {
@@ -88,38 +111,19 @@ const setActive = (val) => {
   color: #333;
 }
 
-/* Header Container */
+.course-section {
+  margin-bottom: 30px;
+}
+
 .course-header {
+  position: relative;
   display: flex;
-  width: 100%;
+  justify-content: center;
   align-items: center;
+  width: 100%;
   cursor: pointer;
   margin-bottom: 20px;
-}
-
-/* The Secret to Centering: Three Equal Columns */
-.header-col {
-  flex: 1; /* Each takes 33.3% of the width */
-  display: flex;
-  align-items: center;
-}
-
-.header-col.left {
-  justify-content: flex-start;
-}
-
-.header-col.center {
-  justify-content: center;
-}
-
-.header-col.right {
-  justify-content: flex-end;
-}
-
-.home-icon {
-  color: #800000;
-  display: flex;
-  align-items: center;
+  min-height: 40px;
 }
 
 .course-title {
@@ -129,9 +133,13 @@ const setActive = (val) => {
   font-weight: 800;
   letter-spacing: 2px;
   line-height: 1;
+  text-align: center;
+  user-select: none;
 }
 
 .header-controls {
+  position: absolute;
+  right: 0;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -140,6 +148,8 @@ const setActive = (val) => {
 .chevron {
   transition: transform 0.3s ease;
   color: #444;
+  display: flex;
+  align-items: center;
 }
 
 .chevron.rotated {
@@ -149,12 +159,12 @@ const setActive = (val) => {
 .vertical-divider {
   width: 4px;
   height: 35px;
-  background-color: transparent;
+  background-color: transparent; /* Invisible when not active */
   transition: background-color 0.3s ease;
 }
 
 .vertical-divider.active {
-  background-color: #800000;
+  background-color: #800000; /* Red line when active */
 }
 
 .course-nav {
@@ -173,6 +183,7 @@ const setActive = (val) => {
   cursor: pointer;
   width: 100%;
   transition: all 0.2s ease;
+  text-align: center;
 }
 
 .btn-active {
