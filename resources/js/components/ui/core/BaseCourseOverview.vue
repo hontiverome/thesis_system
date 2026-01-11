@@ -1,79 +1,77 @@
 <template>
-  <div class="course-content-container">
-    
-    <div class="card-content">
+  <div class="white-container">
+    <header v-if="title || $slots.right" class="container-header">
+      <h2 class="container-title">{{ title }}</h2>
       
-      <div class="inner-header-container">
-        <p class="course-heading-overview">COURSE OVERVIEW</p>
+      <div class="container-right">
+        <slot name="right"></slot>
       </div>
-      
-      <slot></slot>
-      
-    </div>
+    </header>
     
+    <div class="content-body">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CourseContentContainer' 
-}
+<script setup>
+/**
+ * PROPS
+ * title: The main heading on the left.
+ */
+defineProps({
+  title: {
+    type: String,
+    default: ''
+  }
+});
 </script>
 
 <style scoped>
-/* ==========================================================
-   1. STYLES FOR THE OUTER CONTAINER
-   ========================================================== */
-
-.course-content-container {
-  /* Card Look: White background, rounded, shadowed */
+.white-container {
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  border-radius: 12px;
+  box-shadow: 0 0 15px 5px rgba(0, 0, 0, 0.06);
   
-  /* Size and Position */
-  max-width: 1400px; 
-  margin: 10px auto; 
-  padding-bottom: 40px; 
+  /* SIZE & SPACING */
+  width: 95%;
+  max-width: 1600px;
+  margin: 40px auto;
+  padding: 60px; /* Large internal padding for a "Big" look */
+  box-sizing: border-box;
 }
 
-/* Removed .card-header-main styles to clean up CSS */
-
-.card-content {
-    /* * ADJUSTMENT: We move the top padding here to replace the space 
-     * left by the removed orange header. 
-     * The original padding was 50px top. 
-     */
-    padding: 50px 50px 0 50px; /* Top, Right, Bottom, Left */
+.container-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f2f2f2; /* Subtle line to separate titles from content */
 }
 
-
-/* ==========================================================
-   2. STYLES FOR THE INNER HEADER ("COURSE OVERVIEW")
-   ========================================================== */
-
-.inner-header-container {
-    /* Adjusted padding-top to 0 because the main padding is on .card-content */
-    padding-top: 0; 
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 10;
-    
-    /* Maintains the visual separation from the slot content */
-    padding-bottom: 20px; 
+.container-title {
+  color: #777777;
+  font-family: Arial, sans-serif;
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0;
 }
 
-.course-heading-overview {
-    color: #777777; 
-    font-family: Arial, sans-serif;
-    font-size: 1.2em; 
-    font-weight: bold; 
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    
-    margin: 0; 
-    position: relative;
-    z-index: 20; 
+.container-right {
+  color: #999999;
+  font-family: Arial, sans-serif;
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.content-body {
+  width: 100%;
+  font-family: Arial, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333333;
 }
 </style>

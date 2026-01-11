@@ -2,11 +2,11 @@
   <nav class="sub-nav">
     <ul class="nav-list">
       <li 
-        v-for="item in navItems" 
+        v-for="item in items" 
         :key="item"
         class="nav-item"
-        :class="{ active: activeTab === item }"
-        @click="selectTab(item)"
+        :class="{ active: modelValue === item }"
+        @click="$emit('update:modelValue', item)"
       >
         {{ item }}
       </li>
@@ -14,41 +14,36 @@
   </nav>
 </template>
 
-<script>
-export default {
-  name: 'SubNavbar',
-  data() {
-    return {
-      /* Updated to Title Case */
-      activeTab: 'Submission',
-      navItems: ['Submission', 'Feedback']
-    }
+<script setup>
+/**
+ * NO HARDCODED STRINGS HERE
+ * items: The array of names (e.g. ['Submission', 'Feedback'])
+ * modelValue: The specific string that should be Red (#720000)
+ */
+defineProps({
+  items: {
+    type: Array,
+    required: true
   },
-  methods: {
-    selectTab(item) {
-      this.activeTab = item;
-    }
+  modelValue: {
+    type: String,
+    required: true
   }
-}
+});
+
+defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
 .sub-nav {
   background-color: #E48319; 
   width: 100%; 
-  padding: 12px 0; 
-  display: flex;
-  justify-content: flex-start; 
-  padding-left: 40px; 
-  position: relative;
-  z-index: 10;
+  padding: 12px 40px; 
   box-sizing: border-box;
 }
 
 .nav-list {
   display: flex;
-  flex-direction: row; 
-  justify-content: flex-start;
   gap: 80px; 
   list-style: none;
   margin: 0;
@@ -56,26 +51,19 @@ export default {
 }
 
 .nav-item {
-  color: #ffffff; 
+  color: #ffffff; /* White by default */
   font-family: 'Source Sans Pro', Arial, sans-serif;
   font-weight: 750; 
-  font-size: 1rem; /* Slightly larger as Title Case looks smaller than Uppercase */
-  letter-spacing: 1.2px;
   cursor: pointer;
-  
-  /* REMOVED text-transform: uppercase */
-  
-  transition: all 0.3s ease;
-  line-height: 1; 
+  transition: color 0.2s ease;
 }
 
-/* Active State (Dark Red) */
+/* Logic: Turn Red only if it matches the modelValue */
 .nav-item.active {
   color: #720000; 
 }
 
 .nav-item:hover {
   color: #720000;
-  opacity: 0.9;
 }
 </style>
