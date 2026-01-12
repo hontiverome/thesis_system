@@ -18,7 +18,7 @@ class SudentVerification
         /** @var \App\Models\User $user */ 
         $user = Auth::user();
         
-        if (! $user->hasRole('Student')) {
+        if (! $user->hasRole('GroupLeader') && ! $user->hasRole('Student')) {
             return response()->json(['message' => 'Unauthorized. Student access only.'], 403);
         }
 

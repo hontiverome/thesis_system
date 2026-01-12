@@ -4,13 +4,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Http\UploadedFile;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Auth\{LoginController, RegisterController, FacultyLoginController, PasswordController};
 use App\Http\Controllers\Api\V1\UserProfileController;
-use App\Http\Middleware\SudentVerification;
-use App\Services\StudentProposalService;
+use App\Http\Controllers\Api\V1\DefenseService;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Api\V1\CreateFacultyController;
 use App\Http\Controllers\Api\V1\AdminListController;
@@ -19,6 +20,9 @@ use App\Http\Controllers\Api\V1\GroupPageController;
 use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
 use App\Http\Controllers\Api\V1\StudentController;
+use App\Http\Controllers\Api\V1\StudentLeaderController;
+use App\Models\Defense;
+use App\Http\Middleware\GroupLeaderMiddleware;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -46,12 +50,13 @@ Route::prefix('v1/auth')->middleware('auth:sanctum')->group(function () {
 
 // Test endpoint to verify CORS is working
 Route::get('/test', function (Request $request) {
+    $user = $request->user() ?? auth('sanctum')->user();
     return response()->json([
         'message' => 'API is working!',
-        'user' => $request->user() ? $request->user()->only('id', 'name', 'email') : null,
+        'user' => $user ? $user->only('id', 'name', 'email') : null,
         'auth' => [
             'via' => $request->bearerToken() ? 'token' : 'session',
-            'authenticated' => $request->user() ? true : false
+            'authenticated' => $user ? true : false
         ]
     ]);
 });
@@ -62,6 +67,16 @@ Route::middleware('auth:sanctum')->get('/test-auth', function (Request $request)
         'message' => 'Authenticated!',
         'user' => $request->user()->only('id', 'name', 'email')
     ]);
+});
+
+// Test endpoint to get a token for the test student (for Postman testing)
+Route::get('/test/token/student', function () {
+    $user = User::find(113);
+    if (!$user) {
+        return response()->json(['error' => 'User 113 not found.'], 404);
+    }
+    $token = $user->createToken('test-token')->plainTextToken;
+    return response()->json(['token' => $token, 'message' => 'Use this token in Authorization header: Bearer <token>']);
 });
 
 // Protected routes
@@ -77,36 +92,28 @@ Route::prefix('v1')->middleware('auth:sanctum')->name('api.')->group(function ()
 
 // Student-only routes
 Route::prefix('v1/groups')->middleware(['auth:sanctum', 'student.verify'])->group(function () {
-     Route::post('/{groupId}/proposals', [StudentController::class, 'submitProposal']);
-     Route::get('/{groupId}/proposals', [StudentController::class, 'getProposalStatus']);
-     Route::get('/proposals/student/group', [StudentController::class, 'displayInfo']);
-     Route::post('/{groupId}/manuscript', [StudentController::class, 'submitProposal']);
-     Route::get('/{groupId}/approval-status', [StudentController::class, 'getEligibleProposals']);
-     Route::get('/faculty', [StudentProposalService::class, 'getFacultyList']);
-     Route::post('/{groupdId}/manuscript', [StudentController::class, 'submitManuscript']);
-     Route::post('/invitation', [StudentController::class, 'invitation']);
-     Route::post('/evaluation', [StudentController::class, 'evaluation']);
-     Route::get('/{id}/delete', [StudentController::class, 'delete']);
-     Route::post('{groupId}/select-title', [StudentController::class, 'selectTitleForDefense']);
-     Route::get('/{groupId}/defense', [StudentController::class, 'getDefenseVerdict']);
-});
+     
+    # Group Leader APIs
+     Route::post('/{groupId}/proposals', [StudentLeaderController::class, 'submitProposal'])->middleware(GroupLeaderMiddleware::class); # F-104
+     Route::get('/{groupId}/approval-status', [StudentLeaderController::class, 'getEligibleProposals'])->middleware(GroupLeaderMiddleware::class); # F-107
+     Route::post('/{groupId}/select-title', [StudentLeaderController::class, 'selectTitleForDefense'])->middleware(GroupLeaderMiddleware::class); # F--108
+     Route::post('/{groupId}/manuscript', [StudentLeaderController::class, 'submitManuscript'])->middleware(GroupLeaderMiddleware::class); # F-109
 
-// Student API Tests
-Route::post('/student/test', function (Request $request) {
-    
-    $user = User::with('groups')->find(101); 
-    if (!$user) return response()->json(['error' => 'User 101 not found'], 404);
-    
-    Sanctum::actingAs($user, ['*']);
-    $groupId = $user->groups->first()->GroupID ?? 1; 
-    $internalRequest = Request::create(
-        "/api/v1/groups/{$groupId}/defense", 'GET',                     
-        $request->all()         
-    );
-    $response = app()->handle($internalRequest);
+     # General APIs
+     Route::get('/{groupId}/proposals', [StudentController::class, 'getProposal']); # F-105 
+     Route::get('/{groupId}/defense', [StudentController::class, 'getDefenseVerdict']); # F-113
 
-    return $response;
+     # Other Student APIs
+     Route::get('/group', [StudentController::class, 'displayInfo']); # Display Group Information (Group Number, Adviser, Section)
+     Route::get('/faculty', [StudentController::class, 'faculty']); # Display All User with Faculty Role
+     Route::get('/invitation', [StudentController::class, 'invitation']); # Display all defense panel invitation status
+     Route::get('/evaluation-forms', [StudentController::class, 'defenseEvalutaion']); # Retrieve all evaluation forms
+     Route::get('/{groupId}/manuscript', [StudentController::class, 'getManuscript']); # Retrieve Manuscript
+     Route::get('/{id}/delete', [StudentLeaderController::class, 'delete'])->middleware(GroupLeaderMiddleware::class);; # Delete Proposal
+     
 });
+     Route::middleware('auth:sanctum')->get('auth/dashboard', [StudentController::class, 'dashboard']); # F-103
+
 
 // Admin routes
 Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admin.')->group(function () {

@@ -41,6 +41,11 @@ class Proposal extends Model
         return $this->hasMany(Defense::class, 'ProposalID');
     }
 
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class, 'ProposalID');
+    }
+
     public function group()
     {
         return $this->hasOneThrough(Group::class, Enrollment::class, 'EnrollmentID', 'GroupID', 'EnrollmentID', 'GroupID');

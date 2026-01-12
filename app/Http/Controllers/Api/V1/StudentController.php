@@ -4,120 +4,145 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\StudentProposalService;
+use App\Models\User;
+use App\Services\StudentServices\StudentProposalService;
+use Illuminate\Database\Eloquent\Collection;
+use App\Models\Proposal;
+use App\Services\StudentServices\DefenseService;
+use App\Services\StudentServices\SubmitFileService;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
+    public function dashboard()
+    {   
+        $userID = Auth::user()->UserID;
+        $user = User::with(['roles', 'groups'])->find($userID);
+
+        if (!$user) {
+            abort(404, 'User not found');
+        }
+
+        if ($user->hasRole('Student') || $user->hasRole('GroupLeader')) {
+            $group = $user->groups->first();
+            $groupRole = $group->pivot->GroupRole ?? 'Member';
+            if (in_array($groupRole, ['Leader', 'GroupLeader'])) {
+                return view('student.leader_dashboard') ?? 'Leader Dashboard'; 
+            } elseif ($groupRole === 'Member') {
+                return view('student.member_dashboard') ?? 'Member Dashboard'; 
+            }
+        }
+        return view('common.dashboard') ?? 'Common Dashboard'; 
+    }
+
     public function displayInfo()
     {
         $userID = Auth::user()->UserID;
-        $studentData = StudentProposalService::getGroupInfo($userID);
+        $user = User::with('groups')->find($userID);
+
+        if (!$user) return new Collection();
+
+        $groupIds = $user->groups->pluck('GroupID')->toArray();
+        if (empty($groupIds)) return new Collection();
+
+        return Proposal::with([
+            'enrollment' => function ($query) {
+                $query->select('EnrollmentID', 'GroupID');
+            },
+            'enrollment.group' => function ($query) {
+                $query->select('GroupID', 'GroupCode', 'YearLevel');
+            },
+            'enrollment.group.advisers' => function ($query) {
+                $query->select('users.UserID', 'FullName');
+            }
+        ])->get();
 
         return response()->json(['message' => $studentData], 200);
     }
 
-    public function submitProposal(Request $request, $groupId)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf|max:10240',
-        ]);
-
-        $userID = Auth::user()->UserID;
-        $file = $request->file('file');
-        $upload = StudentProposalService::submitProposal($userID, $file);
-
-        return response()->json(['message' => $upload], 200);
-    }
-
-    public function getProposalStatus($groupId)
+    public function getProposal($groupId)
     {
         $userID = Auth::user()->UserID;
         $proposals = StudentProposalService::getGroupProposal($userID);
 
-        return response()->json($proposals);
+        return response()->json([$proposals]);
     }
 
-    public function invitation()
-    {
-        $userID = Auth::user()->UserID;
-        $inv = StudentProposalService::getDefenseInvitation($userID);
-
-        return response()->json(['message' => $inv], 200);
-    }
-
-    public function evaluation()
-    {
-        $userID = Auth::user()->UserID;
-        $inv = StudentProposalService::getDefenseEvaluation($userID);
-
-        return response()->json(['message' => $inv], 200);
-    }
-
-    public function getEligibleProposals($groupId)
-    {
-        $userID = Auth::user()->UserID;
-        $quotaStatus = StudentProposalService::checkProposalQuota($userID);
-
-        return response()->json(['message' => $quotaStatus], 200);
-    }
-
-    public function delete($proposalId)
-    {
-        $delete = StudentProposalService::deleteProposal($proposalId);
-
-        return response()->json(['message' => 'Proposal #' . $delete . ' deleted'], 200);
-    }
-
-    public function submitManuscript(Request $request, $groupId)
-    {
-        $request->validate([
-            'file' => 'required|file|mimes:pdf|max:10240',
-        ]);
-
-        $userID = Auth::user()->UserID;
-        $file = $request->file('file');
-        $upload = StudentProposalService::submitManuscript($userID, $file);
-
-        return response()->json(['message' => $upload], 200);
-    }
-    
-    public function selectTitleForDefense(Request $request, $groupId)
-    {
-        $request->validate([
-            'proposal_id' => 'required'
-        ]);
-
+    public function getManuscript($groupId)
+    {   
         try {
             $userID = Auth::user()->UserID;
-            $proposalId = $request->input('proposal_id');
+            $manuscripts = StudentProposalService::getGroupManuscript($groupId);
+            
+            if (isset($manuscripts)) {
+                return response()->json(['message' => 'No manuscript found.'], 404);
+            }
 
-            $defense = StudentProposalService::pickTitle($userID, $proposalId);
-
-            return response()->json([
-                'message' => 'Title successfully selected for defense!',
-                'data'    => $defense
-            ], 200);
-
+            return response()->json($manuscripts);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['message' => $e->getMessage()], 404);
         }
+
+        
     }
 
-    /*
-    public function getDefenseVerdict($groupId)
-    {
+    public function faculty () {
         try {
             $userID = Auth::user()->UserID;
-            $verdictData = StudentProposalService::getDefenseVerdict($userID);
+            $facultyData = DefenseService::getFacultyList($userID);
 
             return response()->json([
-                'message' => 'Defense verdict retrieved successfully.',
-                'data'    => $verdictData
+                'Faculty List' => $facultyData
             ], 200);
 
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
-    }*/
+    }
+
+    public function invitation()
+    {
+        $userID = Auth::user()->UserID;
+        $inv = DefenseService::getDefenseInvitation($userID);
+        $list = $inv['invitation_list'];
+        $accepted = $inv['invitation_accepted'];
+
+        return response()->json(["Panel Invitation"=>$list, "Panel Approval"=>$accepted], 200);
+    }
+
+    public function getDefenseVerdict($groupId)
+    {
+        try {
+            $userID = Auth::user()->UserID;
+            $verdictData = DefenseService::getDefenseEvaluation($userID);
+
+            return response()->json([
+                'Defense Verdict' => $verdictData
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function defenseEvalutaion () {
+         try {
+        $userID = Auth::user()->UserID;
+        $facultyData = DefenseService::getEvaluationFiles($userID);
+
+        if (isset($facultyData)) {
+            return response()->json(['Message' => 'No evaluation files found.'], 404);
+        }
+
+        return response()->json([
+            'Evaluation Files' => $facultyData
+        ], 200);
+        
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+
+    }
+
+
 }
