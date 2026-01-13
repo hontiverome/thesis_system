@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-card">
+  <div class="rounded-card" :style="{ maxWidth: maxWidth }">
     
     <div class="header-row">
       <div class="header-left">
@@ -7,14 +7,15 @@
           v-if="showBackArrow" 
           class="back-button" 
           @click="$emit('back')"
-          title="Go Back"
         >
-          <Icon icon="iconamoon:arrow-left-2-light" />
+          <Icon :icon="backIcon" />
         </button>
         <h2 class="title-header">{{ title }}</h2>
       </div>
       
-      <span class="deadline-text">{{ deadline }}</span>
+      <div class="header-right">
+        <slot name="header-right"></slot>
+      </div>
     </div>
     
     <div class="card-content">
@@ -24,30 +25,29 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { Icon } from '@iconify/vue';
 
-export default {
-  name: 'RoundedCard',
-  components: {
-    Icon
+const props = defineProps({
+  title: { 
+    type: String, 
+    default: '' 
   },
-  props: {
-    title: {
-      type: String,
-      default: 'SAMPLE TITLE'
-    },
-    deadline: {
-      type: String,
-      default: 'STATUS: ---'
-    },
-    // Prop to control visibility of the arrow
-    showBackArrow: {
-      type: Boolean,
-      default: true
-    }
+  showBackArrow: { 
+    type: Boolean, 
+    default: true 
+  },
+  backIcon: { 
+    type: String, 
+    default: 'iconamoon:arrow-left-2-light' 
+  },
+  maxWidth: { 
+    type: String, 
+    default: '800px' 
   }
-}
+});
+
+defineEmits(['back']);
 </script>
 
 <style scoped>
@@ -55,10 +55,9 @@ export default {
   background-color: #FFFFFF;
   border-radius: 20px;
   padding: 40px;
-  max-width: 800px;
   margin: 20px auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  font-family: 'Arial', sans-serif;
+  font-family: inherit;
 }
 
 .header-row {
@@ -68,47 +67,37 @@ export default {
   margin-bottom: 30px;
 }
 
-/* Grouping Arrow and Title */
 .header-left {
   display: flex;
   align-items: center;
-  gap: 15px; /* Space between arrow and text */
+  gap: 15px;
 }
 
-/* Transparent button for the icon */
 .back-button {
   background: none;
   border: none;
   padding: 0;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 2rem;
   color: #000;
-  font-size: 2rem; /* Size of the < arrow */
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .back-button:hover {
-  color: #D32F2F; /* Turns red on hover to match deadline */
-  transform: translateX(-3px); /* Subtle nudge to the left */
+  transform: translateX(-3px);
 }
 
 .title-header {
   font-size: 1.5rem;      
-  font-weight: 900;        
-  color: #000000;          
+  font-weight: 900;                
   text-transform: uppercase;
-  letter-spacing: 2px;    
   margin: 0;              
 }
 
-.deadline-text {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #D32F2F;          
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .card-content {

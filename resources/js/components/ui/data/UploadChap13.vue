@@ -32,7 +32,7 @@
         </svg>
 
         <p class="instruction-text">Choose a file or drag & drop it here</p>
-        <p class="format-text">PDF format only</p>
+        <p class="format-text">{{ acceptedFormatText }}</p>
 
         <button class="browse-btn" @click.stop="triggerFileInput">
           Browse File
@@ -42,7 +42,7 @@
           type="file" 
           ref="fileInput" 
           class="hidden-input" 
-          accept=".pdf" 
+          :accept="accept" 
           @change="handleFileSelected"
         />
       </div>
@@ -55,61 +55,68 @@
 export default {
   name: 'FileUploadCard',
   props: {
+    // Dynamic Title passed from Parent
     title: {
       type: String,
-      default: 'Upload Chapters 1 - 3 (MOR)'
+      required: true
     },
+    // Dynamic Subtitle
     subtitle: {
       type: String,
       default: 'Select and upload your file'
+    },
+    // Allows parent to control file types (e.g., ".pdf,.docx")
+    accept: {
+      type: String,
+      default: '.pdf'
+    },
+    // Descriptive text for the UI
+    acceptedFormatText: {
+      type: String,
+      default: 'PDF format only'
     }
   },
   methods: {
-    // 1. Opens the File Manager
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
-    // 2. Handles file selection via "Browse" button
     handleFileSelected(event) {
       const file = event.target.files[0];
       if (file) {
         this.processFile(file);
       }
     },
-    // 3. Handles Drag and Drop functionality
     handleDrop(event) {
       const file = event.dataTransfer.files[0];
       if (file) {
         this.processFile(file);
       }
     },
-    // 4. Emits the file to the parent component
     processFile(file) {
-      console.log("File selected:", file.name);
       this.$emit('file-uploaded', file);
+      // Reset input so the same file can be selected again if needed
+      this.$refs.fileInput.value = null;
     }
   }
 }
 </script>
 
 <style scoped>
-/* --- Outer Card Styling --- */
 .upload-card {
-  border: 2px solid #A03030; /* Dark Red/Brown Border */
+  border: 2px solid #A03030;
   border-radius: 20px;
   background-color: #FFFFFF;
   font-family: 'Arial', sans-serif;
   max-width: 600px;
   margin: 20px auto;
-  overflow: hidden; /* Ensures child elements respect border radius */
+  overflow: hidden;
 }
 
-/* --- Header Section --- */
 .card-header {
   display: flex;
   align-items: center;
   padding: 20px 25px;
-  border-bottom: 1px solid #333; /* The solid line separator */
+  border-bottom: 1px solid #E0E0E0;
   gap: 15px;
 }
 
@@ -121,6 +128,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .header-icon {
@@ -143,17 +151,16 @@ export default {
 
 .card-subtitle {
   font-size: 0.85rem;
-  color: #333;
+  color: #666;
   margin: 2px 0 0 0;
 }
 
-/* --- Body Section --- */
 .card-body {
   padding: 30px;
 }
 
 .dashed-zone {
-  border: 2px dashed #A03030; /* Matches outer border color */
+  border: 2px dashed #A03030;
   border-radius: 20px;
   padding: 30px;
   text-align: center;
@@ -166,7 +173,7 @@ export default {
 }
 
 .dashed-zone:hover {
-  background-color: #FFF5F5; /* Very light red hover tint */
+  background-color: #FFF5F5;
 }
 
 .body-icon {
@@ -177,7 +184,7 @@ export default {
 }
 
 .instruction-text {
-  font-family: 'Courier New', Courier, monospace; /* Typewriter font style */
+  font-family: 'Courier New', Courier, monospace;
   font-weight: 700;
   font-size: 1rem;
   color: #000;
@@ -187,15 +194,14 @@ export default {
 .format-text {
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
-  color: #888; /* Grey text */
+  color: #888;
   margin: 0 0 20px 0;
 }
 
-/* --- Browse Button --- */
 .browse-btn {
   background-color: #FFFFFF;
   border: 1px solid #000;
-  border-radius: 20px; /* Pill shape */
+  border-radius: 20px;
   padding: 8px 25px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
