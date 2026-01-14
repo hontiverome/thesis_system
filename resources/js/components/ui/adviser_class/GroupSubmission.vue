@@ -1,6 +1,6 @@
 <template>
   <div class="submissions-container">
-    <div class="header-container-sub">
+    <div v-if="classSection" class="header-container-sub">
       <div class="class-info">
         <span class="label">CLASS SECTION:</span> 
         <span class="value">{{ classSection }}</span>
@@ -64,7 +64,7 @@
                 </div>
 
                 <div class="actions-col">
-                  <div class="action-buttons">
+                  <div v-if="showActions" class="action-buttons">
                     <template v-if="!item.status">
                       <button 
                         class="btn-accept" 
@@ -91,6 +91,7 @@
                        </div>
                     </div>
                   </div>
+                  <div v-else class="view-only-text">View Only</div>
                 </div>
               </div>
             </td>
@@ -115,24 +116,24 @@ import { Icon } from '@iconify/vue';
 import Comment from './Comment.vue';
 
 const props = defineProps({
-  classSection: { type: String, default: 'N/A' },
+  // Setting default to null makes it optional
+  classSection: { type: String, default: null },
   submissions: { type: Array, default: () => [] },
-  filterOptions: { type: Array, default: () => ['Accepted', 'Rejected'] }
+  filterOptions: { type: Array, default: () => ['Accepted', 'Rejected'] },
+  // Allows other devs to hide the buttons entirely
+  showActions: { type: Boolean, default: true }
 });
 
-const emit = defineEmits(['accept', 'reject', 'filter-change', 'reset-status']);
+const emit = defineEmits(['accept', 'reject', 'filter-change']);
 
-// Local State
 const currentFilter = ref('');
 const showPopup = ref(false);
 const pendingAction = ref({ type: '', code: '', item: null });
 
-// Computed logic for filtering submissions
 const filteredGroups = computed(() => {
   if (!props.submissions || props.submissions.length === 0) {
     return [{ code: '----', researchItems: [{}] }];
   }
-
   if (!currentFilter.value) return props.submissions;
 
   return props.submissions.map(group => ({
@@ -183,7 +184,6 @@ const onPopupConfirm = (commentText) => {
 
 .text-center { text-align: center !important; }
 
-/* TABLE PROPORTIONS */
 .col-code { width: 12%; }
 .col-research { width: 50%; }
 .col-status { width: 15%; } 
@@ -246,8 +246,9 @@ const onPopupConfirm = (commentText) => {
 .count-text { font-weight: 600; font-size: 13px; color: #475569; }
 
 .action-buttons { display: flex; gap: 8px; align-items: center; }
+.view-only-text { color: #94a3b8; font-size: 12px; font-style: italic; }
 
-.btn-accept, .btn-reject, .btn-undo { 
+.btn-accept, .btn-reject { 
   border: none; border-radius: 4px; 
   padding: 8px 12px; color: white; 
   cursor: pointer; display: flex; 
@@ -257,7 +258,6 @@ const onPopupConfirm = (commentText) => {
 
 .btn-accept { background-color: #065f27; }
 .btn-reject { background-color: #7f0000; }
-.btn-undo { background-color: #64748b; color: white; font-size: 12px; }
 
 .btn-accept:disabled, .btn-reject:disabled {
   opacity: 0.2;

@@ -30,7 +30,7 @@ import EnrolleeManager from './EnrolleeManager.vue';
 const props = defineProps({
   classSection: {
     type: String,
-    default: '' // Default value if no prop is provided
+    default: 'N/A' // Default value if no prop is provided
   }
 });
 

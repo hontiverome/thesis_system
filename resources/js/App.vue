@@ -26,8 +26,9 @@ import { useLayoutStore } from '@/stores/layout.js';
 // Import Sidebars
 import StudSidebar from '@/components/layout/stud_sidebar.vue';
 import AdviserSidebar from '@/components/layout/adviser_sidebar.vue';
-import FaCoChairSidebar from '@/components/layout/FaCoChair_sidebar.vue';
 import AppNavbar from '@/components/layout/app_navbar.vue';
+import ChairSidebar from '@/components/layout/chair_sidebar.vue';
+import FacultySidebar from './components/layout/faculty_sidebar.vue';
 
 /**
  * PROPS: This is the entry point for other developers.
@@ -36,8 +37,8 @@ import AppNavbar from '@/components/layout/app_navbar.vue';
 const props = defineProps({
   userRole: {
     type: String,
-    default: 'student',
-    validator: (value) => ['student', 'adviser', 'faco-chair'].includes(value)
+    default: '',
+    validator: (value) => ['student', 'adviser', 'faculty', 'chair'].includes(value)
   }
 });
 
@@ -51,7 +52,8 @@ const currentSidebar = computed(() => {
   const sidebars = {
     'student': StudSidebar,
     'adviser': AdviserSidebar,
-    'faco-chair': FaCoChairSidebar
+    'faculty': FacultySidebar,
+    'chair': ChairSidebar
   };
   return sidebars[props.userRole] || StudSidebar;
 });
