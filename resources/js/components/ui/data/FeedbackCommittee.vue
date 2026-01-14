@@ -132,7 +132,7 @@ const statusClass = computed(() => {
 /* Truncation Logic: Limits to 3 lines */
 .is-truncated {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
