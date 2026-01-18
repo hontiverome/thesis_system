@@ -37,7 +37,6 @@ import { useAuth } from '@/composables/useAuth';
 // Import route modules
 import authRoutes from './routes/auth';
 import mainRoutes from './routes/main';
-import dashboardRoutes from './routes/dashboard';
 
 // Import route guards
 import { setupRouteGuards } from './routeGuards';
@@ -46,33 +45,20 @@ import { setupRouteGuards } from './routeGuards';
 const routes = [
   ...authRoutes,      // Authentication related routes
   ...mainRoutes,      // Main application routes
-  ...dashboardRoutes  // Dashboard and related routes
 ];
 
 // Create router instance
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
-  // Improved scroll behavior
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    }
-    
-    // Scroll to top for new routes, but maintain position when using back/forward
-    if (to.hash) {
-      return { 
-        el: to.hash,
-        behavior: 'smooth',
-        top: 100 // Offset for fixed headers if needed
-      };
-    }
-    
-    // Default scroll to top
+    if (savedPosition) return savedPosition;
+    if (to.hash) return { el: to.hash, behavior: 'smooth', top: 100 };
     return { top: 0, behavior: 'smooth' };
   }
 });
 
+<<<<<<< Updated upstream
 // Setup route guards
 // setupRouteGuards(router);
 
@@ -107,11 +93,13 @@ router.beforeEach(async (to, from, next) => {
   // 4. Allow Navigation
   next();
 });
+=======
+setupRouteGuards(router);
+>>>>>>> Stashed changes
 
-// Set page title
 router.afterEach((to) => {
   if (to.meta.title) {
-    document.title = `${to.meta.title} | Website Template`;
+    document.title = `${to.meta.title} | Thesis System`;
   }
 });
 
