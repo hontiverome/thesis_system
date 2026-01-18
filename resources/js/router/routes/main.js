@@ -34,12 +34,12 @@
 
 const mainRoutes = [
   {
-    path: '/home',
-    name: 'home',
-    component: () => import('@/views/home_view.vue'),
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/views/profile_view.vue'),
     meta: { 
-      title: 'Home',
-      requiresAuth: true,  
+      title: 'Profile',
+      requiresAuth: true,
       layout: 'AppLayoutDefault'
     }
   },
@@ -49,16 +49,6 @@ const mainRoutes = [
     component: () => import('@/views/settings_view.vue'),
     meta: { 
       title: 'Settings',
-      requiresAuth: true,
-      layout: 'AppLayoutDefault'
-    }
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('@/views/profile_view.vue'),
-    meta: { 
-      title: 'Profile',
       requiresAuth: true,
       layout: 'AppLayoutDefault'
     }
