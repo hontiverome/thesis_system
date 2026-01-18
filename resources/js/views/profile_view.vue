@@ -1,79 +1,91 @@
-a<!---
- * System Name: Theming and UI Framework
- * Module Name: Profile
- * Purpose Of this file: 
- * To display and manage user profile information and settings.
- * 
- * Author: Jerome Andrei O. Hontiveros
- * Copyright (C) 2025
- * by the Department of Science and Technology — Project LODI
- * All rights reserved.
- * 
- * Permission is hereby granted, free of charge, to any persons obtaining a copy
- * of this software and associated documentation files, to deal in the Software
- * without restriction, including the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, provided that the
- * above copyright notice(s) and this permission notice appears in all copies of
- * the Software and that both the above copyright notice(s) and this permission
- * notice appear in supporting documentation.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE
- * LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY
- * DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- * Except as contained in this notice, the name of a copyright holder shall not
- * be used in advertising or otherwise to promote the sale, use or other dealings
- * in this Software without prior written authorization of the copyright holder.
--->
-
 <template>
-  <div class="page-view" role="main" aria-labelledby="profile-title">
-    <header class="page-header">
-      <h1 id="page-title" class="page-title">Your Profile</h1>
-      <p class="page-subtitle">Manage your profile and account information</p>
+  <div class="page">
+    <header class="profile-header">
+      <div class="header-content">
+        <span class="header-title">PROFILE</span>
+        <button class="edit-btn-header" @click="showEditModal = true">
+          Edit Profile
+        </button>
+      </div>
     </header>
-    <!-- Loading State -->
-    <div v-if="userStore.isLoading" class="loading-overlay">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <span>Loading profile...</span>
-      </div>
-    </div>
 
-    <!-- Error Message -->
-    <div v-else-if="error" class="error-message">
-      <div class="error-content">
-        <svg class="error-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-        </svg>
-        <p>{{ error }}</p>
-      </div>
-    </div>
+    <div class="content">
+      <aside class="card">
+        <h2 class="user-name">{{ fullName }}</h2>
+        <p class="user-id">@{{ userStore.user?.id || '33550336-MN-0' }}</p>
 
-    <!-- Main Content -->
-    <div v-else class="profile-content">
-      <!-- Profile Header Component -->
-      <ProfileHeader 
-        @edit-profile="showEditModal = true"
-      />
-
-      <!-- Account Information Card -->
-      <div class="account-info-card">
-        <div class="card-content">
-          <AccountInfo 
-            @edit-profile="showEditModal = true"
-          />
+        <div class="avatar-wrapper">
+          <img :src="avatar" class="avatar" />
         </div>
-      </div>
+
+        <button class="btn orange">Upload New Photo</button>
+
+        <div class="meta">
+          <div class="meta-row">
+            <strong>SYC:</strong> <span>3-3</span>
+          </div>
+          <div class="meta-row">
+            <span class="group-label">GROUP #</span>
+          </div>
+        </div>
+
+        <button class="btn dark" @click="handleLogout">Sign out</button>
+      </aside>
+
+      <section class="form">
+        <div class="field">
+          <label>About</label>
+          <div class="box readonly-box">
+             {{ userStore.user?.about || '33,550,336...' }}
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field">
+            <label>First Name</label>
+            <div class="box readonly-box">
+              {{ userStore.user?.firstName || 'Phainon' }}
+              <button class="icon" @click="showEditModal = true">✎</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <div class="box readonly-box">
+              {{ userStore.user?.lastName || 'Khaslana' }}
+              <button class="icon" @click="showEditModal = true">✎</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <div class="box readonly-box">
+            {{ userStore.user?.email || 'email@address.com' }}
+            <button class="icon" @click="showEditModal = true">✎</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="box readonly-box">
+            <span>****************</span>
+            <button class="icon" title="Change Password">✎</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Birthdate</label>
+          <div class="box readonly-box">
+             {{ userStore.user?.birthdate || 'Not set' }}
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- Edit Profile Modal -->
+    <footer class="footer">
+       <span>T-SIS SYSTEM</span>
+    </footer>
+
     <EditProfileModal 
       v-if="showEditModal"
       :user="userStore.user"
@@ -83,44 +95,257 @@ a<!---
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useUserStore } from '@/stores/user.js';
-import ProfileHeader from '../components/profile/profile_header.vue';
-import AccountInfo from '../components/profile/account_info.vue';
-import EditProfileModal from '../components/profile/edit_profile_modal.vue';
+<script setup>
+import { ref, computed } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import EditProfileModal from '@/components/profile/edit_profile_modal.vue'
 
-const userStore = useUserStore();
-const showEditModal = ref(false);
-const error = ref<string | null>(null);
+const userStore = useUserStore()
+const router = useRouter()
+const showEditModal = ref(false)
+const avatar = ref('/avatar.png')
 
-// Initialize user data
-const initialize = async (): Promise<void> => {
-  try {
-    // Only initialize if we don't have user data yet
-    if (!userStore.user || !userStore.user.id) {
-      await userStore.initialize();
-    }
-  } catch (err) {
-    console.error('Failed to load profile:', err);
-    error.value = 'Failed to load profile data. Please try again later.';
-  }
-};
+const fullName = computed(() => 
+  `${userStore.user?.firstName || 'User'} ${userStore.user?.lastName || ''}`
+)
 
-const handleProfileSaved = async (): Promise<void> => {
-  // Any additional logic after profile is saved
-  showEditModal.value = false;
-  
-  // Refresh user data to ensure everything is up to date
-  try {
-    await userStore.initialize();
-  } catch (err: unknown) {
-    console.error('Error refreshing user data:', err);
-  }
-};
+const handleLogout = async () => {
+    await userStore.logout();
+    router.push('/login');
+}
 
-// Load data when component mounts
-onMounted((): void => {
-  initialize();
-});
+const handleProfileSaved = () => {
+  // Refresh logic here if needed
+}
 </script>
+
+<style scoped>
+/* RESET & BASE */
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+.page {
+  background: #f4f4f4;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOP HEADER (Replaces Profile Strip) */
+.profile-header {
+  background: linear-gradient(to right, #e8891c, #f6d2a3);
+  border-bottom: 1px solid #e0e0e0; /* Subtle separator */
+  padding: 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.header-content {
+  max-width: 100%; /* Or set a max-width if you want it contained */
+  padding: 20px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 30px;
+  letter-spacing: 6px;
+  font-weight: 900; /* Extra Bold */
+  color: #ffffff;   /* Pure Black */
+}
+
+/* BUTTONS */
+.edit-btn-header {
+  font-size: 14px;
+  background: white;
+  border: 1px solid #000;
+  color: #000;
+  padding: 8px 20px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.edit-btn-header:hover { 
+    background: #000; 
+    color: white; 
+}
+
+/* CONTENT CONTAINER */
+.content {
+  display: flex;
+  gap: 40px;
+  padding: 40px;
+  background: transparent;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* LEFT CARD */
+.card {
+  width: 320px;
+  background: #fff;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  height: fit-content;
+  flex-shrink: 0;
+  border: 1px solid #e0e0e0;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #000000;
+}
+
+.user-id {
+  color: #cc0000;
+  margin-bottom: 25px;
+  margin-top: 5px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.avatar-wrapper {
+  margin: 0 auto 20px auto;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  padding: 4px;
+  border: 2px solid #e8891c;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+}
+
+/* Side Buttons */
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 13px;
+}
+.orange { background: #e8891c; color: white; }
+.orange:hover { background: #d67a10; }
+
+.dark { background: #000; color: white; }
+.dark:hover { background: #333; }
+
+/* Meta Info */
+.meta {
+  margin: 25px 0;
+  font-size: 14px;
+  color: #000;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
+}
+.meta-row {
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+.group-label {
+  color: #cc0000; 
+  font-weight: bold;
+}
+
+/* FORM STYLING */
+.form { 
+    flex: 1; 
+    background: white;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border: 1px solid #e0e0e0;
+}
+
+.grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px; 
+}
+
+.field { 
+  margin-bottom: 24px; 
+}
+
+label { 
+  font-weight: 800;
+  margin-bottom: 8px; 
+  display: block; 
+  color: #000000; 
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.box { 
+  position: relative; 
+}
+
+.readonly-box {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e8891c;
+  background: #fff;
+  min-height: 48px;
+  color: #000000;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #000; 
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+.icon:hover { 
+  opacity: 1;
+  color: #e8891c; 
+}
+
+/* FOOTER */
+.footer {
+  background: linear-gradient(to right, #e8891c, #f6d2a3);
+  padding: 15px 40px;
+  text-align: right;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .content { flex-direction: column; padding: 20px; }
+    .card { width: 100%; }
+    .grid { grid-template-columns: 1fr; }
+    .header-content { padding: 0 20px; }
+}
+</style>
