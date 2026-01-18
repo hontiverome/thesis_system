@@ -1,65 +1,231 @@
-<!---
- * System Name: Theming and UI Framework
- * Module Name: Help
- * Purpose Of this file: 
- * To display the main help view
- * 
- * Author: Jerome Andrei O. Hontiveros
- * Copyright (C) 2025
- * by the Department of Science and Technology — Project LODI
- * All rights reserved.
- * 
- * Permission is hereby granted, free of charge, to any persons obtaining a copy
- * of this software and associated documentation files, to deal in the Software
- * without restriction, including the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, provided that the
- * above copyright notice(s) and this permission notice appears in all copies of
- * the Software and that both the above copyright notice(s) and this permission
- * notice appear in supporting documentation.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE
- * LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY
- * DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- * Except as contained in this notice, the name of a copyright holder shall not
- * be used in advertising or otherwise to promote the sale, use or other dealings
- * in this Software without prior written authorization of the copyright holder.
--->
 <template>
-  <div class="page-view" role="main" aria-labelledby="help-title">
-    <header class="page-header">
-      <h1 id="page-title" class="page-title">Help & Support</h1>
-      <p class="page-subtitle">Find answers and get assistance</p>
+  <div class="page">
+    <header class="help-header">
+      <div class="header-content">
+        <span class="header-title">HELP & SUPPORT</span>
+      </div>
     </header>
-    
-    <div class="card">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq">
-        <div class="faq-item">
-          <h3>How do I change the theme?</h3>
-          <p>Click on the theme selector in the top-right corner of the navigation bar and select your preferred theme from the dropdown menu.</p>
-        </div>
-        <div class="faq-item">
-          <h3>How do I collapse the sidebar?</h3>
-          <p>Click the menu icon (☰) in the top-left corner of the navigation bar to toggle the sidebar between expanded and collapsed states.</p>
-        </div>
-        <div class="faq-item">
-          <h3>Is my data saved?</h3>
-          <p>Yes, your theme preference and sidebar state are saved in your browser's local storage.</p>
-        </div>
+
+    <div class="content">
+      <div class="help-block">
+        
+        <section class="section-group">
+          <h2 class="section-title">
+            <span class="icon">❓</span> Frequently Asked Questions
+          </h2>
+          
+          <div class="faq-list">
+            <div class="faq-item">
+              <h3 class="question">How do I change the theme?</h3>
+              <p class="answer">
+                Click on the theme selector in the top-right corner of the navigation bar 
+                or go to the <strong>Settings</strong> page to select your preferred theme.
+              </p>
+            </div>
+
+            <div class="faq-item">
+              <h3 class="question">How do I collapse the sidebar?</h3>
+              <p class="answer">
+                Click the menu icon (☰) in the top-left corner of the navigation bar 
+                to toggle the sidebar between expanded and collapsed states.
+              </p>
+            </div>
+
+            <div class="faq-item">
+              <h3 class="question">Is my data saved?</h3>
+              <p class="answer">
+                Yes, your theme preference and layout settings are automatically saved 
+                in your local storage for your next visit.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <hr class="separator" />
+
+        <section class="section-group">
+          <h2 class="section-title">
+            <span class="icon">✉️</span> Contact Support
+          </h2>
+          <div class="contact-box">
+            <p>If you need further assistance, please contact our support team:</p>
+            <a href="mailto:support@example.com" class="contact-link">
+              support@example.com
+            </a>
+          </div>
+        </section>
+
       </div>
     </div>
-    
-    <div class="card">
-      <h2>Contact Support</h2>
-      <p>If you need further assistance, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
-    </div>
+
+    <footer class="footer">
+       <span>T-SIS SYSTEM</span>
+    </footer>
   </div>
 </template>
 
+<script setup>
+// Logic can be added here if you want expandable accordions later
+</script>
+
+<style scoped>
+/* RESET & BASE */
+* { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+
+.page {
+  background: #f4f4f4;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOP HEADER */
+.help-header {
+  background: linear-gradient(to right, #e8891c, #f6d2a3);
+  border-bottom: 1px solid #e0e0e0;
+  padding: 20px 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.header-content {
+  padding: 0 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header-title {
+  font-size: 30px;
+  letter-spacing: 6px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+}
+
+.header-subtitle {
+  margin: 5px 0 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* CONTENT CONTAINER */
+.content {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  background: transparent;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* MAIN BLOCK STYLE */
+.help-block {
+  width: 100%;
+  max-width: 900px;
+  background: white;
+  padding: 50px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+  height: fit-content;
+}
+
+/* SECTIONS */
+.section-group {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #000;
+  text-transform: uppercase;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
+}
+
+.separator {
+  border: 0;
+  border-top: 1px solid #eee;
+  margin: 40px 0;
+}
+
+/* FAQ ITEMS */
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.faq-item {
+  padding-left: 20px;
+  border-left: 3px solid #e8891c;
+}
+
+.question {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.answer {
+  margin: 0;
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* CONTACT BOX */
+.contact-box {
+  background: #fff8f0; /* Light orange tint */
+  padding: 25px;
+  border-radius: 4px;
+  border: 1px solid #ffeeba;
+}
+
+.contact-box p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #555;
+}
+
+.contact-link {
+  color: #e8891c;
+  font-weight: 800;
+  font-size: 18px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.contact-link:hover {
+  color: #d67a10;
+  text-decoration: underline;
+}
+
+/* FOOTER */
+.footer {
+  background: linear-gradient(to right, #e8891c, #f6d2a3);
+  padding: 15px 40px;
+  text-align: right;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content { padding: 20px; }
+  .help-block { padding: 30px; }
+  .header-content { padding: 0 20px; }
+  .header-title { font-size: 24px; }
+}
+</style>
