@@ -235,7 +235,7 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   /* Ensure content fills the viewport height minus header */
   min-height: calc(100vh - var(--header-height));
   /* Add padding around content */
-  padding: 1.5rem;
+  padding: 0;
   /* Smooth transition for sidebar collapse/expand and navbar enter/exit */
   transition: margin-left var(--transition-duration), margin-top var(--transition-duration), padding-bottom var(--transition-duration);
   /* Theme-aware background color */
@@ -260,9 +260,9 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
  */
 .content-wrapper {
   /* Maximum width for content to maintain readability */
-  max-width: 1600px;
+  max-width: 100%;
   width: 100%;
-  padding: 0 2rem;
+  padding: 0;
   /* Center the content */
   margin: 0 auto;
   box-sizing: border-box;
