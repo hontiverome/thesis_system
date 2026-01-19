@@ -7,16 +7,16 @@
     </transition>
     
     <transition name="sidebar-fade">
-      <AppSidebar v-if="!isBlankLayout && layoutStore.layoutPreference !== 'navbar'"
+      <AppSidebar v-if="!isBlankLayout && !shouldHideSidebar && layoutStore.layoutPreference !== 'navbar'"
                   :isCollapsed="layoutStore.isSidebarCollapsed" />
     </transition>
 
-    <div v-if="!isBlankLayout && layoutStore.isMobileSidebarOpen" 
+    <div v-if="!isBlankLayout && !shouldHideSidebar && layoutStore.isMobileSidebarOpen" 
          class="backdrop-overlay" 
          @click="layoutStore.closeMobileSidebar()" />
     
     <button
-      v-if="!isBlankLayout && layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
+      v-if="!isBlankLayout && !shouldHideSidebar && layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
       class="floating-sidebar-toggle"
       @click="layoutStore.toggleMobileSidebar()"
       aria-label="Toggle sidebar"
@@ -54,6 +54,7 @@ const route = useRoute();
 
 // Check for Blank Layout Metadata
 const isBlankLayout = computed(() => route.meta.layout === 'blank');
+const shouldHideSidebar = computed(() => route.meta.hideSidebar === true);
 const currentTheme = computed(() => themeStore.currentTheme);
 
 const sidebarWidth = 250;
@@ -72,7 +73,7 @@ const layoutStyles = computed(() => {
       '--content-padding': '0px'
     };
   }
-  const showSidebar = layoutStore.layoutPreference !== 'navbar';
+  const showSidebar = layoutStore.layoutPreference !== 'navbar' && !shouldHideSidebar.value;
   const collapsedPref = layoutStore.isSidebarCollapsed && showSidebar;
   const mobileOpen = layoutStore.isMobileSidebarOpen;
   const effectiveCollapsed = mobileOpen ? false : collapsedPref;
