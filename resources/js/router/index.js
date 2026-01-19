@@ -185,12 +185,6 @@ const roleRoutes = Object.keys(roleCourses).map(role => ({
   component: () => import('@/components/workspace/RoleCourseOverview.vue'), // displays course cards with navigation
   meta: { layout: 'AppLayoutDefault', requiresAuth: true },
   children: [
-    // Course detail page for each course
-    {
-      path: ':course',
-      component: () => import('@/components/workspace/CourseDetail.vue'),
-      meta: { layout: 'AppLayoutDefault', requiresAuth: true }
-    },
     // Original nested routes (deprecated for now but keeping structure)
     ...Object.keys(roleCourses[role]).map(parentTab => ({
       path: parentTab, // e.g., mor, dp1, dp2
@@ -220,6 +214,14 @@ const roleRoutes = Object.keys(roleCourses).map(role => ({
   ]
 }));
 
+// Role-based home routes - added after dynamic routes to avoid conflicts
+const roleHomeRoutes = Object.keys(roleCourses).map(role => ({
+  path: `/${role}/home`,
+  name: `${role}-home`,
+  component: () => import('@/components/workspace/RoleHomeOverview.vue'),
+  meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
+}));
+
 // ==========================
 // Combine all routes
 // ==========================
@@ -227,6 +229,7 @@ const routes = [
   ...guestRoutes,
   ...authRoutes,
   ...roleRoutes,
+  ...roleHomeRoutes,
 ];
 
 // ==========================

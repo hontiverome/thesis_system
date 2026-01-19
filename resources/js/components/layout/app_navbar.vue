@@ -21,9 +21,36 @@
       <div class="navbar-actions">
         
         <nav class="top-links">
-          <router-link to="/home" class="header-link">HOMEPAGE</router-link>
+          <!-- Dynamic role-based navigation -->
+          <router-link 
+            v-if="currentRole"
+            :to="`/${currentRole}/home`" 
+            class="header-link"
+            :class="{ active: isActiveLink('home') }">
+            HOMEPAGE
+          </router-link>
+          <router-link 
+            v-else
+            to="/home" 
+            class="header-link"
+            :class="{ active: isActiveLink('home') }">
+            HOMEPAGE
+          </router-link>
           <span class="separator">|</span>
-          <router-link to="/courses" class="header-link">COURSE</router-link>
+          <router-link 
+            v-if="currentRole"
+            :to="`/${currentRole}/courses`" 
+            class="header-link"
+            :class="{ active: isActiveLink('courses') }">
+            COURSE
+          </router-link>
+          <router-link 
+            v-else
+            to="/courses" 
+            class="header-link"
+            :class="{ active: isActiveLink('courses') }">
+            COURSE
+          </router-link>
         </nav>
 
         <div class="user-menu" @click.stop="toggleUserMenu">
@@ -108,8 +135,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, ref, onUnmounted, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout.js';
 import { useUserStore } from '@/stores/user.js';
 import { loadIcons } from '@iconify/vue';
@@ -119,6 +146,7 @@ import { useAuth } from '@/composables/useAuth';
 import logoImage from '../../../assets/PUP_logo.png';
 
 const router = useRouter();
+const route = useRoute();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 
@@ -126,6 +154,25 @@ const userStore = useUserStore();
 const { logout } = useAuth();
 
 const isUserMenuOpen = ref(false);
+
+// Get current role from URL
+const currentRole = computed(() => {
+  const pathSegments = route.path.split('/');
+  const role = pathSegments[1];
+  // Return role only if it matches known roles
+  const validRoles = ['student', 'admin', 'adviser', 'faculty'];
+  return validRoles.includes(role) ? role : null;
+});
+
+// Check if a link is active
+const isActiveLink = (linkType) => {
+  if (linkType === 'home') {
+    return route.path.includes('/home');
+  } else if (linkType === 'courses') {
+    return route.path.includes('/courses');
+  }
+  return false;
+};
 
 const toggleUserMenu = () => {
   isUserMenuOpen.value = !isUserMenuOpen.value;
@@ -271,11 +318,28 @@ onUnmounted(() => {
   font-size: 1.05rem;
   text-transform: uppercase;
   transition: color 0.2s;
+  position: relative;
 }
 
 .header-link:hover {
   color: #ffc107;
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.header-link.active {
+  color: #ffc107;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.header-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #ffc107;
 }
 
 .separator {
