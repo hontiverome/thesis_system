@@ -124,12 +124,15 @@
             <div class="field">
               <input
                 v-model="form.password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="PASSWORD"
                 autocomplete="current-password"
                 :disabled="loading"
                 required
               />
+              <button type="button" class="toggle-password" @click="showPassword = !showPassword" tabindex="-1">
+                <IconifyIcon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
+              </button>
             </div>
 
             <div class="row">
@@ -159,6 +162,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { Icon as IconifyIcon } from '@iconify/vue'
 
 import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
@@ -168,6 +172,7 @@ const { login } = useAuth()
 
 const loading = ref(false)
 const error = ref('')
+const showPassword = ref(false)
 
 const form = reactive({
   firstName: '',
@@ -412,7 +417,7 @@ const handleLogin = async () => {
   border-radius: 14px;
   border: none;
   outline: none;
-  padding: 0 18px;
+  padding: 0 60px 0 18px;
   background: rgba(255,255,255,0.92);
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
   font-size: 13px;
@@ -427,6 +432,22 @@ const handleLogin = async () => {
 }
 .field input:disabled { opacity: 0.75; cursor: not-allowed; }
 
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(0,0,0,0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.password-icon {
+  font-size: 20px;
+}
 /* DATE GRID */
 .date-row {
   display: grid;

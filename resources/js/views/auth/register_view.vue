@@ -96,24 +96,30 @@
             <div class="field">
               <input
                 v-model="form.password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="PASSWORD"
                 autocomplete="new-password"
                 :disabled="loading"
                 required
               />
+              <button type="button" class="toggle-password" @click="showPassword = !showPassword" tabindex="-1">
+                <IconifyIcon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
+              </button>
             </div>
 
             <!-- Confirm password -->
             <div class="field">
               <input
                 v-model="form.password_confirmation"
-                type="password"
+                :type="showConfirmPassword ? 'text' : 'password'"
                 placeholder="RE-PASSWORD"
                 autocomplete="new-password"
                 :disabled="loading"
                 required
               />
+              <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword" tabindex="-1">
+                <IconifyIcon :icon="showConfirmPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
+              </button>
             </div>
 
             <button class="register-btn" type="submit" :disabled="loading">
@@ -168,6 +174,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { Icon as IconifyIcon } from '@iconify/vue'
 
 import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
@@ -176,6 +183,8 @@ const router = useRouter()
 const loading = ref(false)
 const error = ref('')
 const success = ref(false)
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const form = reactive({
   SchoolID: '',
@@ -303,7 +312,7 @@ const handleRegister = async () => {
   border-radius:14px;
   border:none;
   outline:none;
-  padding:0 18px;
+  padding:0 60px 0 18px;
   background:rgba(255,255,255,0.92);
   box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);
   font-size:13px;
@@ -318,6 +327,23 @@ const handleRegister = async () => {
   box-shadow:
     inset 0 0 0 2px rgba(123,10,10,0.35),
     0 0 0 3px rgba(123,10,10,0.12);
+}
+
+.toggle-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(0,0,0,0.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.password-icon {
+  font-size: 20px;
 }
 
 .date-row{
