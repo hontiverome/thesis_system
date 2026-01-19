@@ -16,8 +16,7 @@
         <div class="left-content">
           <h2 class="welcome-title">GREETINGS, FACULTY!</h2>
           <p class="welcome-text">
-            Thank you for your dedication.<br />
-            Continue to your dashboard.
+            Thank you for your dedication. Please Continue to your dashboard.
           </p>
         <div class="left-bottom">
           <router-link :to="{ name: 'access-portal' }" class="back-portal">
@@ -139,21 +138,38 @@ const handleLogin = async () => {
 
 .login-wrapper{
   position:relative;
-  width:min(1120px, 100%);
-  min-height:620px;
+  width:min(2000px, 100%);
+  min-height:800px;
   display:grid;
   grid-template-columns: 1.02fr 1fr;
   gap:32px;
   z-index:1;
 }
 
+
+
 .login-left{
   background:#7b0a0a;
-  border-radius:52px;
+  border-radius: 0 52px 52px 0;
   padding:44px 48px;
   color:#fff;
   overflow:hidden;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  height: 100%; 
 }
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center inside its space */
+  align-items: center;     /* horizontal center */
+  text-align: center;
+  height: 100%;
+}
+
 
 .school-header{
   display:flex;
@@ -176,8 +192,6 @@ const handleLogin = async () => {
   height:64px;
   object-fit:contain;
 }
-/* Left Page */
-.left-content{ margin-top:78px; }
 
 .school-logo{
   width:64px;
@@ -192,6 +206,7 @@ const handleLogin = async () => {
   font-weight:500;
   letter-spacing:0.04em;
   text-transform:uppercase;
+  color:#fff;
   font-family:"Comic Sans MS","Segoe Print","Bradley Hand",cursive;
 }
 
@@ -221,7 +236,7 @@ const handleLogin = async () => {
 /* Right Page */
 
 .login-right{
-  border-radius:52px;
+  border-radius: 52px 0 0 52px;
   padding:44px 52px;
   background:rgba(255,255,255,0.62);
   backdrop-filter:blur(10px);
@@ -285,7 +300,7 @@ const handleLogin = async () => {
 
 .row{
   display:flex;
-  justify-content:flex-end;
+  justify-content:center;
   margin-top:8px;
 }
 
