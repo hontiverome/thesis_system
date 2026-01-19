@@ -20,14 +20,10 @@
 </template>
 
 <script setup>
-// Correct Imports based on your file paths
 import BaseCard from '@/components/ui/core/BaseCard.vue';
 import BaseCourseOverview from '@/components/ui/core/BaseCourseOverview.vue';
 import CourseCard from '@/components/ui/data/CourseCard.vue';
 
-/**
- * Static Course Data
- */
 const staticCourses = [
   { id: 1, title: 'Methods of Research' },
   { id: 2, title: 'Project Design 1' },
@@ -37,18 +33,21 @@ const staticCourses = [
 
 <style scoped>
 .page-view {
-  padding: 20px;
+  padding: 50px; /* Increased padding for a more spacious look */
+  background-color: #f4f6f9; /* The Gray background you requested */
+  min-height: 100vh; /* Ensures the background covers the full screen height */
+  width: 100%;
 }
 
 .page-title {
   font-size: 2.5rem;
   font-weight: bold;
   margin-bottom: 1.5rem;
-  color: #800000;
+  color: #800000; /* Maroon color */
   text-transform: uppercase;
 }
 
-/* Grid layout designed for the 300px width of CourseCard */
+/* Grid layout expands to the maximum width of the BaseCard */
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
