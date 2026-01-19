@@ -473,4 +473,61 @@ class AdviserGroupController extends Controller
             })
         ], 200);
     }
+    public function getAdviserGroups(Request $request)
+    {
+        // 1. Kunin ang User ID ng Adviser
+        $user_id = $request->user() ? $request->user()->UserID : 117; 
+
+        // 2. Kunin ang Groups
+        $groups = DB::table('groups')
+                    ->where('AdviserUserID', $user_id)
+                    ->select('GroupID', 'GroupCode', 'YearLevel', 'AdviserUserID')
+                    ->get();
+
+        // 3. Loop sa bawat group para kunin ang EXTRA details
+        foreach($groups as $group) {
+            
+            // A. GET MEMBERS (Galing sa logic ng team mo, pero simplified query)
+            $members = DB::table('groupmembers')
+                        ->join('users', 'groupmembers.StudentUserID', '=', 'users.UserID')
+                        ->where('groupmembers.GroupID', $group->GroupID)
+                        ->select('users.FullName', 'groupmembers.GroupRole', 'users.UserID')
+                        ->orderBy('groupmembers.GroupRole', 'desc') // Leader muna
+                        ->get();
+            
+            // I-format natin para maganda ang JSON output ng members
+            $group->Members = $members->map(function($m) {
+                return $m->FullName . ' (' . $m->GroupRole . ')';
+            });
+            $group->MembersRaw = $members; // Keep raw data just in case frontend needs it
+
+
+            // B. GET CO-ADVISER (Galing sa logic natin)
+            $coAdviser = DB::table('groupadvisers')
+                        ->join('users', 'groupadvisers.AdviserUserID', '=', 'users.UserID')
+                        ->where('groupadvisers.GroupID', $group->GroupID)
+                        ->where('groupadvisers.AdviserUserID', '!=', $user_id)
+                        ->select('users.FullName')
+                        ->first();
+            
+            $group->CoAdviser = $coAdviser ? $coAdviser->FullName : 'Missing';
+
+
+            // C. GET PANELIST (Galing sa logic natin)
+            $panelists = DB::table('defensepanel')
+                        ->join('defenses', 'defensepanel.DefenseID', '=', 'defenses.DefenseID')
+                        ->join('proposals', 'defenses.ProposalID', '=', 'proposals.ProposalID')
+                        ->join('enrollments', 'proposals.EnrollmentID', '=', 'enrollments.EnrollmentID')
+                        ->join('users', 'defensepanel.PanelistUserID', '=', 'users.UserID')
+                        ->where('enrollments.GroupID', $group->GroupID)
+                        ->pluck('users.FullName');
+
+            $group->Panelists = $panelists;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $groups
+        ], 200);
+    }
 }
