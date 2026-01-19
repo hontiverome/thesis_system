@@ -1,6 +1,6 @@
 <template>
   <div class="login-page" :style="{ backgroundImage: `url(${bgImage})` }">
-    <div class="login-wrapper">
+    <div class="login-wrapper auth-stage" :class="{ switch: isRegistering }">
       <!-- LEFT PANEL -->
       <section class="login-left" aria-label="Welcome panel">
         <!-- Back icon (top-left) -->
@@ -10,7 +10,7 @@
 
         <div class="school-header">
           <div class="school-name">
-            POLYTECHNIC UNIVERSITY<br />
+            POLYTECHNIC UNIVERSITY
             OF THE PHILIPPINES
           </div>
 
@@ -154,6 +154,9 @@
           <footer class="login-footer">2025 T-SIS | ALL RIGHT RESERVED</footer>
         </div>
       </section>
+      <!-- RED SWEEP OVERLAY -->
+      <div class="red-sweep"></div>
+
     </div>
   </div>
 </template>
@@ -184,6 +187,8 @@ const form = reactive({
   password: ''
 })
 
+
+
 const isRegistering = ref(false)
 
 const goToRegister = () => {
@@ -194,6 +199,8 @@ const goToRegister = () => {
     router.push({ name: 'register' })
   }, 900)
 }
+
+
 
 const handleLogin = async () => {
   loading.value = true
@@ -214,6 +221,21 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+
+/* base animation */
+.auth-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+/* smooth movement */
+.login-left,
+.login-right,
+.red-sweep {
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+}
+
+
 .login-page {
   width: 100vw;
   height: 100wh;
@@ -239,9 +261,8 @@ const handleLogin = async () => {
 
 .login-wrapper {
   position: relative;
-  width: 100%;
-  max-width: none;
-  min-height: 100vhpx;
+  width: min(2000px, 100%);
+  min-height: 800px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 50px;
@@ -382,6 +403,41 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
 }
+
+.red-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -50%;
+  width: 50%;
+  background: #7b0a0a;
+  border-radius: 0 52px 52px 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* WHEN SWITCHING TO REGISTER */
+.auth-stage.switch .login-right {
+  transform: translateX(-100%);
+}
+
+.auth-stage.switch .login-left {
+  transform: translateX(-100%);
+}
+
+.auth-stage.switch .red-sweep {
+  transform: translateX(-100%);
+}
+
+.auth-stage.switch .register-left,
+.auth-stage.switch .register-right {
+  transform: translateX(100%);
+}
+
+.auth-stage.switch .red-sweep {
+  transform: translateX(100%);
+}
+
 
 .right-inner { width: 100%; text-align: center; }
 

@@ -1,9 +1,9 @@
 <template>
   <div class="register-page" :style="{ backgroundImage: `url(${bgImage})` }">
-    <div class="register-wrapper">
+    <div class="register-wrapper auth-stage" :class="{switch:isSwitching}">
 
       <!-- LEFT PANEL (FORM) -->
-      <section class="register-left" aria-label="Registration form">
+      <section class="register-left panel panel-glass" aria-label="Registration form">
         <div class="left-inner">
           <h1 class="register-title">REGISTRATION</h1>
 
@@ -146,11 +146,11 @@
       </section>
 
       <!-- RIGHT PANEL (WELCOME) -->
-      <section class="register-right" aria-label="Welcome panel">
+      <section class="register-right panel panel-red" aria-label="Welcome panel">
         <div class="school-header">
           <img :src="logoImage" alt="PUP Logo" class="school-logo" />
           <div class="school-name">
-            POLYTECHNIC UNIVERSITY<br />
+            POLYTECHNIC UNIVERSITY
             OF THE PHILIPPINES
           </div>
         </div>
@@ -159,9 +159,10 @@
           <h2 class="welcome-title">HELLO, WELCOME!</h2>
           <div class="sub-cta-title">ALREADY HAVE AN ACCOUNT?</div>
 
-          <router-link :to="{ name: 'login.student' }" class="signin-btn">
+          <<button class="signin-btn" @click="goToLogin">
             SIGN IN
-          </router-link>
+          </button>
+          <div class="red-sweep"></div>
         </div>
       </section>
 
@@ -185,6 +186,7 @@ const error = ref('')
 const success = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const isSwitching = ref(false)
 
 const form = reactive({
   SchoolID: '',
@@ -226,16 +228,58 @@ const handleRegister = async () => {
     loading.value = false
   }
 }
+
+const goToLogin = () => {
+  isSwitching.value = true
+
+  // wait for animation to finish
+  setTimeout(() => {
+    router.push({ name: 'login.student' })
+  }, 900) // must match CSS duration
+}
+
 </script>
 
 
 <style scoped>
+/* ===== AUTH ANIMATION STAGE ===== */
+.auth-stage {
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* PANELS */
+.panel {
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+  will-change: transform;
+}
+/* SWITCH ANIMATION */
+.auth-stage.switch .panel-glass {
+  transform: translateX(100%);
+}
+
+/* WHITE GLASS SWEEPS RIGHT */
+.auth-stage.switch .panel-glass {
+  transform: translateX(100%);
+}
+
+/* ORIGINAL RED SWEEPS RIGHT */
+.auth-stage.switch .panel-red {
+  transform: translateX(100%);
+}
+
+/* NEW RED ENTERS FROM LEFT */
+.auth-stage.switch .red-sweep {
+  transform: translateX(100%);
+}
+
 .register-page{
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:28px;
+  padding: 28px;
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
@@ -250,22 +294,20 @@ const handleRegister = async () => {
 }
 
 /* Wrapper */
-.register-wrapper{
-  position:relative;
-  width:100%;
-  max-width:none;
-  min-height:100vhpx;
-  display:grid;
-  grid-template-columns: 1.3fr 0.8fr; 
+.register-wrapper {
+  position: relative;
+  width: min(100px, 100%);
+  min-height: 800px;
+  display: grid;
   grid-template-columns: 1fr 1fr;
-  gap:32px;
-  z-index:1;
+  gap: 50px;
+  z-index: 1;
 }
 
 /* LEFT (Glass form) */
 .register-left{
   border-radius: 0 52px 52px 0;
-  padding:44px 52px;
+  padding: 40px 40px;
   background:rgba(255,255,255,0.62);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
@@ -302,6 +344,19 @@ const handleRegister = async () => {
   grid-template-columns: 1fr 1fr;
   gap:16px;
 }
+
+.red-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -100%;
+  width: 50%;
+  background: #7b0a0a;
+  border-radius: 52px 0 0 52px;
+  z-index: 3;
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+}
+
 
 .field{ position:relative; margin:18px 0; }
 
@@ -436,9 +491,8 @@ const handleRegister = async () => {
 .register-right{
   position:relative;
   background:#7b0a0a;
-  border-radius:52px;
   border-radius: 52px 0 0 52px;
-  padding:44px 40px;
+  padding: 40px 40px;
   color:#fff;
   overflow:hidden;
   display:flex;
@@ -514,9 +568,23 @@ const handleRegister = async () => {
 .fade-enter-active,.fade-leave-active{ transition:opacity .25s ease; }
 .fade-enter-from,.fade-leave-to{ opacity:0; }
 
-@media (max-width:980px){
-  .register-wrapper{ grid-template-columns:1fr; gap:18px; min-height:auto; }
-  .register-left,.register-right{ border-radius:34px; }
-  .welcome-title{ font-size:44px; }
+@media (max-width: 980px) {
+  .auth-stage {
+    flex-direction: column;
+  }
+
+  .panel {
+    width: 100%;
+    height: 50%;
+  }
+
+  .auth-stage.switch .panel-glass {
+    transform: translateY(100%);
+  }
+
+  .auth-stage.switch .panel-red {
+    transform: translateY(-100%) rotate(360deg);
+  }
 }
+
 </style>
