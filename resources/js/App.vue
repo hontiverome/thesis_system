@@ -128,7 +128,7 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   margin-left: var(--sidebar-width);
   margin-top: var(--header-height);
   min-height: calc(100vh - var(--header-height));
-  padding: 1.5rem;
+  padding: 0;
   transition: margin-left var(--transition-duration), margin-top var(--transition-duration);
   background-color: var(--bg-color);
 }
@@ -140,7 +140,7 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   min-height: 100vh !important;
 }
 .content-wrapper {
-  max-width: 1600px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
 }
@@ -152,7 +152,7 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
 @media (max-width: 1024px) {
   .main-content {
     margin-left: 0;
-    padding: var(--content-padding, 1rem);
+    padding: var(--content-padding, 0);
   }
 }
 
