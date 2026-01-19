@@ -103,7 +103,6 @@
                 required
               />
               <button type="button" class="toggle-password" @click="showPassword = !showPassword" tabindex="-1">
-                {{ showPassword ? 'HIDE' : 'SHOW' }}
                 <IconifyIcon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
               </button>
             </div>
@@ -119,7 +118,6 @@
                 required
               />
               <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword" tabindex="-1">
-                {{ showConfirmPassword ? 'HIDE' : 'SHOW' }}
                 <IconifyIcon :icon="showConfirmPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
               </button>
             </div>
