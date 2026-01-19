@@ -137,6 +137,6 @@ const authRoutes = [
 ];
 
 export default [
-  ...userRoutes,
+  ...usRoutes,
   ...authRoutes
 ];

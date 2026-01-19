@@ -176,7 +176,7 @@ const authRoutes = [
 // ==========================
 const roleRoutes = Object.keys(roleCourses).map(role => ({
   path: `/${role}/courses`,
-  component: () => import('@/components/workspace/RoleWorkspace.vue'), // parent workspace container
+  component: () => import('@/components/workspace/RoleCourseOverview.vue'), // displays course cards with navigation
   meta: { layout: 'AppLayoutDefault', requiresAuth: true },
   children: Object.keys(roleCourses[role]).map(parentTab => ({
     path: parentTab, // e.g., mor, dp1, dp2
