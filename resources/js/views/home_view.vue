@@ -37,7 +37,8 @@
     <div class="hero-section">
       <div class="overlay"></div>
       <div class="content-container">
-        <h1 class="main-title">WELCOME TO T-SIS</h1>
+        <h1 class="main-title">WELCOME TO 
+          <span class="t-red">T</span>-SIS</h1>
         <p class="tagline">
           your dedicated space for organized research planning, thesis development, and academic growth.
         </p>
@@ -106,6 +107,11 @@
   /* Force single line on desktop (Kept as requested, but may overflow
      if text width > 1200px) */
   white-space: nowrap;
+  color: #ffffff;
+}
+
+.t-red{
+  color:#800000 ;
 }
 
 
