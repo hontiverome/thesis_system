@@ -265,7 +265,7 @@ onUnmounted(() => {
 }
 
 .header-link {
-  color: #ffc107;
+  color: #ffffff;
   text-decoration: none;
   font-weight: 700;
   font-size: 1.05rem;
@@ -274,7 +274,7 @@ onUnmounted(() => {
 }
 
 .header-link:hover {
-  color: white;
+  color: #ffc107;
   text-decoration: underline;
 }
 
