@@ -4,9 +4,12 @@
       <div class="overlay"></div>
       <div class="content-container">
         <h1 class="main-title">
-          Welcome, <span class="t-red">{{ roleName }}</span>
+          WELCOME TO
+          <span class="t-red">T</span>-SIS
         </h1>
-        <p class="tagline">{{ roleTagline }}</p>
+        <p class="tagline">
+          {{ roleTagline }}
+        </p>
       </div>
     </div>
 
@@ -54,13 +57,7 @@ const roleName = computed(() => {
 const roleLabel = computed(() => roleName.value);
 
 const roleTagline = computed(() => {
-  const taglines = {
-    student: 'Your space for organized research planning and thesis development.',
-    admin: 'Manage the system, users, and academic resources efficiently.',
-    adviser: 'Guide and support your advisees through their thesis journey.',
-    faculty: 'Oversee courses, evaluate submissions, and support students.'
-  };
-  return taglines[role.value] || 'Welcome to T-SIS';
+  return 'your dedicated space for organized research planning, thesis development, and academic growth.';
 });
 
 const dashboardItems = computed(() => {
@@ -222,7 +219,7 @@ const handleItemClick = (item) => {
 
 .hero-section {
   width: 100%;
-  min-height: 70vh;
+  min-height: 100vh;
   position: relative;
   background-image: url('/assets/aerial_pup.jpg');
   background-size: cover;
@@ -254,10 +251,11 @@ const handleItemClick = (item) => {
 
 .main-title {
   font-family: 'Sorts Mill Goudy', serif;
-  font-size: 80px;
+  font-size: 100px;
   font-weight: bold;
   margin: 0 0 20px 0;
   letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
 .t-red {
@@ -274,8 +272,10 @@ const handleItemClick = (item) => {
 
 .dashboard-section {
   padding: 50px;
-  background-color: #f4f6f9;
+  background: linear-gradient(rgba(17, 22, 28, 0.85), rgba(17, 22, 28, 0.85)),
+              url('/assets/aerial_pup.jpg') center/cover fixed;
   min-height: 100vh;
+  color: white;
 }
 
 .dashboard-grid {
