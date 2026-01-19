@@ -268,7 +268,9 @@ onUnmounted(() => {
   font-weight: 700;
   font-size: 1.05rem;
   text-transform: uppercase;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .header-link:hover {
@@ -276,8 +278,14 @@ onUnmounted(() => {
   text-decoration: underline;
 }
 
+.header-link.router-link-active {
+  color: #ffc107;
+  text-decoration: none;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .separator {
-  color: white;
+  color: #ffc107;
   font-weight: 300;
   font-size: 1.2rem;
   margin-top: -2px;
