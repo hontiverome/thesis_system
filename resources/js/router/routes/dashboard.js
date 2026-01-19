@@ -38,7 +38,7 @@ const dashboardRoutes = [
     component: () => import('@/views/dashboard_view.vue'),
     meta: { 
       title: 'Student Dashboard',
-      requiresAuth: true,
+      requiresAuth: false,
       roles: ['student'],
       layout: 'AppLayoutDefault' 
     }

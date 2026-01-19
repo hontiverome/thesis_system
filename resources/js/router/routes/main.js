@@ -33,13 +33,15 @@
  */
 
 const mainRoutes = [
+
+  // User Dropdown Menu Routes
   {
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/profile_view.vue'),
     meta: { 
       title: 'Profile',
-      requiresAuth: true,
+      requiresAuth: false,
       layout: 'AppLayoutDefault'
     }
   },
@@ -49,7 +51,7 @@ const mainRoutes = [
     component: () => import('@/views/settings_view.vue'),
     meta: { 
       title: 'Settings',
-      requiresAuth: true,
+      requiresAuth: false,
       layout: 'AppLayoutDefault'
     }
   },
@@ -59,9 +61,10 @@ const mainRoutes = [
     component: () => import('@/views/help_view.vue'),
     meta: { 
       title: 'Help',
+      requiresAuth: false,
       layout: 'AppLayoutDefault'
     }
-  }
+  },
 ];
 
 export default mainRoutes;
