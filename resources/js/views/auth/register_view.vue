@@ -243,17 +243,19 @@ const handleRegister = async () => {
 /* Wrapper */
 .register-wrapper{
   position:relative;
-  width:min(1120px, 100%);
-  min-height:620px;
+  width:100%;
+  max-width:none;
+  min-height:100vhpx;
   display:grid;
   grid-template-columns: 1.3fr 0.8fr; 
+  grid-template-columns: 1fr 1fr;
   gap:32px;
   z-index:1;
 }
 
 /* LEFT (Glass form) */
 .register-left{
-  border-radius:52px;
+  border-radius: 0 52px 52px 0;
   padding:44px 52px;
   background:rgba(255,255,255,0.62);
   backdrop-filter:blur(10px);
@@ -407,7 +409,8 @@ const handleRegister = async () => {
   position:relative;
   background:#7b0a0a;
   border-radius:52px;
-  padding:44px 48px;
+  border-radius: 52px 0 0 52px;
+  padding:44px 40px;
   color:#fff;
   overflow:hidden;
   display:flex;
