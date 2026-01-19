@@ -33,7 +33,7 @@
  */
 
 
-const authRoutes = [
+const userRoutes = [
   // 1. Main Landing Page 
   {
     path: '/',
@@ -104,4 +104,39 @@ const authRoutes = [
   },
 ];
 
-export default authRoutes;
+
+const authRoutes = [
+  // Admin Route
+  {
+    path: '/admin/courses',
+    name: 'admin-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { requiresAuth: false, role: 'admin' }
+  },
+  // Adviser Route
+  {
+    path: '/adviser/courses',
+    name: 'adviser-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { requiresAuth: false, role: 'faculty' }
+  },
+  // Faculty Route
+  {
+    path: '/faculty/courses',
+    name: 'faculty-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { requiresAuth: false, role: 'faculty' }
+  },
+  // Student Route
+  {
+    path: '/student/courses',
+    name: 'student-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { requiresAuth: false, role: 'student' }
+  },
+];
+
+export default [
+  ...userRoutes,
+  ...authRoutes
+];

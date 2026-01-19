@@ -65,6 +65,33 @@ const mainRoutes = [
       layout: 'AppLayoutDefault'
     }
   },
+  
+// Role-based Course Routes
+  {
+    path: '/admin/courses',
+    name: 'admin-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { layout: 'AppLayoutDefault' }
+  },
+  {
+    path: '/adviser/courses',
+    name: 'adviser-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { layout: 'AppLayoutDefault' }
+  },
+  {
+    path: '/faculty/courses',
+    name: 'faculty-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { layout: 'AppLayoutDefault' }
+  },
+  {
+    path: '/student/courses',
+    name: 'student-courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { layout: 'AppLayoutDefault' }
+  }
+
 ];
 
 export default mainRoutes;
