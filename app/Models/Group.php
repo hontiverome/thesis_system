@@ -34,9 +34,9 @@ class Group extends Model
         return $this->belongsToMany(User::class, 'GroupMembers', 'GroupID', 'StudentUserID')->withPivot('GroupRole');
     }
 
-    public function members()
+    public function members(): BelongsToMany
     {
-        return $this->hasMany(GroupMember::class, 'GroupID', 'GroupID');
+        return $this->belongsToMany(User::class, 'GroupMembers', 'GroupID', 'StudentUserID')->withPivot('GroupRole');
     }
 
     public function advisers(): BelongsToMany
@@ -46,6 +46,6 @@ class Group extends Model
 
     public function proposal(): HasOne
     {
-        return $this->hasOne(Proposal::class);
+        return $this->hasOne(Proposal::class, 'GroupID', 'GroupID');
     }
 }
