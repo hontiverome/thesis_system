@@ -256,6 +256,8 @@ const handleLogin = async () => {
   padding: 40px 40px;
   color: #fff;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .back-icon {
@@ -277,6 +279,7 @@ const handleLogin = async () => {
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
+  padding:20px 30px;
 }
 
 .school-name {
@@ -299,6 +302,8 @@ const handleLogin = async () => {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  flex: 1;
+  justify-content: center;
 }
 
 
