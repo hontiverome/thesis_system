@@ -70,6 +70,7 @@ const routes = [
     component: () => import('@/views/profile_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Profile', requiresAuth: true }
   },
+
   {
     path: '/settings',
     name: 'settings',
@@ -81,6 +82,12 @@ const routes = [
     name: 'help',
     component: () => import('@/views/help_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Help & Support' }
+  },
+    {
+    path: '/notif',
+    name: 'notification',
+    component: () => import('@/views/notification_view.vue'),
+    meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
   }
 ];
 
