@@ -103,6 +103,7 @@
                 required
               />
               <button type="button" class="toggle-password" @click="showPassword = !showPassword" tabindex="-1">
+                {{ showPassword ? 'HIDE' : 'SHOW' }}
                 <IconifyIcon :icon="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
               </button>
             </div>
@@ -118,6 +119,7 @@
                 required
               />
               <button type="button" class="toggle-password" @click="showConfirmPassword = !showConfirmPassword" tabindex="-1">
+                {{ showConfirmPassword ? 'HIDE' : 'SHOW' }}
                 <IconifyIcon :icon="showConfirmPassword ? 'mdi:eye-off' : 'mdi:eye'" class="password-icon" />
               </button>
             </div>
@@ -270,7 +272,6 @@ const handleRegister = async () => {
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   box-shadow:0 18px 60px rgba(0,0,0,0.18);
-  display:flex;
   align-items:center;
 }
 
@@ -337,6 +338,9 @@ const handleRegister = async () => {
   background: none;
   border: none;
   color: rgba(0,0,0,0.5);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   cursor: pointer;
   display: flex;
   align-items: center;
