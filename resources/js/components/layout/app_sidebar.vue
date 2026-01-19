@@ -21,14 +21,47 @@ const themeButtonText = computed(() => {
   return currentTheme?.name || 'Theme';
 });
 
-// --- COURSE NAVIGATION LOGIC ---
-const activeItem = ref('PROPOSAL');
+// --- DYNAMIC COURSE DATA ---
+// Updated to support "Labels" inside the list (like 'Title Proposals')
+const courses = ref([
+  {
+    id: 'MOR',
+    title: 'MOR',
+    // Items can be objects with 'type' to distinguish between Headers and Links
+    items: [
+      { type: 'label', text: 'Title Proposals' },
+      { type: 'link', text: 'PROPOSAL' },
+      { type: 'label', text: 'Chapters 1-3' },
+      { type: 'link', text: 'CHAPTER 1' },
+      { type: 'link', text: 'CHAPTER 2' },
+      { type: 'link', text: 'CHAPTER 3' },
+      { type: 'link', text: 'OTHERS' }
+    ]
+  }
+]);
 
-const setActive = (itemName) => {
-  activeItem.value = itemName;
-  // Optional: router.push(...) logic here
+// --- NAVIGATION STATE ---
+const openSections = ref(['MOR']); 
+const activeCourseId = ref('MOR'); 
+const activeSubItem = ref('PROPOSAL');
+
+const toggleSection = (courseId) => {
+  activeCourseId.value = courseId;
+  if (openSections.value.includes(courseId)) {
+    openSections.value = openSections.value.filter(id => id !== courseId);
+  } else {
+    openSections.value.push(courseId);
+  }
 };
 
+const setActiveItem = (courseId, item) => {
+  if (item.type === 'label') return; // Labels aren't clickable
+  activeCourseId.value = courseId;
+  activeSubItem.value = item.text;
+  // router.push(...)
+};
+
+// --- LAYOUT LOGIC ---
 const toggleSidebar = () => {
   const isSmall = window.innerWidth <= 1024;
   if (isSmall) {
@@ -71,54 +104,59 @@ onUnmounted(() => {
       <button v-if="layoutStore.layoutPreference === 'sidebar'" @click="toggleSidebar" class="hamburger-button">
         <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
       </button>
-      <h2 v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" class="sidebar-title">
-        {{ isCollapsed ? 'M' : 'Menu' }}
-      </h2>
+      <div v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" class="header-text-container">
+        <h2 class="sidebar-title">Courses</h2>
+      </div>
     </div>
     
     <div class="sidebar-content">
       
-      <div class="course-card" v-if="!isCollapsed">
-        <div class="course-title">MOR</div>
+      <div v-if="!isCollapsed" class="courses-container">
         
-        <nav class="course-nav">
-          <a href="#" 
-             class="nav-item" 
-             :class="{ active: activeItem === 'PROPOSAL' }"
-             @click.prevent="setActive('PROPOSAL')">
-            PROPOSAL
-          </a>
+        <div v-for="course in courses" :key="course.id" class="course-section">
           
-          <a href="#" 
-             class="nav-item" 
-             :class="{ active: activeItem === 'CHAPTER 1' }"
-             @click.prevent="setActive('CHAPTER 1')">
-            CHAPTER 1
-          </a>
+          <div class="course-header" @click="toggleSection(course.id)">
+            
+            <span v-if="course.items && course.items.length" 
+                  class="chevron" 
+                  :class="{ rotated: openSections.includes(course.id) }">
+              <IconifyIcon icon="mdi:play" width="12" height="12" />
+            </span>
 
-          <a href="#" 
-             class="nav-item" 
-             :class="{ active: activeItem === 'CHAPTER 2' }"
-             @click.prevent="setActive('CHAPTER 2')">
-            CHAPTER 2
-          </a>
+            <h2 class="course-title">{{ course.title }}</h2>
+            
+            <div class="vertical-bar" 
+                 :class="{ active: openSections.includes(course.id) }">
+            </div>
+          </div>
 
-          <a href="#" 
-             class="nav-item" 
-             :class="{ active: activeItem === 'CHAPTER 3' }"
-             @click.prevent="setActive('CHAPTER 3')">
-            CHAPTER 3
-          </a>
+          <nav v-if="course.items && course.items.length" 
+               v-show="openSections.includes(course.id)" 
+               class="course-nav">
+            
+            <template v-for="item in course.items" :key="item.text">
+              
+              <div v-if="item.type === 'label'" class="nav-label">
+                {{ item.text }}
+              </div>
 
-          <a href="#" 
-             class="nav-item" 
-             :class="{ active: activeItem === 'OTHERS' }"
-             @click.prevent="setActive('OTHERS')">
-            OTHERS
-          </a>
-        </nav>
+              <button
+                v-else
+                class="nav-btn"
+                :class="activeSubItem === item.text && activeCourseId === course.id ? 'btn-active' : 'btn-inactive'"
+                @click.stop="setActiveItem(course.id, item)"
+              >
+                {{ item.text }}
+              </button>
+
+            </template>
+
+          </nav>
+
+        </div>
+
       </div>
-      </div>
+    </div>
 
     <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
       <button @click="toggleTheme" class="theme-toggle">
@@ -149,64 +187,128 @@ onUnmounted(() => {
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  background-color: #fff;
+}
+
+.sidebar-header {
+  padding: 20px 20px 10px 20px;
+}
+
+.sidebar-title {
+  font-family: 'Courier New', Courier, monospace;
+  font-style: italic;
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
 }
 
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 10px 0; /* Remove horizontal padding to let hover effects span width */
 }
 
-/* --- COURSE CARD STYLES --- */
-.course-card {
-  padding: 0;
-  margin-bottom: 20px;
-  background-color: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border: 1px solid #e0e0e0;
+/* --- COURSE SECTION STYLES --- */
+.courses-container {
   font-family: 'Courier New', Courier, monospace;
 }
 
-.course-title {
-  text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #800000;
-  padding: 15px 0;
+.course-section {
+  margin-bottom: 20px;
   background-color: white;
+}
+
+.course-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the Title */
+  width: 100%;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+/* Header Title (MOR) */
+.course-title {
+  margin: 0;
+  color: #800000;
+  font-size: 2rem;
+  font-weight: 800;
   letter-spacing: 2px;
-  border-bottom: 1px solid #eee;
+  line-height: 1;
+  text-align: center;
+  user-select: none;
+}
+
+/* Left Chevron */
+.chevron {
+  position: absolute;
+  left: 25px; /* Position on left like screenshot */
+  transition: transform 0.3s ease;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.chevron.rotated {
+  transform: rotate(90deg); /* Rotate down */
+}
+
+/* Right Vertical Bar */
+.vertical-bar {
+  position: absolute;
+  right: 25px;
+  width: 4px;
+  height: 30px;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.vertical-bar.active {
+  background-color: #800000; /* Red bar when active */
 }
 
 .course-nav {
   display: flex;
   flex-direction: column;
+  padding: 10px 0;
 }
 
-.nav-item {
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 12px 0;
+/* Labels (e.g., "Title Proposals") */
+.nav-label {
   text-align: center;
-  color: black;
-  background-color: #f0f4f5;
-  margin-bottom: 1px;
-  transition: background-color 0.2s;
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #800000;
+  background-color: #fafafa; /* Slight highlight for label area */
+  padding: 5px 0;
+  margin: 10px 0 5px 0;
+  border-radius: 4px;
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Links (e.g., "DP1") */
+.nav-btn {
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-weight: 900; /* Extra bold */
+  font-size: 1.2rem;
   cursor: pointer;
-  display: block;
+  width: 100%;
+  transition: all 0.2s ease;
+  text-align: center;
+  font-family: inherit;
+  color: #333;
 }
 
-.nav-item.active {
-  background-color: #800000;
-  color: white;
-  margin-bottom: 0;
+.btn-active {
+  color: #800000; /* Active text is red */
 }
 
-.nav-item:hover:not(.active) {
-  background-color: #e0e4e5;
+.nav-btn:hover {
+  background-color: rgba(0,0,0,0.03); /* Subtle hover */
 }
 </style>
