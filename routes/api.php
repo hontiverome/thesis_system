@@ -30,7 +30,6 @@ use App\Http\Controllers\Api\V1\GroupPageController;
 use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
 use App\Http\Controllers\Api\V1\GroupPanelController;
-use App\Http\Controllers\Api\V1\AdviserAssignmentController;
 use App\Http\Controllers\Api\V1\AdviserCourseController;
 use App\Http\Controllers\Api\V1\AdviserProposalController;
 use App\Http\Controllers\Api\V1\AdviserPanelController;
