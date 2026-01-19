@@ -7,7 +7,9 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // 1. Define Routes Directly to ensure Meta Tags work
 const routes = [
-  // --- GUEST ROUTES (Blank Layout) ---
+  // =========================================
+  // GUEST ROUTES (Blank Layout)
+  // =========================================
   {
     path: '/',
     name: 'landing',
@@ -45,9 +47,11 @@ const routes = [
     meta: { layout: 'blank', title: 'Login', guestOnly: true }
   },
 
-  // --- AUTHENTICATED ROUTES (Default Layout with Sidebar/Navbar) ---
+  // =========================================
+  // AUTHENTICATED ROUTES (Default Layout)
+  // =========================================
   {
-    path: '/home',  // Changed from '/' to '/home'
+    path: '/home',
     name: 'home',
     component: () => import('@/views/home_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Home', requiresAuth: true }
@@ -70,7 +74,6 @@ const routes = [
     component: () => import('@/views/profile_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Profile', requiresAuth: true }
   },
-
   {
     path: '/settings',
     name: 'settings',
@@ -83,11 +86,29 @@ const routes = [
     component: () => import('@/views/help_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Help & Support' }
   },
-    {
+  {
     path: '/notif',
     name: 'notification',
     component: () => import('@/views/notification_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
+  },
+
+  // =========================================
+  // ADVISER SPECIFIC ROUTES
+  // =========================================
+  {
+    path: '/adviser/class-dashboard',
+    name: 'adviser.class.dashboard',
+    // Make sure the file exists at this path: resources/js/views/adviser/AdviserClassDashboard.vue
+    component: () => import('@/views/adviser/AdviserClassDashboard.vue'),
+    meta: { 
+      // Change to 'AppLayoutDefault' if you want the standard Sidebar/Navbar
+      // Keep as 'blank' if the Dashboard file already contains its own sidebar
+      layout: 'blank', 
+      title: 'Class Dashboard', 
+      requiresAuth: true, 
+      role: 'adviser' 
+    }
   }
 ];
 
@@ -100,21 +121,7 @@ const router = createRouter({
   }
 });
 
-// // Basic Navigation Guard (Placeholder - extend as needed)
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token'); // Adjust based on your Auth logic
-//   const isLogged = !!token;
-
-//   if (to.meta.requiresAuth && !isLogged) {
-//     next({ name: 'access-portal' });
-//   } else if (to.meta.guestOnly && isLogged) {
-//     next({ name: 'home' });
-//   } else {
-//     next();
-//   }
-// });
-
-// TEMPORARY: Allow access to everything
+// TEMPORARY: Allow access to everything for development
 router.beforeEach((to, from, next) => {
   next(); 
 });
