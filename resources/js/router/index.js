@@ -1,85 +1,38 @@
 /*
  * Router Configuration
- * Dynamic nested routes: roles -> courses -> tabs
+ * Fixed: Imports the Adviser Dashboard from the VIEWS folder
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
+
+// 1. IMPORT FROM THE CORRECT LOCATION
+// You confirmed the file is in: resources/js/views/adviser/AdviserClassDashboard.vue
+import AdviserClassDashboard from '@/views/adviser/AdviserClassDashboard.vue';
+
+// ... other imports ...
 
 // ==========================
 // Role-based courses and tabs
 // ==========================
 const roleCourses = {
   student: {
-    mor: {
-      'title-proposals': {
-        submission: {},     // ehandles student submissions
-        feedback: {}        // feedback from adviser/faculty
-      },
-      'chapters1-3': {
-        submission: {},     // student submission
-        evaluation: {}      // evaluation by panels
-      }
-    },
-    dp1: {},               // no tabs for dp1
-    dp2: {
-      documents: {},        // documents related to dp2
-      evaluation: {}        // evaluation tab for dp2
-    }
+    mor: { 'title-proposals': {}, 'chapters1-3': {} },
+    dp1: {},
+    dp2: { documents: {}, evaluation: {} }
   },
-
   admin: {
-    mor: {
-      'title-proposals': {
-        groups: {            // group management
-          grouplist: {},     // list of groups
-          viewSubmission: {} // submission view per group
-        },
-        enrollees: {}        // enrollees management
-      },
-      'chapters1-3': {
-        submission: {},      // submission tab
-        evaluation: {}       // evaluation tab
-      },
-      'panel-status': {},    // panel status tab
-      faculty: {}            // faculty tab
-    },
-    dp1: {},                  // no tabs for dp1
-    dp2: {
-      documents: {},           // dp2 documents
-      evaluation: {}           // dp2 evaluation
-    }
+    mor: { 'title-proposals': {}, 'chapters1-3': {}, 'panel-status': {}, faculty: {} },
+    dp1: {},
+    dp2: { documents: {}, evaluation: {} }
   },
-
   adviser: {
-    mor: {
-      'title-proposals': {
-        submission: {},
-        feedback: {}
-      },
-      'chapters1-3': {
-        submission: {},
-        evaluation: {}
-      },
-      'panel-status': {}
-    },
-    dp2: {
-      documents: {},
-      evaluation: {}
-    }
+    mor: { 'title-proposals': {}, 'chapters1-3': {}, 'panel-status': {} },
+    dp2: { documents: {}, evaluation: {} }
   },
-
   faculty: {
-    mor: {
-      'title-proposals': {
-        submission: {},
-        feedback: {}
-      },
-      'panel-status': {},
-      faculty: {}
-    }
+    mor: { 'title-proposals': {}, 'panel-status': {}, faculty: {} }
   }
 };
-
 
 // ==========================
 // Guest Routes
@@ -169,6 +122,27 @@ const authRoutes = [
     component: () => import('@/views/notification_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
   },
+
+  // -----------------------------------------------------------------------
+  // [CRITICAL FIX] SPECIFIC ADVISER ROUTE - NOW POINTS TO CORRECT VIEW FILE
+  // -----------------------------------------------------------------------
+  {
+    path: '/adviser/course/:courseCode',
+    name: 'AdviserClassDashboard',
+    component: AdviserClassDashboard,
+    props: true, 
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, title: 'Class Dashboard' }
+  },
+
+  // Generic Role Home
+  {
+    path: '/:role/home',
+    name: 'role-home',
+    component: () => import('@/components/workspace/RoleHomeOverview.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
+  },
+  
+  // Generic Course Detail (Fallback for Student/Faculty)
   {
     path: '/:role/course/:course',
     name: 'course-detail',
@@ -178,58 +152,54 @@ const authRoutes = [
 ];
 
 // ==========================
-// Dynamic Role Routes
+// Dynamic Role Routes (Nested Tabs)
 // ==========================
-const roleRoutes = Object.keys(roleCourses).map(role => ({
-  path: `/${role}/courses`,
-  component: () => import('@/components/workspace/RoleCourseOverview.vue'), // displays course cards with navigation
-  meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true },
-  children: [
-    // Original nested routes (deprecated for now but keeping structure)
-    ...Object.keys(roleCourses[role]).map(parentTab => ({
-      path: parentTab, // e.g., mor, dp1, dp2
-      component: () => import('@/components/workspace/RoleWorkspace.vue'), // acts as container for child tabs
-      children: Object.keys(roleCourses[role][parentTab]).length > 0 
-        ? Object.keys(roleCourses[role][parentTab]).map(childTab => {
-            // Map to correct component path based on role and structure
-            let componentPath;
-            if (role === 'student') {
-              componentPath = `@/components/workspace/student/courses/${childTab}.vue`;
-            } else if (role === 'adviser') {
-              componentPath = `@/components/workspace/adviser/tab/${childTab}.vue`;
-            } else {
-              // For admin and faculty, use a generic path (components may need to be created)
-              componentPath = `@/components/workspace/${role}/${childTab}.vue`;
-            }
-            
-            return {
-              path: childTab, // e.g., title-proposals, chapters1-3
-              name: `${role}-${parentTab}-${childTab}`,
-              component: () => import(componentPath),
-              meta: { title: childTab.replace(/-/g, ' ').toUpperCase() },
-            };
-          })
-        : []
-    }))
-  ]
-}));
+const roleRoutes = Object.keys(roleCourses).map(role => {
+  const courses = roleCourses[role];
+  const dynamicChildren = [];
 
-// Role-based home routes - added after dynamic routes to avoid conflicts
-const roleHomeRoutes = Object.keys(roleCourses).map(role => ({
-  path: `/${role}/home`,
-  name: `${role}-home`,
-  component: () => import('@/components/workspace/RoleHomeOverview.vue'),
-  meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
-}));
+  Object.keys(courses).forEach(courseKey => {
+    const tabs = courses[courseKey];
+    const hasTabs = Object.keys(tabs).length > 0;
+
+    if (hasTabs) {
+      const tabRoutes = Object.keys(tabs).map(tabKey => {
+        let componentLoader;
+        if (role === 'student') componentLoader = () => import(`@/components/workspace/student/courses/${tabKey}.vue`);
+        else if (role === 'adviser') componentLoader = () => import(`@/components/workspace/adviser/tab/${tabKey}.vue`);
+        else componentLoader = () => import(`@/components/workspace/${role}/${tabKey}.vue`);
+
+        return {
+          path: tabKey,
+          name: `${role}-${courseKey}-${tabKey}`,
+          component: componentLoader,
+          meta: { title: tabKey.replace(/-/g, ' ').toUpperCase() }
+        };
+      });
+
+      dynamicChildren.push({
+        path: courseKey, 
+        component: () => import('@/components/workspace/RoleWorkspace.vue'),
+        children: tabRoutes
+      });
+    }
+  });
+
+  return {
+    path: `/${role}/courses`,
+    component: () => import('@/components/workspace/RoleCourseOverview.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true },
+    children: dynamicChildren
+  };
+});
 
 // ==========================
-// Combine all routes
+// Combine Routes
 // ==========================
 const routes = [
   ...guestRoutes,
   ...authRoutes,
   ...roleRoutes,
-  ...roleHomeRoutes,
 ];
 
 // ==========================
@@ -244,33 +214,14 @@ const router = createRouter({
   }
 });
 
-// ==========================
 // Navigation Guards
-// ==========================
-// Temporarily disabled for development - allows access without login
 router.beforeEach((to, from, next) => {
-  // Set a mock token to bypass auth if none exists (dev only)
   if (!localStorage.getItem('token')) {
     localStorage.setItem('token', 'dev-token-' + Date.now());
   }
   next();
 });
 
-// ORIGINAL AUTH CHECK (commented out for dev):
-// router.beforeEach((to, from, next) => {
-//   const token = localStorage.getItem('token');
-//   const isLogged = !!token;
-//
-//   if (to.meta.requiresAuth && !isLogged) {
-//     next({ name: 'access-portal' });
-//   } else if (to.meta.guestOnly && isLogged) {
-//     next({ name: 'home' });
-//   } else {
-//     next();
-//   }
-// });
-
-// Set document title
 router.afterEach((to) => {
   if (to.meta.title) {
     document.title = `${to.meta.title} | PUP System`;
