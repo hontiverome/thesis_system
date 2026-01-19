@@ -23,7 +23,6 @@ use App\Http\Controllers\Api\V1\AdviserModuleController;
 use App\Http\Controllers\ProposalApprovalController as ProposalController;
 use App\Http\Controllers\FacultyPanelInvitationController;
 use App\Http\Controllers\DefenseEvaluationDocumentController;
-use App\Http\Controllers\AdviserAssignmentController;
 use App\Http\Controllers\PanelProposalsController;
 use App\Http\Controllers\CourseNavigationController;
 use App\Http\Controllers\Api\V1\GroupPageController;
@@ -132,7 +131,7 @@ Route::prefix('v1/groups')->middleware(['auth:sanctum', 'student.verify'])->grou
 
 
 // Admin routes
-Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admin.')->group(function () {
+Route::prefix('v1/admin')->middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->name('api.admin.')->group(function () {
     Route::post('/users', [CreateFacultyController::class, 'createFacultyUser'])->name('users.create');
     Route::get('/users/list', [AdminListController::class, 'listUsers'])->name('users.list');
     Route::put('/users/{userId}/role', [AdminRoleController::class, 'changeRole'])->name('users.role.change');
@@ -145,7 +144,7 @@ Route::prefix('v1/admin')->middleware(['auth:sanctum', 'admin'])->name('api.admi
 });
 
 // Adviser routes
-Route::prefix('v1/adviser')->middleware(['auth:sanctum', 'adviser'])->name('api.adviser.')->group(function () {
+Route::prefix('v1/adviser')->middleware(['auth:sanctum', \App\Http\Middleware\AdviserMiddleware::class])->name('api.adviser.')->group(function () {
     // F-012: Create new group
     Route::post('/groups', [AdviserGroupController::class, 'createGroup'])->name('groups.create');
     
@@ -194,7 +193,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     
     // Adviser group page (requires adviser middleware)
     Route::get('/adviser/groups/{groupId}', [GroupPageController::class, 'getGroupPage'])
-        ->middleware(['adviser'])
+        ->middleware([\App\Http\Middleware\AdviserMiddleware::class])
         ->name('adviser.groups.page');
 });
 
@@ -238,7 +237,7 @@ Route::prefix('v1/adviser')->middleware('auth:sanctum')->name('api.adviser.')->g
 });
 
 // Group Adviser Management (Admin only)
-Route::prefix('v1/groups')->middleware(['auth:sanctum', 'admin'])->name('api.groups.')->group(function () {
+Route::prefix('v1/groups')->middleware(['auth:sanctum', \App\Http\Middleware\AdminMiddleware::class])->name('api.groups.')->group(function () {
     Route::post('/{group_id}/advisers', [AdviserModuleController::class, 'assignAdviser'])->name('advisers.assign');
     Route::delete('/{group_id}/advisers/{adviser_id}', [AdviserModuleController::class, 'removeAdviser'])->name('advisers.remove');
 });
