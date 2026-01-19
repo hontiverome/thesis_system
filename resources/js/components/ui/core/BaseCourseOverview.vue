@@ -1,23 +1,21 @@
 <template>
   <div class="course-content-container">
-    
     <div class="card-content">
-      
       <div class="inner-header-container">
-        <p class="course-heading-overview">COURSE OVERVIEW</p>
+        <p class="course-heading-overview">{{ subTitle }}</p>
       </div>
-      
       <slot></slot>
-      
     </div>
-    
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CourseContentContainer' 
-}
+<script setup>
+defineProps({
+  subTitle: {
+    type: String,
+    default: 'COURSE'
+  }
+});
 </script>
 
 <style scoped>
