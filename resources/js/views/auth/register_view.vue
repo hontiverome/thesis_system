@@ -12,18 +12,8 @@
           </div>
 
           <form class="register-form" @submit.prevent="handleRegister">
-            <!-- First Row: School ID and First Name -->
+            <!-- First Row: First Name and Surname -->
             <div class="form-row">
-              <div class="field">
-                <input
-                  v-model.trim="form.SchoolID"
-                  type="text"
-                  placeholder="SCHOOL ID"
-                  autocomplete="username"
-                  :disabled="loading"
-                  required
-                />
-              </div>
               <div class="field">
                 <input
                   v-model.trim="form.FirstName"
@@ -32,19 +22,6 @@
                   autocomplete="given-name"
                   :disabled="loading"
                   required
-                />
-              </div>
-            </div>
-
-            <!-- Second Row: Middle Name and Surname -->
-            <div class="form-row">
-              <div class="field">
-                <input
-                  v-model.trim="form.MiddleName"
-                  type="text"
-                  placeholder="MIDDLE NAME (OPTIONAL)"
-                  autocomplete="additional-name"
-                  :disabled="loading"
                 />
               </div>
               <div class="field">
@@ -59,19 +36,19 @@
               </div>
             </div>
 
-            <!-- Email Field (Full Width) -->
+            <!-- Second Row: Student Number -->
             <div class="field">
               <input
-                v-model.trim="form.Email"
-                type="email"
-                placeholder="EMAIL"
-                autocomplete="email"
+                v-model.trim="form.SchoolID"
+                type="text"
+                placeholder="STUDENT NUMBER"
+                autocomplete="username"
                 :disabled="loading"
                 required
               />
             </div>
 
-            <!-- Birth date -->
+            <!-- Third Row: Birth date -->
             <div class="date-row">
               <select v-model="form.birth_month" class="date-input" :disabled="loading" required>
                 <option value="" disabled>BIRTH MONTH</option>
@@ -98,6 +75,18 @@
                 :max="new Date().getFullYear()"
                 class="date-input"
                 placeholder="BIRTH YEAR"
+                :disabled="loading"
+                required
+              />
+            </div>
+
+            <!-- Fourth Row: Email -->
+            <div class="field">
+              <input
+                v-model.trim="form.Email"
+                type="email"
+                placeholder="EMAIL"
+                autocomplete="email"
                 :disabled="loading"
                 required
               />
