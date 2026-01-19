@@ -104,6 +104,7 @@ class UserProfileController extends Controller
                     'FileID' => $submission->FileID,
                     'FileType' => $submission->FileType,
                     'FilePath' => $submission->FilePath,
+                    'FileUrl' => url('storage/' . $submission->FilePath),
                     'ProposalID' => $submission->ProposalID,
                     'DefenseID' => $submission->DefenseID,
                 ];

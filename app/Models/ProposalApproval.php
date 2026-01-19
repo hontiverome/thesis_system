@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProposalApproval extends Model
 {
     use HasFactory;
+    
+    protected $table = 'ProposalApprovals'; 
 
     protected $fillable = [
         'ProposalID',
