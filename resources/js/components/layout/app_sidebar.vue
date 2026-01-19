@@ -7,6 +7,9 @@ import { useThemeStore } from '@/stores/theme';
 import { Icon as IconifyIcon } from '@iconify/vue';
 import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
 
+// IMPORT THE NEW COMPONENT
+import StudSidebar from './stud_sidebar.vue'; 
+
 const router = useRouter();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
@@ -20,46 +23,6 @@ const themeButtonText = computed(() => {
   const currentTheme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
   return currentTheme?.name || 'Theme';
 });
-
-// --- DYNAMIC COURSE DATA ---
-// Updated to support "Labels" inside the list (like 'Title Proposals')
-const courses = ref([
-  {
-    id: 'MOR',
-    title: 'MOR',
-    // Items can be objects with 'type' to distinguish between Headers and Links
-    items: [
-      { type: 'label', text: 'Title Proposals' },
-      { type: 'link', text: 'PROPOSAL' },
-      { type: 'label', text: 'Chapters 1-3' },
-      { type: 'link', text: 'CHAPTER 1' },
-      { type: 'link', text: 'CHAPTER 2' },
-      { type: 'link', text: 'CHAPTER 3' },
-      { type: 'link', text: 'OTHERS' }
-    ]
-  }
-]);
-
-// --- NAVIGATION STATE ---
-const openSections = ref(['MOR']); 
-const activeCourseId = ref('MOR'); 
-const activeSubItem = ref('PROPOSAL');
-
-const toggleSection = (courseId) => {
-  activeCourseId.value = courseId;
-  if (openSections.value.includes(courseId)) {
-    openSections.value = openSections.value.filter(id => id !== courseId);
-  } else {
-    openSections.value.push(courseId);
-  }
-};
-
-const setActiveItem = (courseId, item) => {
-  if (item.type === 'label') return; // Labels aren't clickable
-  activeCourseId.value = courseId;
-  activeSubItem.value = item.text;
-  // router.push(...)
-};
 
 // --- LAYOUT LOGIC ---
 const toggleSidebar = () => {
@@ -104,58 +67,16 @@ onUnmounted(() => {
       <button v-if="layoutStore.layoutPreference === 'sidebar'" @click="toggleSidebar" class="hamburger-button">
         <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
       </button>
-      <div v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" class="header-text-container">
-        <h2 class="sidebar-title">Courses</h2>
+      
+      <div v-if="!isCollapsed" class="header-label-container">
+        <span class="sidebar-label-italic">Courses</span>
       </div>
     </div>
     
     <div class="sidebar-content">
       
-      <div v-if="!isCollapsed" class="courses-container">
-        
-        <div v-for="course in courses" :key="course.id" class="course-section">
-          
-          <div class="course-header" @click="toggleSection(course.id)">
-            
-            <span v-if="course.items && course.items.length" 
-                  class="chevron" 
-                  :class="{ rotated: openSections.includes(course.id) }">
-              <IconifyIcon icon="mdi:play" width="12" height="12" />
-            </span>
+      <StudSidebar v-if="!isCollapsed" />
 
-            <h2 class="course-title">{{ course.title }}</h2>
-            
-            <div class="vertical-bar" 
-                 :class="{ active: openSections.includes(course.id) }">
-            </div>
-          </div>
-
-          <nav v-if="course.items && course.items.length" 
-               v-show="openSections.includes(course.id)" 
-               class="course-nav">
-            
-            <template v-for="item in course.items" :key="item.text">
-              
-              <div v-if="item.type === 'label'" class="nav-label">
-                {{ item.text }}
-              </div>
-
-              <button
-                v-else
-                class="nav-btn"
-                :class="activeSubItem === item.text && activeCourseId === course.id ? 'btn-active' : 'btn-inactive'"
-                @click.stop="setActiveItem(course.id, item)"
-              >
-                {{ item.text }}
-              </button>
-
-            </template>
-
-          </nav>
-
-        </div>
-
-      </div>
     </div>
 
     <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
@@ -194,121 +115,17 @@ onUnmounted(() => {
   padding: 20px 20px 10px 20px;
 }
 
-.sidebar-title {
+.sidebar-label-italic {
   font-family: 'Courier New', Courier, monospace;
   font-style: italic;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #333;
-  margin: 0;
+  letter-spacing: 1px;
 }
 
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 0; /* Remove horizontal padding to let hover effects span width */
-}
-
-/* --- COURSE SECTION STYLES --- */
-.courses-container {
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.course-section {
-  margin-bottom: 20px;
-  background-color: white;
-}
-
-.course-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center the Title */
-  width: 100%;
-  cursor: pointer;
-  padding: 10px 0;
-}
-
-/* Header Title (MOR) */
-.course-title {
-  margin: 0;
-  color: #800000;
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  line-height: 1;
-  text-align: center;
-  user-select: none;
-}
-
-/* Left Chevron */
-.chevron {
-  position: absolute;
-  left: 25px; /* Position on left like screenshot */
-  transition: transform 0.3s ease;
-  color: #333;
-  display: flex;
-  align-items: center;
-}
-
-.chevron.rotated {
-  transform: rotate(90deg); /* Rotate down */
-}
-
-/* Right Vertical Bar */
-.vertical-bar {
-  position: absolute;
-  right: 25px;
-  width: 4px;
-  height: 30px;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
-}
-
-.vertical-bar.active {
-  background-color: #800000; /* Red bar when active */
-}
-
-.course-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 10px 0;
-}
-
-/* Labels (e.g., "Title Proposals") */
-.nav-label {
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #800000;
-  background-color: #fafafa; /* Slight highlight for label area */
-  padding: 5px 0;
-  margin: 10px 0 5px 0;
-  border-radius: 4px;
-  width: 60%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Links (e.g., "DP1") */
-.nav-btn {
-  border: none;
-  background: transparent;
-  padding: 10px 0;
-  font-weight: 900; /* Extra bold */
-  font-size: 1.2rem;
-  cursor: pointer;
-  width: 100%;
-  transition: all 0.2s ease;
-  text-align: center;
-  font-family: inherit;
-  color: #333;
-}
-
-.btn-active {
-  color: #800000; /* Active text is red */
-}
-
-.nav-btn:hover {
-  background-color: rgba(0,0,0,0.03); /* Subtle hover */
+  padding: 0;
 }
 </style>
