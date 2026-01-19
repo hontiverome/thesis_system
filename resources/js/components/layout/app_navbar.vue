@@ -4,11 +4,13 @@
       
       <div class="navbar-branding">
         <div class="logo-image-container">
+          <router-link to="/home" class="logo-image-container">
           <img 
             :src="logoImage" 
             alt="Polytechnic University of the Philippines Logo" 
             class="pup-logo-img" 
           />
+        </router-link>
         </div>
         <div class="university-info">
           <h1 class="uni-name">Polytechnic University of the Philippines</h1>
@@ -206,16 +208,16 @@ onUnmounted(() => {
 }
 
 .logo-image-container {
-  width: 45px;
-  height: 45px;
+  width: 60px;
+  height: 60px;
   background-color: #800000;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid white; 
-  padding: 4px; 
   box-sizing: border-box;
+  padding:0 0 5px 0;
+  cursor: pointer;
 }
 
 .pup-logo-img {
@@ -268,9 +270,7 @@ onUnmounted(() => {
   font-weight: 700;
   font-size: 1.05rem;
   text-transform: uppercase;
-  transition: all 0.2s ease;
-  padding: 4px 8px;
-  border-radius: 4px;
+  transition: color 0.2s;
 }
 
 .header-link:hover {
@@ -278,14 +278,8 @@ onUnmounted(() => {
   text-decoration: underline;
 }
 
-.header-link.router-link-active {
-  color: #ffc107;
-  text-decoration: none;
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
 .separator {
-  color: #ffc107;
+  color: white;
   font-weight: 300;
   font-size: 1.2rem;
   margin-top: -2px;
