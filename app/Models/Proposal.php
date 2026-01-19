@@ -11,11 +11,15 @@ class Proposal extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    protected $table = 'Proposals';
 
     protected $primaryKey = 'ProposalID';
+    
     public $incrementing = false;
+    
     protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
         'ProposalID',

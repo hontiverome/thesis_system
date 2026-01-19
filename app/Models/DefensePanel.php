@@ -22,6 +22,11 @@ class DefensePanel extends Model
         'DefenseID',
         'PanelistUserID',
         'Status',
+        'PanelID',
+        'Role',
+        'InvitationStatus',
+        'InvitedAt',
+        'RespondedAt',
     ];
 
     public function defense(): BelongsTo
@@ -34,4 +39,8 @@ class DefensePanel extends Model
         return $this->belongsTo(User::class, 'PanelistUserID', 'UserID');
     }
     
+    public function panelist(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'PanelistUserID', 'UserID');
+    }
 }

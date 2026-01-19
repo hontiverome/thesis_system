@@ -153,4 +153,13 @@ class User extends Authenticatable
     {
         $this->notify(new ResetPassword($token));
     }
+    
+    /**
+     * Get groups where user is adviser
+     */
+    public function advisedGroups()
+    {
+        return $this->belongsToMany(Group::class, 'GroupAdvisers', 'AdviserUserID', 'GroupID');
+    }
 }
+

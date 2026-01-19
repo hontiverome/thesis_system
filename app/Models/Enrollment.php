@@ -18,6 +18,8 @@ class Enrollment extends Model
 
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'EnrollmentID',
         'GroupID',
@@ -34,5 +36,10 @@ class Enrollment extends Model
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class, 'CourseID', 'CourseID');
+    }
+
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class, 'EnrollmentID', 'EnrollmentID');
     }
 }
