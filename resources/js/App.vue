@@ -1,63 +1,20 @@
-<!--
- * System Name: Theming and UI Framework
- * Module Name: App
- * Purpose Of this file: 
- * Main application component that handles the core layout and theme management.
- * 
- * Author: Jerome Andrei O. Hontiveros
- * Copyright (C) 2025
- * by the Department of Science and Technology — Project LODI
- * All rights reserved.
- * 
- * Permission is hereby granted, free of charge, to any persons obtaining a copy
- * of this software and associated documentation files, to deal in the Software
- * without restriction, including the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, provided that the
- * above copyright notice(s) and this permission notice appears in all copies of
- * the Software and that both the above copyright notice(s) and this permission
- * notice appear in supporting documentation.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.
- * IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE
- * LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY
- * DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- * Except as contained in this notice, the name of a copyright holder shall not
- * be used in advertising or otherwise to promote the sale, use or other dealings
- * in this Software without prior written authorization of the copyright holder.
--->
-
 <template>
-  <!-- 
-    Main Application Component
-    Serves as the root component that structures the entire application layout
-    
-    Dynamic Classes & Styles:
-    - 'currentTheme': Applies the current theme class to the root element
-    - 'layoutStyles': Dynamically sets CSS variables for responsive layout
-  -->
   <div class="app" :class="[currentTheme, layoutStore.layoutClasses]" :style="layoutStyles">
-    <!-- Application Navigation Bar -->
+    
     <transition name="navbar-slide" mode="out-in">
       <AppNavbar v-if="!isBlankLayout && layoutStore.layoutPreference !== 'sidebar'"
                  @toggle-sidebar="handleToggleSidebar" />
     </transition>
     
-    <!-- Sidebar Navigation (collapsible / off-canvas on mobile) -->
     <transition name="sidebar-fade">
       <AppSidebar v-if="!isBlankLayout && layoutStore.layoutPreference !== 'navbar'"
                   :isCollapsed="layoutStore.isSidebarCollapsed" />
     </transition>
 
-    <!-- Backdrop overlay for mobile sidebar -->
-    <div v-if="!isBlankLayout && layoutStore.isMobileSidebarOpen" class="backdrop-overlay" @click="layoutStore.closeMobileSidebar()" />
+    <div v-if="!isBlankLayout && layoutStore.isMobileSidebarOpen" 
+         class="backdrop-overlay" 
+         @click="layoutStore.closeMobileSidebar()" />
     
-    <!-- Floating hamburger for sidebar-only layout on mobile (hidden when overlay is open) -->
     <button
       v-if="!isBlankLayout && layoutStore.layoutPreference === 'sidebar' && !layoutStore.isMobileSidebarOpen"
       class="floating-sidebar-toggle"
@@ -67,29 +24,23 @@
       ☰
     </button>
 
-    <!-- Main Content Area -->
     <main class="main-content" :class="{ 'blank-main' : isBlankLayout}" role="main">
-      <div class="content-wrapper" :class="{'full-width':isBlankLayout}">
+      <div class="content-wrapper" :class="{'full-width': isBlankLayout}">
         <router-view :key="$route.fullPath" />
       </div>
     </main>
     
-    <!-- Bottom Mobile Navigation (for navbar-only layout) -->
     <transition name="bottom-nav-slide">
       <MobileBottomNav v-if="!isBlankLayout && layoutStore.layoutPreference === 'navbar'" />
     </transition>
     
-    <!-- Floating Settings Button -->
     <FloatingSettings />
   </div>
 </template>
 
 <script setup>
-/**
- * Imports Vue's composition API functions and required dependencies
- */
 import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute } from 'vue-router'; // Added useRoute
+import { useRoute } from 'vue-router';
 import { useThemeStore } from '@/stores/theme.js';
 import { useLayoutStore } from '@/stores/layout.js';
 import AppNavbar from '@/components/layout/app_navbar.vue';
@@ -97,37 +48,18 @@ import AppSidebar from '@/components/layout/app_sidebar.vue';
 import MobileBottomNav from '@/components/layout/mobile_bottom_nav.vue';
 import FloatingSettings from '@/components/ui/floating_settings.vue';
 
-// Initialize the stores
 const themeStore = useThemeStore();
 const layoutStore = useLayoutStore();
-const route = useRoute(); // Initialize route
+const route = useRoute();
 
-// Determine if the current page requires a blank layout
-const isBlankLayout = computed(() => {
-  return route.meta.layout === 'blank';
-});
-
-/**
- * Computed Properties
- */
-
-/**
- * Current theme of the application
- * @type {ComputedRef<string>}
- */
+// Check for Blank Layout Metadata
+const isBlankLayout = computed(() => route.meta.layout === 'blank');
 const currentTheme = computed(() => themeStore.currentTheme);
 
-// Layout configuration constants
-const sidebarWidth = 250;         // Width of the expanded sidebar in pixels
-const collapsedSidebarWidth = 60;  // Width of the collapsed sidebar in pixels
+const sidebarWidth = 250;
+const collapsedSidebarWidth = 60;
 
-/**
- * Computed styles for dynamic layout adjustments
- * Updates CSS variables based on sidebar state and layout preference
- * @type {ComputedRef<Object>}
- */
 const layoutStyles = computed(() => {
-  // Blank layout = 0values
   if (isBlankLayout.value) {
     return {
       '--sidebar-width': '0px',
@@ -137,13 +69,12 @@ const layoutStyles = computed(() => {
       '--sidebar-opacity': '0',
       '--sidebar-visibility': 'hidden',
       '--navbar-display': 'none',
-      '--content-padding': '0px' // Remove padding for landing page
+      '--content-padding': '0px'
     };
   }
   const showSidebar = layoutStore.layoutPreference !== 'navbar';
   const collapsedPref = layoutStore.isSidebarCollapsed && showSidebar;
   const mobileOpen = layoutStore.isMobileSidebarOpen;
-  // When mobile overlay is open, force expanded width regardless of collapsedPref
   const effectiveCollapsed = mobileOpen ? false : collapsedPref;
 
   return {
@@ -152,32 +83,26 @@ const layoutStyles = computed(() => {
       : '0px',
     '--sidebar-collapsed-width': `${collapsedSidebarWidth}px`,
     '--mobile-bottom-nav-height': '56px',
-    '--header-height': layoutStore.layoutPreference !== 'sidebar' ? '60px' : '0px',
+    '--header-height': layoutStore.layoutPreference !== 'sidebar' ? '80px' : '0px', // Updated to 80px to match Navbar
     '--sidebar-opacity': showSidebar ? '1' : '0',
     '--sidebar-visibility': showSidebar ? 'visible' : 'hidden',
     '--navbar-display': layoutStore.layoutPreference !== 'sidebar' ? 'flex' : 'none'
   };
 });
 
-// Body layout classes are managed by the watcher below (no full overwrite)
-
-// Watch for layout class changes
 watch(() => layoutStore.layoutClasses, (newClasses) => {
   const body = document.body;
-  // Remove all layout classes
   ['has-sidebar', 'has-navbar', 'sidebar-collapsed', 'mobile-sidebar-open'].forEach(cls => {
     body.classList.remove(cls);
   });
-  // Add active layout classes
   Object.entries(newClasses).forEach(([cls, isActive]) => {
     if (isActive) body.classList.add(cls);
   });
 }, { immediate: true, deep: true });
 
-// Handle navbar hamburger: on mobile open off-canvas, else toggle collapse
 const handleToggleSidebar = () => {
   if (layoutStore.layoutPreference === 'navbar') return;
-  const isSmall = window.innerWidth <= 1024; // tablet and below
+  const isSmall = window.innerWidth <= 1024;
   if (isSmall) {
     layoutStore.toggleMobileSidebar();
   } else {
@@ -185,60 +110,26 @@ const handleToggleSidebar = () => {
   }
 };
 
-/**
- * Lifecycle Hooks
- */
-
-// Component mounted hook
 onMounted(() => {
-  // Set the initial theme on the HTML element
   document.documentElement.setAttribute('data-theme', currentTheme.value);
 });
 
-/**
- * Watchers
- */
-
-// Watch for theme changes and update the HTML attribute
 watch(currentTheme, (newTheme) => {
   document.documentElement.setAttribute('data-theme', newTheme);  
-  // This allows for theme-specific CSS selectors using [data-theme="theme-name"]
 });
 
-// Lock body scroll when mobile sidebar is open
 watch(() => layoutStore.isMobileSidebarOpen, (open) => {
-  const body = document.body;
-  if (open) {
-    body.classList.add('no-scroll');
-  } else {
-    body.classList.remove('no-scroll');
-  }
+  document.body.classList.toggle('no-scroll', open);
 });
 </script>
 
 <style scoped>
-/**
- * App Component Styles
- * Contains all styles for the main application layout
- */
-
-/* 
- * Main Content Area
- * Handles the main content positioning and responsive behavior
- * Uses CSS variables for dynamic theming and layout adjustments
- */
 .main-content {
-  /* Position content to the right of the sidebar */
   margin-left: var(--sidebar-width);
-  /* Position below the fixed header */
   margin-top: var(--header-height);
-  /* Ensure content fills the viewport height minus header */
   min-height: calc(100vh - var(--header-height));
-  /* Add padding around content */
-  padding: 0;
-  /* Smooth transition for sidebar collapse/expand and navbar enter/exit */
-  transition: margin-left var(--transition-duration), margin-top var(--transition-duration), padding-bottom var(--transition-duration);
-  /* Theme-aware background color */
+  padding: 1.5rem;
+  transition: margin-left var(--transition-duration), margin-top var(--transition-duration);
   background-color: var(--bg-color);
 }
 .blank-main {
@@ -248,74 +139,42 @@ watch(() => layoutStore.isMobileSidebarOpen, (open) => {
   margin-top: 0 !important;
   min-height: 100vh !important;
 }
-
+.content-wrapper {
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+}
 .content-wrapper.full-width {
   max-width: 100% !important;
   padding: 0 !important;
 }
 
-/* 
- * Content Wrapper
- * Constrains the content width and centers it on larger screens
- */
-.content-wrapper {
-  /* Maximum width for content to maintain readability */
-  max-width: 100%;
-  width: 100%;
-  padding: 0;
-  /* Center the content */
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-/* Allow full width for blank layouts */
-.content-wrapper.full-width {
-  max-width: 100%;
-  padding: 0;
-}
-
-/* 
- * Responsive Adjustments
- * Handles layout changes for different screen sizes
- */
 @media (max-width: 1024px) {
   .main-content {
-    /* On mobile, remove sidebar margin for full-width content */
     margin-left: 0;
-    /* Adjust padding for smaller screens */
-    /* Only apply padding if NOT blank layout */
-    padding:var(--content-padding, 1rem);
-  }
-
-  /* Floating toggle visible only on mobile */
-  .floating-sidebar-toggle {
-    display: inline-flex;
+    padding: var(--content-padding, 1rem);
   }
 }
 
-/* Floating sidebar toggle button */
 .floating-sidebar-toggle {
   position: fixed;
   top: 12px;
   left: 12px;
-  z-index: 60; /* Above overlay (39) and sidebar (40) */
+  z-index: 60;
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
   background: var(--card-bg);
-  color: var(--text-color);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  border: 1px solid var(--border-color);
+  display: none;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  line-height: 1;
   cursor: pointer;
-  transition: background var(--transition-duration), box-shadow var(--transition-duration);
-  display: none; /* hidden by default; shown in mobile media query */
 }
 
-.floating-sidebar-toggle:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+@media (max-width: 1024px) {
+  .floating-sidebar-toggle {
+    display: inline-flex;
+  }
 }
 </style>

@@ -1,103 +1,48 @@
-<template>
-  <div>
-    <DebugAuth /> 
-  </div>
-  <aside class="sidebar-container">
-    
-    <div class="sidebar-header">
-      <h3>Courses</h3>
-    </div>
-
-    <div class="course-card">
-      <div class="course-title">MOR</div>
-      
-      <nav class="course-nav">
-        <a href="#" 
-           class="nav-item" 
-           :class="{ active: activeItem === 'PROPOSAL' }"
-           @click.prevent="setActive('PROPOSAL')">
-          PROPOSAL
-        </a>
-        
-        <a href="#" 
-           class="nav-item" 
-           :class="{ active: activeItem === 'CHAPTER 1' }"
-           @click.prevent="setActive('CHAPTER 1')">
-          CHAPTER 1
-        </a>
-
-        <a href="#" 
-           class="nav-item" 
-           :class="{ active: activeItem === 'CHAPTER 2' }"
-           @click.prevent="setActive('CHAPTER 2')">
-          CHAPTER 2
-        </a>
-
-        <a href="#" 
-           class="nav-item" 
-           :class="{ active: activeItem === 'CHAPTER 3' }"
-           @click.prevent="setActive('CHAPTER 3')">
-          CHAPTER 3
-        </a>
-
-        <a href="#" 
-           class="nav-item" 
-           :class="{ active: activeItem === 'OTHERS' }"
-           @click.prevent="setActive('OTHERS')">
-          OTHERS
-        </a>
-      </nav>
-    </div>
-
-  </aside>
-</template>
-
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
+// ... (imports remain the same)
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
 import { useUserStore } from '@/stores/user';
 import { useThemeStore } from '@/stores/theme';
 import { Icon as IconifyIcon } from '@iconify/vue';
 import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
+
 const router = useRouter();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 const themeStore = useThemeStore();
 const userButtonRef = ref(null);
 const layoutMode = computed(() => layoutStore.layoutPreference);
-const popoverStyle = ref({});
-
-
-defineOptions({
-  components: {
-    UserDropdownPopover
-  }
-});
-
-// On mobile when the off-canvas sidebar is open, force expanded view
-const isCollapsed = computed(() => layoutStore.isSidebarCollapsed && !layoutStore.isMobileSidebarOpen);
 const isUserMenuOpen = ref(false);
 
+const isCollapsed = computed(() => layoutStore.isSidebarCollapsed && !layoutStore.isMobileSidebarOpen);
 const themeButtonText = computed(() => {
   const currentTheme = themeStore.availableThemes.find(t => t.id === themeStore.currentTheme);
   return currentTheme?.name || 'Theme';
 });
 
+// --- UPDATED NAVIGATION ITEMS ---
+const navItems = [
+  { path: '/home', icon: 'mdi:home', text: 'Home' }, // Correct path
+  { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
+  { path: '/profile', icon: 'mdi:account', text: 'Profile' },
+  { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
+  { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
+];
+
+// ... (rest of logic: toggleSidebar, toggleTheme, etc. remains the same)
+
 const toggleSidebar = () => {
-  const isSmall = window.innerWidth <= 1024; // tablet and below
+  const isSmall = window.innerWidth <= 1024;
   if (isSmall) {
-    // On mobile, toggle the off-canvas sidebar overlay
     layoutStore.toggleMobileSidebar();
   } else {
-    // On larger screens, toggle collapsed state
     layoutStore.toggleSidebar();
   }
 };
 
-const toggleTheme = () => {
-  themeStore.toggleTheme();
-};
+const toggleTheme = () => themeStore.toggleTheme();
 
 const toggleUserMenu = (event) => {
   event.stopPropagation();
@@ -108,47 +53,63 @@ const closeUserMenu = () => {
   isUserMenuOpen.value = false;
 };
 
-const handleLogout = async () => {
-  try {
-    await userStore.logout();
-    router.push('/');
-  } catch (error) {
-    console.error('Logout failed:', error);
-  }
-};
-
 const handleClickOutside = (event) => {
-  const userMenu = event.target.closest('.user-menu-container');
-  if (!userMenu && isUserMenuOpen.value) {
+  if (isUserMenuOpen.value && userButtonRef.value && !userButtonRef.value.contains(event.target)) {
+    // Also check if click is inside the popover (if referencing DOM directly)
+    // For now, simple check
     closeUserMenu();
   }
 };
 
-// Navigation items
-const navItems = [
-  { path: '/', icon: 'mdi:home', text: 'Home' },
-  { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
-  { path: '/profile', icon: 'mdi:account', text: 'Profile' },
-  { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
-  { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
-];
-
-// Close mobile sidebar after navigation on small screens
-const handleNavClick = () => {
-  if (window.innerWidth <= 1024) {
-    layoutStore.closeMobileSidebar();
-  }
-};
-
-// No need to preload icons when using the Icon component directly
-// The Icon component will load icons on demand
 onMounted(() => {
-  // Add click outside listener
   document.addEventListener('click', handleClickOutside);
 });
 
-// Clean up event listeners
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside);
 });
 </script>
+
+<template>
+  <aside class="sidebar" :data-layout-mode="layoutMode" :class="{ 'collapsed': isCollapsed }">
+    <div class="sidebar-header">
+      <button v-if="layoutStore.layoutPreference === 'sidebar'" @click="toggleSidebar" class="hamburger-button">
+        <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
+      </button>
+      <h2 v-if="layoutStore.layoutPreference !== 'sidebar' || !isCollapsed" class="sidebar-title">
+        {{ isCollapsed ? 'M' : 'Menu' }}
+      </h2>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul>
+        <li v-for="item in navItems" :key="item.path">
+          <router-link :to="item.path" class="sidebar-nav nav-link" @click="handleNavClick">
+            <span class="icon"><IconifyIcon :icon="item.icon" width="20" height="20" /></span>
+            <span class="text" v-if="!isCollapsed">{{ item.text }}</span>
+          </router-link>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
+      <button @click="toggleTheme" class="theme-toggle">
+        <span class="icon"><IconifyIcon icon="mdi:palette" width="20" height="20" /></span>
+        <span class="theme-toggle-text" v-if="!isCollapsed">{{ themeButtonText }}</span>
+      </button>
+      
+      <button class="sidebar-user-button" ref="userButtonRef" @click.stop="toggleUserMenu">
+          <div class="sidebar-avatar-container">
+            <div class="sidebar-avatar-initials">{{ userStore.user?.firstName?.charAt(0) || 'U' }}</div>
+          </div>
+          <div class="user-info" v-if="!isCollapsed">
+            <div class="sidebar-username">{{ userStore.user?.firstName || 'User' }}</div>
+          </div>
+          <IconifyIcon v-if="!isCollapsed" icon="mdi:chevron-down" class="sidebar-dropdown-arrow" />
+      </button>
+      <Teleport to="body">
+          <UserDropdownPopover :is-open="isUserMenuOpen" :target-element="userButtonRef" :is-sidebar-collapsed="isCollapsed" @close="closeUserMenu"/>
+      </Teleport>
+    </div>
+  </aside>
+</template>
