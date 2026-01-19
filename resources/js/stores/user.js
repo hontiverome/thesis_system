@@ -20,24 +20,11 @@ const formatDate = (dateString) => {
 export const useUserStore = defineStore('user', () => {
   // --- STATE ---
   
-  // -------------------------------------------------------------
-  // TEMPORARY DEV MODE: Force a fake user immediately
-  // -------------------------------------------------------------
-  const fakeUser = {
-    id: 1,
-    firstName: 'Test',
-    lastName: 'Student',
-    email: 'student@test.com',
-    roles: ['student'], // Force the 'student' role
-    permissions: ['view_dashboard'],
-    memberSince: '2023-01-01',
-    lastLogin: new Date().toISOString()
-  };
-
-  // Instead of checking localStorage, use the fake user
-  const user = ref(fakeUser);
-  const token = ref('fake-dev-token-123'); // Fake token to pass "!!token" checks
-  const initialized = ref(true);
+  // Check for existing token in localStorage
+  const existingToken = localStorage.getItem('auth_token');
+  const user = ref(null);
+  const token = ref(existingToken);
+  const initialized = ref(false);
   
   // UI States
   const avatarPreview = ref(null);
@@ -94,11 +81,17 @@ export const useUserStore = defineStore('user', () => {
 
   function setToken(newToken) {
     token.value = newToken;
+    if (newToken) {
+      localStorage.setItem('auth_token', newToken);
+    } else {
+      localStorage.removeItem('auth_token');
+    }
   }
 
   function clearUser() {
-    console.log("Logout triggered (Dev Mode - preventing actual clear)");
-    // In a real app, you would set user.value = null here.
+    user.value = null;
+    token.value = null;
+    localStorage.removeItem('auth_token');
   }
 
   const can = (permission) => {

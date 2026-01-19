@@ -83,12 +83,13 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { useUserStore } from '@/stores/user'
+import axios from 'axios'
 import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
 
 const router = useRouter()
-const { login } = useAuth()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const error = ref('')
@@ -103,7 +104,23 @@ const handleLogin = async () => {
   error.value = ''
 
   try {
-    await login({ ...form })
+    await axios.get('/sanctum/csrf-cookie')
+
+    const payload = {
+      SchoolID: form.faculty_id, 
+      password: form.password,
+      device_name: 'web-browser'
+    }
+
+    const response = await axios.post('/api/v1/auth/login/faculty', payload)
+    
+    if (!response.data.token) throw new Error('No token received')
+
+    // Set user and token in the store
+    userStore.setToken(response.data.token)
+    userStore.setUser(response.data.user)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
+
     router.push('/dashboard')
   } catch (err) {
     error.value =

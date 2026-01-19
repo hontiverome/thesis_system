@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserProfileController extends Controller
 {
@@ -18,16 +19,9 @@ class UserProfileController extends Controller
     {
         $user = $request->user()->load([
             'roles', 
-            'groups.enrollment.proposal',
-            'groups.enrollment.proposal.defenses',
-            'groups.enrollment.proposal.defenses.panel',
-            'groups.enrollment.proposal.defenses.evaluations',
-            'groups.enrollment.proposal.approvals',
-            'groups.enrollment.proposal.archive',
             'submissions',
             'facultyDetail',
             'groupsAsAdviser.users',
-            'defensePanels.defense.proposal.enrollment.group',
         ]);
 
         $profileData = [
@@ -42,60 +36,48 @@ class UserProfileController extends Controller
         ];
 
         if ($user->hasRole('student')) {
+            // Get student's group info with direct query
+            $groupInfo = \DB::table('thesis.GroupMembers')
+                ->join('thesis.Groups', 'thesis.GroupMembers.GroupID', '=', 'thesis.Groups.GroupID')
+                ->where('thesis.GroupMembers.StudentUserID', $user->UserID)
+                ->first();
+
             $profileData['student_info'] = [
                 'StudentID' => $user->SchoolID,
-                'GroupCode' => $user->groups->first()?->GroupCode ?? null,
-                'YearLevel' => $user->groups->first()?->YearLevel ?? null,
-                'GroupRole' => $user->groups->first()?->pivot?->GroupRole ?? null,
-                'Adviser' => $user->groups->first()?->advisers->first()?->FullName ?? null,
+                'GroupCode' => $groupInfo->GroupCode ?? null,
+                'YearLevel' => $groupInfo->YearLevel ?? null,
+                'GroupRole' => $groupInfo->GroupRole ?? null,
             ];
 
-            if($user->groups->isNotEmpty() && $user->groups->first()->enrollment && $user->groups->first()->enrollment->proposal) {
-                $proposal = $user->groups->first()->enrollment->proposal;
-                $profileData['proposal_details'] = [
-                    'ResearchTitle' => $proposal->ResearchTitle,
-                    'Status' => $proposal->Status,
-                    'SubmissionDate' => $proposal->SubmissionDate,
-                    'Deadline' => $proposal->Deadline,
-                    'Approvals' => $proposal->approvals->map(function ($approval) {
-                        return [
-                            'Approver' => $approval->approvedUser->FullName,
-                            'ApprovalRole' => $approval->ApprovalRole,
-                            'Status' => $approval->Status,
-                            'Remarks' => $approval->Remarks,
-                        ];
-                    }),
-                ];
+            // Get adviser info
+            if ($groupInfo) {
+                $adviserInfo = \DB::table('thesis.GroupAdvisers')
+                    ->join('thesis.Users', 'thesis.GroupAdvisers.AdviserUserID', '=', 'thesis.Users.UserID')
+                    ->where('thesis.GroupAdvisers.GroupID', $groupInfo->GroupID)
+                    ->first();
+                $profileData['student_info']['Adviser'] = $adviserInfo->FullName ?? null;
+            }
 
-                if($proposal->archive) {
-                    $profileData['research_archive'] = [
-                        'AbstractFilePath' => $proposal->archive->AbstractFilePath,
-                        'FullManuscriptPath' => $proposal->archive->FullManuscriptPath,
-                        'PublishedDate' => $proposal->archive->PublishedDate,
-                    ];
+            // Get proposal info if group exists
+            if ($groupInfo) {
+                $enrollmentInfo = \DB::table('thesis.Enrollments')
+                    ->where('GroupID', $groupInfo->GroupID)
+                    ->first();
+                
+                $proposalInfo = null;
+                if ($enrollmentInfo) {
+                    $proposalInfo = \DB::table('thesis.Proposals')
+                        ->where('EnrollmentID', $enrollmentInfo->EnrollmentID)
+                        ->first();
                 }
 
-                if($proposal->defenses->isNotEmpty()){
-                    $profileData['defense_details'] = $proposal->defenses->map(function ($defense){
-                        return [
-                            'DefenseID' => $defense->DefenseID,
-                            'DefenseType' => $defense->DefenseType,
-                            'Schedule' => $defense->Schedule,
-                            'OverallVerdict' => $defense->OverallVerdict,
-                            'Panel' => $defense->panel->map(function($panelist){
-                                return [
-                                    'FullName' => $panelist->FullName,
-                                    'Status' => $panelist->pivot->Status,
-                                ];
-                            }),
-                            'Evaluations' => $defense->evaluations->map(function($evaluation){
-                                return [
-                                    'Panelist' => $evaluation->panelistUser->FullName,
-                                    'Verdict' => $evaluation->Verdict,
-                                ];
-                            }),
-                        ];
-                    });
+                if ($proposalInfo) {
+                    $profileData['proposal_details'] = [
+                        'ResearchTitle' => $proposalInfo->ResearchTitle,
+                        'Status' => $proposalInfo->Status,
+                        'SubmissionDate' => $proposalInfo->SubmissionDate,
+                        'Deadline' => $proposalInfo->Deadline,
+                    ];
                 }
             }
 
@@ -108,7 +90,6 @@ class UserProfileController extends Controller
                     'DefenseID' => $submission->DefenseID,
                 ];
             });
-
         }
 
         if ($user->hasRole('faculty') || $user->hasRole('adviser') || $user->hasRole('research coordinator')) {

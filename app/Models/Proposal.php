@@ -11,6 +11,8 @@ class Proposal extends Model
 {
     use HasFactory;
 
+    protected $table = 'Proposals';
+
     protected $fillable = [
         'EnrollmentID',
         'ResearchTitle',
@@ -36,6 +38,13 @@ class Proposal extends Model
 
     public function group()
     {
-        return $this->hasOneThrough(Group::class, Enrollment::class, 'EnrollmentID', 'GroupID', 'EnrollmentID', 'GroupID');
+        return $this->belongsTo(Enrollment::class, 'EnrollmentID')->withDefault(function () {
+            return new Group();
+        });
+    }
+
+    public function actualGroup()
+    {
+        return $this->belongsTo(Group::class, 'EnrollmentID', 'GroupID');
     }
 }

@@ -47,29 +47,6 @@
           </div>
 
           <form class="login-form" @submit.prevent="handleLogin">
-            <!-- First Row: First Name and Surname -->
-            <div class="form-row">
-              <div class="field">
-                <input
-                  v-model.trim="form.firstName"
-                  type="text"
-                  placeholder="FIRST NAME"
-                  autocomplete="given-name"
-                  :disabled="loading"
-                  required
-                />
-              </div>
-              <div class="field">
-                <input
-                  v-model.trim="form.lastName"
-                  type="text"
-                  placeholder="SURNAME"
-                  autocomplete="family-name"
-                  :disabled="loading"
-                  required
-                />
-              </div>
-            </div>
 
             <!-- STUDENT NUMBER -->
             <div class="field">
@@ -164,30 +141,27 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { useUserStore } from '@/stores/user'
+import axios from 'axios'
 import { Icon as IconifyIcon } from '@iconify/vue'
 
 import logoImage from '../../../assets/PUP_logo.png'
 import bgImage from '../../../assets/access_bg.jpg'
 
 const router = useRouter()
-const { login } = useAuth()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
   student_number: '',
   birth_month: '',
   birth_day: '',
   birth_year: '',
   password: ''
 })
-
-
 
 const isRegistering = ref(false)
 
@@ -209,15 +183,32 @@ onMounted(() => {
   })
 })
 
-
-
 const handleLogin = async () => {
   loading.value = true
   error.value = ''
 
   try {
-    await login({ ...form })
-    router.push('/student-dashboard') // change if your student dashboard route differs
+    await axios.get('/sanctum/csrf-cookie')
+
+    const payload = {
+      SchoolID: form.student_number, 
+      birth_month: parseInt(form.birth_month),
+      birth_day: parseInt(form.birth_day),
+      birth_year: parseInt(form.birth_year),
+      password: form.password,
+      device_name: 'web-browser'
+    }
+
+    const response = await axios.post('/api/v1/auth/login/student', payload)
+    
+    if (!response.data.token) throw new Error('No token received')
+
+    // Set user and token in store
+    userStore.setToken(response.data.token)
+    userStore.setUser(response.data.user)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
+
+    router.push('/dashboard')
   } catch (err) {
     error.value =
       err?.response?.data?.message ||

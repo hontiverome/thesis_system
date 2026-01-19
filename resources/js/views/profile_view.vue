@@ -3,8 +3,8 @@
     <header class="profile-header">
       <div class="header-content">
         <span class="header-title">PROFILE</span>
-        <button class="edit-btn-header" @click="showEditModal = true">
-          Edit Profile
+        <button class="edit-btn-header" @click="showEditModal = true" :disabled="loading">
+          {{ loading ? 'Loading...' : 'Edit Profile' }}
         </button>
       </div>
     </header>
@@ -12,7 +12,7 @@
     <div class="content">
       <aside class="card">
         <h2 class="user-name">{{ fullName }}</h2>
-        <p class="user-id">@{{ userStore.user?.id || '33550336-MN-0' }}</p>
+        <p class="user-id">@{{ profileData?.basic_info?.SchoolID || userStore.user?.id || '33550336-MN-0' }}</p>
 
         <div class="avatar-wrapper">
           <img :src="avatar" class="avatar" />
@@ -24,8 +24,20 @@
           <div class="meta-row">
             <strong>SYC:</strong> <span>3-3</span>
           </div>
-          <div class="meta-row">
-            <span class="group-label">GROUP #</span>
+          <div v-if="profileData?.student_info" class="meta-row">
+            <span class="group-label">GROUP #{{ profileData.student_info.GroupCode || 'N/A' }}</span>
+          </div>
+          <div v-if="profileData?.student_info" class="meta-row">
+            <strong>Year Level:</strong> <span>{{ profileData.student_info.YearLevel || 'N/A' }}</span>
+          </div>
+          <div v-if="profileData?.student_info" class="meta-row">
+            <strong>Adviser:</strong> <span>{{ profileData.student_info.Adviser || 'N/A' }}</span>
+          </div>
+          <div v-if="profileData?.faculty_info" class="meta-row">
+            <strong>Faculty Type:</strong> <span>{{ profileData.faculty_info.FacultyType || 'N/A' }}</span>
+          </div>
+          <div v-if="profileData?.faculty_info" class="meta-row">
+            <strong>Groups Advised:</strong> <span>{{ profileData.faculty_info.GroupsAdvised?.length || 0 }}</span>
           </div>
         </div>
 
@@ -36,7 +48,7 @@
         <div class="field">
           <label>About</label>
           <div class="box readonly-box">
-             {{ userStore.user?.about || '33,550,336...' }}
+             {{ profileData?.basic_info?.Email || userStore.user?.about || '33,550,336...' }}
           </div>
         </div>
 
@@ -44,14 +56,14 @@
           <div class="field">
             <label>First Name</label>
             <div class="box readonly-box">
-              {{ userStore.user?.firstName || 'Phainon' }}
+              {{ profileData?.basic_info?.FullName?.split(' ')[0] || userStore.user?.firstName || 'Phainon' }}
               <button class="icon" @click="showEditModal = true">✎</button>
             </div>
           </div>
           <div class="field">
             <label>Last Name</label>
             <div class="box readonly-box">
-              {{ userStore.user?.lastName || 'Khaslana' }}
+              {{ profileData?.basic_info?.FullName?.split(' ').slice(1).join(' ') || userStore.user?.lastName || 'Khaslana' }}
               <button class="icon" @click="showEditModal = true">✎</button>
             </div>
           </div>
@@ -59,10 +71,10 @@
 
         <div class="field">
           <label>Email</label>
-          <div class="box readonly-box">
-            {{ userStore.user?.email || 'email@address.com' }}
-            <button class="icon" @click="showEditModal = true">✎</button>
-          </div>
+            <div class="box readonly-box">
+              {{ profileData?.basic_info?.Email || userStore.user?.email }}
+              <button class="icon" @click="showEditModal = true">✎</button>
+            </div>
         </div>
 
         <div class="field">
@@ -76,7 +88,7 @@
         <div class="field">
           <label>Birthdate</label>
           <div class="box readonly-box">
-             {{ userStore.user?.birthdate || 'Not set' }}
+             {{ profileData?.basic_info?.BirthDate ? new Date(profileData.basic_info.BirthDate).toLocaleDateString() : userStore.user?.birthdate || 'Not set' }}
           </div>
         </div>
       </section>
@@ -96,19 +108,40 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
 import EditProfileModal from '@/components/profile/edit_profile_modal.vue'
 
 const userStore = useUserStore()
 const router = useRouter()
 const showEditModal = ref(false)
 const avatar = ref('/avatar.png')
+const profileData = ref(null)
+const loading = ref(true)
 
-const fullName = computed(() => 
-  `${userStore.user?.firstName || 'User'} ${userStore.user?.lastName || ''}`
-)
+const fullName = computed(() => {
+  if (profileData.value?.basic_info?.FullName) {
+    return profileData.value.basic_info.FullName
+  }
+  return `${userStore.user?.firstName || 'User'} ${userStore.user?.lastName || ''}`
+})
+
+const fetchProfile = async () => {
+  try {
+    const response = await axios.get('/api/v1/users/me')
+    profileData.value = response.data
+  } catch (error) {
+    console.error('Failed to fetch profile:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchProfile()
+})
 
 const handleLogout = async () => {
     await userStore.logout();
@@ -116,7 +149,8 @@ const handleLogout = async () => {
 }
 
 const handleProfileSaved = () => {
-  // Refresh logic here if needed
+  // Refresh profile data after save
+  fetchProfile()
 }
 </script>
 
