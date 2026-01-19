@@ -1,5 +1,4 @@
 <script setup>
-// ... (imports remain the same)
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
@@ -22,16 +21,13 @@ const themeButtonText = computed(() => {
   return currentTheme?.name || 'Theme';
 });
 
-// --- UPDATED NAVIGATION ITEMS ---
-const navItems = [
-  { path: '/home', icon: 'mdi:home', text: 'Home' }, // Correct path
-  { path: '/dashboard', icon: 'mdi:view-dashboard', text: 'Dashboard' },
-  { path: '/profile', icon: 'mdi:account', text: 'Profile' },
-  { path: '/settings', icon: 'mdi:cog', text: 'Settings' },
-  { path: '/help', icon: 'mdi:help-circle', text: 'Help' },
-];
+// --- COURSE NAVIGATION LOGIC ---
+const activeItem = ref('PROPOSAL');
 
-// ... (rest of logic: toggleSidebar, toggleTheme, etc. remains the same)
+const setActive = (itemName) => {
+  activeItem.value = itemName;
+  // Optional: router.push(...) logic here
+};
 
 const toggleSidebar = () => {
   const isSmall = window.innerWidth <= 1024;
@@ -55,8 +51,6 @@ const closeUserMenu = () => {
 
 const handleClickOutside = (event) => {
   if (isUserMenuOpen.value && userButtonRef.value && !userButtonRef.value.contains(event.target)) {
-    // Also check if click is inside the popover (if referencing DOM directly)
-    // For now, simple check
     closeUserMenu();
   }
 };
@@ -72,6 +66,7 @@ onUnmounted(() => {
 
 <template>
   <aside class="sidebar" :data-layout-mode="layoutMode" :class="{ 'collapsed': isCollapsed }">
+    
     <div class="sidebar-header">
       <button v-if="layoutStore.layoutPreference === 'sidebar'" @click="toggleSidebar" class="hamburger-button">
         <IconifyIcon icon="mdi:menu" class="hamburger-icon" />
@@ -81,17 +76,50 @@ onUnmounted(() => {
       </h2>
     </div>
     
-    <nav class="sidebar-nav">
-      <ul>
-        <li v-for="item in navItems" :key="item.path">
-          <router-link :to="item.path" class="sidebar-nav nav-link" @click="handleNavClick">
-            <span class="icon"><IconifyIcon :icon="item.icon" width="20" height="20" /></span>
-            <span class="text" v-if="!isCollapsed">{{ item.text }}</span>
-          </router-link>
-        </li>
-      </ul>
-    </nav>
-    
+    <div class="sidebar-content">
+      
+      <div class="course-card" v-if="!isCollapsed">
+        <div class="course-title">MOR</div>
+        
+        <nav class="course-nav">
+          <a href="#" 
+             class="nav-item" 
+             :class="{ active: activeItem === 'PROPOSAL' }"
+             @click.prevent="setActive('PROPOSAL')">
+            PROPOSAL
+          </a>
+          
+          <a href="#" 
+             class="nav-item" 
+             :class="{ active: activeItem === 'CHAPTER 1' }"
+             @click.prevent="setActive('CHAPTER 1')">
+            CHAPTER 1
+          </a>
+
+          <a href="#" 
+             class="nav-item" 
+             :class="{ active: activeItem === 'CHAPTER 2' }"
+             @click.prevent="setActive('CHAPTER 2')">
+            CHAPTER 2
+          </a>
+
+          <a href="#" 
+             class="nav-item" 
+             :class="{ active: activeItem === 'CHAPTER 3' }"
+             @click.prevent="setActive('CHAPTER 3')">
+            CHAPTER 3
+          </a>
+
+          <a href="#" 
+             class="nav-item" 
+             :class="{ active: activeItem === 'OTHERS' }"
+             @click.prevent="setActive('OTHERS')">
+            OTHERS
+          </a>
+        </nav>
+      </div>
+      </div>
+
     <div class="sidebar-footer" v-if="layoutStore.layoutPreference !== 'both'">
       <button @click="toggleTheme" class="theme-toggle">
         <span class="icon"><IconifyIcon icon="mdi:palette" width="20" height="20" /></span>
@@ -113,3 +141,72 @@ onUnmounted(() => {
     </div>
   </aside>
 </template>
+
+<style scoped>
+/* Base Sidebar Layout */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* --- COURSE CARD STYLES --- */
+.course-card {
+  padding: 0;
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #e0e0e0;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.course-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #800000;
+  padding: 15px 0;
+  background-color: white;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #eee;
+}
+
+.course-nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-item {
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 12px 0;
+  text-align: center;
+  color: black;
+  background-color: #f0f4f5;
+  margin-bottom: 1px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  display: block;
+}
+
+.nav-item.active {
+  background-color: #800000;
+  color: white;
+  margin-bottom: 0;
+}
+
+.nav-item:hover:not(.active) {
+  background-color: #e0e4e5;
+}
+</style>

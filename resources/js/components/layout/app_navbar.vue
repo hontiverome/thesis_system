@@ -48,35 +48,50 @@
             <ul class="user-dropdown-menu">
               <li class="dropdown-row">
                 <router-link to="/profile" class="dropdown-link" @click="closeUserMenu">
-                  <span>Profile</span>
+                  <div class="link-left">
+                    <IconifyIcon icon="mdi:account" class="menu-icon" />
+                    <span>Profile</span>
+                  </div>
                   <span class="arrow">›</span>
                 </router-link>
               </li>
 
               <li class="dropdown-row">
                 <router-link to="/notif" class="dropdown-link" @click="closeUserMenu">
-                  <span>Notification</span>
+                  <div class="link-left">
+                    <IconifyIcon icon="mdi:bell" class="menu-icon" />
+                    <span>Notification</span>
+                  </div>
                   <span class="arrow">›</span>
                 </router-link>
               </li>
 
               <li class="dropdown-row">
                 <router-link to="/help" class="dropdown-link" @click="closeUserMenu">
-                  <span>Help & Support</span>
+                  <div class="link-left">
+                    <IconifyIcon icon="mdi:help-circle" class="menu-icon" />
+                    <span>Help & Support</span>
+                  </div>
                   <span class="arrow">›</span>
                 </router-link>
               </li>
 
               <li class="dropdown-row">
                 <router-link to="/settings" class="dropdown-link" @click="closeUserMenu">
-                  <span>Settings</span>
+                  <div class="link-left">
+                    <IconifyIcon icon="mdi:cog" class="menu-icon" />
+                    <span>Settings</span>
+                  </div>
                   <span class="arrow">›</span>
                 </router-link>
               </li>
 
               <li class="dropdown-row logout">
                 <button class="dropdown-link logout-btn" @click="handleLogout">
-                  <span>Logout</span>
+                  <div class="link-left">
+                    <IconifyIcon icon="mdi:logout" class="menu-icon" />
+                    <span>Logout</span>
+                  </div>
                   <span class="arrow">›</span>
                 </button>
               </li>
@@ -137,8 +152,14 @@ const handleClickOutside = (event) => {
 };
 
 onMounted(() => {
+  // Load all required icons
   loadIcons([
-    'mdi:account', 'mdi:chevron-down', 'mdi:cog', 'mdi:logout'
+    'mdi:account', 
+    'mdi:chevron-down', 
+    'mdi:cog', 
+    'mdi:logout',
+    'mdi:bell',       // Added for Notification
+    'mdi:help-circle' // Added for Help
   ]);
   document.addEventListener('click', handleClickOutside);
 });
@@ -352,6 +373,7 @@ onUnmounted(() => {
   border-bottom: 1px solid #f0f0f0;
 }
 
+/* Link Container */
 .dropdown-link {
   display: flex;
   justify-content: space-between;
@@ -369,8 +391,25 @@ onUnmounted(() => {
   transition: background 0.2s;
 }
 
+/* Group Icon and Text on the Left */
+.link-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Icon Styling */
+.menu-icon {
+  font-size: 1.2rem;
+  color: #666;
+}
+
 .dropdown-link:hover {
   background-color: #800000;
+  color: white;
+}
+
+.dropdown-link:hover .menu-icon {
   color: white;
 }
 
@@ -388,8 +427,16 @@ onUnmounted(() => {
   color: #dc3545;
 }
 
+.logout-btn .menu-icon {
+  color: #dc3545;
+}
+
 .logout-btn:hover {
   background-color: #dc3545;
+  color: white;
+}
+
+.logout-btn:hover .menu-icon {
   color: white;
 }
 

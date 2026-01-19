@@ -87,18 +87,23 @@ const router = createRouter({
   }
 });
 
-// Basic Navigation Guard (Placeholder - extend as needed)
-router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token'); // Adjust based on your Auth logic
-  const isLogged = !!token;
+// // Basic Navigation Guard (Placeholder - extend as needed)
+// router.beforeEach((to, from, next) => {
+//   const token = localStorage.getItem('token'); // Adjust based on your Auth logic
+//   const isLogged = !!token;
 
-  if (to.meta.requiresAuth && !isLogged) {
-    next({ name: 'access-portal' });
-  } else if (to.meta.guestOnly && isLogged) {
-    next({ name: 'home' });
-  } else {
-    next();
-  }
+//   if (to.meta.requiresAuth && !isLogged) {
+//     next({ name: 'access-portal' });
+//   } else if (to.meta.guestOnly && isLogged) {
+//     next({ name: 'home' });
+//   } else {
+//     next();
+//   }
+// });
+
+// TEMPORARY: Allow access to everything
+router.beforeEach((to, from, next) => {
+  next(); 
 });
 
 // Set page title
