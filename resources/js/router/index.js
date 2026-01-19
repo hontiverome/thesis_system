@@ -175,6 +175,12 @@ const authRoutes = [
     component: () => import('@/components/workspace/CourseDetail.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true }
   },
+  {
+    path: '/:role/home',
+    name: 'role-home',
+    component: () => import('@/components/workspace/RoleHomeOverview.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
+  },
 ];
 
 // ==========================
