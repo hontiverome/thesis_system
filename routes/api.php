@@ -113,7 +113,7 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
 });
 
 // Assign adviser to blocks
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
     // Dropdown for the "Add as Adviser" modal
     Route::get('/blocks/available', [AdviserAssignmentController::class, 'getBlocksForDropdown']);
     
