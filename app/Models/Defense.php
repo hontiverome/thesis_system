@@ -33,12 +33,12 @@ class Defense extends Model
 
     public function enrollment(): BelongsTo
     {
-        return $this->belongsTo(Enrollment::class, 'EnrollmentID');
+        return $this->belongsTo(Enrollment::class, 'EnrollmentID', 'EnrollmentID');
     }
 
     public function proposal(): BelongsTo
     {
-        return $this->belongsTo(Proposal::class, 'ProposalID');
+        return $this->belongsTo(Proposal::class, 'ProposalID', 'ProposalID');
     }
 
     public function panel(): BelongsToMany

@@ -20,6 +20,8 @@ class Group extends Model
 
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'GroupID',
         'GroupCode',
@@ -30,6 +32,11 @@ class Group extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'GroupMembers', 'GroupID', 'StudentUserID')->withPivot('GroupRole');
+    }
+
+    public function members()
+    {
+        return $this->hasMany(GroupMember::class, 'GroupID', 'GroupID');
     }
 
     public function advisers(): BelongsToMany

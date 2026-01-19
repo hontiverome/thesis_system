@@ -19,9 +19,14 @@ class Course extends Model
 
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'CourseID',
         'CourseName',
+        'CourseCode',
+        'YearLevel',
+        'Semester',
         'PrerequisiteCourseID',
     ];
 

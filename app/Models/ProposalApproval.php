@@ -10,7 +10,18 @@ class ProposalApproval extends Model
 {
     use HasFactory;
 
+    protected $table = 'ProposalApprovals';
+
+    protected $primaryKey = 'ApprovalID';
+    
+    public $incrementing = false;
+    
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
+        'ApprovalID',
         'ProposalID',
         'ApprovedUserID',
         'ApprovalRole',
@@ -20,11 +31,11 @@ class ProposalApproval extends Model
 
     public function proposal(): BelongsTo
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->belongsTo(Proposal::class, 'ProposalID', 'ProposalID');
     }
 
     public function approvedUser(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'ApprovedUserID');
+        return $this->belongsTo(User::class, 'ApprovedUserID', 'UserID');
     }
 }
