@@ -323,12 +323,12 @@ onUnmounted(() => {
 
 .header-link:hover {
   color: #ffc107;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .header-link.active {
   color: #ffc107;
-  text-decoration: underline;
+  text-decoration: none;
   font-weight: 900;
 }
 
