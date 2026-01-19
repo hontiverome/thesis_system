@@ -202,7 +202,7 @@ const roleRoutes = Object.keys(roleCourses).map(role => {
   return {
     path: `/${role}/courses`,
     component: () => import('@/components/workspace/RoleCourseOverview.vue'),
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true },
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true },
     children: dynamicChildren
   };
 });
