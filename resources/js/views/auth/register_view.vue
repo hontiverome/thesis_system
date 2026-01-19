@@ -1,6 +1,6 @@
 <template>
   <div class="register-page" :style="{ backgroundImage: `url(${bgImage})` }">
-    <div class="register-wrapper auth-stage" :class="{switch:isSwitching}">
+    <div class="register-wrapper auth-stage" :class="{switch:isSwitching, entering:isEntering}">
 
       <!-- LEFT PANEL (FORM) -->
       <section class="register-left panel panel-glass" aria-label="Registration form">
@@ -159,7 +159,7 @@
           <h2 class="welcome-title">HELLO, WELCOME!</h2>
           <div class="sub-cta-title">ALREADY HAVE AN ACCOUNT?</div>
 
-          <<button class="signin-btn" @click="goToLogin">
+          <button class="signin-btn" @click="goToLogin">
             SIGN IN
           </button>
           <div class="red-sweep"></div>
@@ -172,7 +172,7 @@
 
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted, nextTick} from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { Icon as IconifyIcon } from '@iconify/vue'
@@ -229,15 +229,25 @@ const handleRegister = async () => {
   }
 }
 
+
 const goToLogin = () => {
+  // trigger exit animation
+  isEntering.value = false
   isSwitching.value = true
 
-  // wait for animation to finish
+  // wait for animation to finish before routing
   setTimeout(() => {
     router.push({ name: 'login.student' })
-  }, 900) // must match CSS duration
+  }, 900) // match CSS duration
 }
 
+const isEntering = ref(false)
+
+onMounted(() => {
+  requestAnimationFrame(() => {
+    isEntering.value = true
+  })
+})
 </script>
 
 
@@ -248,31 +258,64 @@ const goToLogin = () => {
   overflow: hidden;
 }
 
-
-/* PANELS */
-.panel {
-  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
-  will-change: transform;
-}
 /* SWITCH ANIMATION */
 .auth-stage.switch .panel-glass {
-  transform: translateX(100%);
+  transform: translateX(-100%);
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
 }
-
-/* WHITE GLASS SWEEPS RIGHT */
-.auth-stage.switch .panel-glass {
-  transform: translateX(100%);
-}
-
-/* ORIGINAL RED SWEEPS RIGHT */
 .auth-stage.switch .panel-red {
   transform: translateX(100%);
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
 }
 
 /* NEW RED ENTERS FROM LEFT */
 .auth-stage.switch .red-sweep {
   transform: translateX(100%);
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
 }
+
+/* INITIAL POSITIONS BEFORE ENTRANCE */
+
+/* ANIMATE IN */
+.auth-stage.entering .panel-glass,
+.auth-stage.entering .panel-red {
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+  transform: translateX(0);
+}
+
+.auth-stage.entering.entered .panel-glass {
+  transform: translateX(-100%); /* final position */
+}
+
+.auth-stage.entering.entered .panel-red {
+  transform: translateX(100%); /* final position */
+}
+
+/* GAP OF 50px (handled by wrapper grid) */
+.register-wrapper {
+  display: grid;
+  grid-template-columns: calc(50% - 25px) 50px calc(50% - 25px); /* left | gap | right */
+  gap: 0;
+}
+
+/* INITIAL STATE (before entering) */
+.register-wrapper:not(.entering) .panel-glass {
+  transform: translateX(-100%);
+}
+
+.register-wrapper:not(.entering) .panel-red {
+  transform: translateX(100%);
+}
+
+/* ENTER ANIMATION */
+.register-wrapper.entering .panel-glass,
+.register-wrapper.entering .panel-red {
+  transform: translateX(0);
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+}
+
+
+
 
 .register-page{
   min-height:100vh;
@@ -296,7 +339,7 @@ const goToLogin = () => {
 /* Wrapper */
 .register-wrapper {
   position: relative;
-  width: min(100px, 100%);
+  width: min(2000px, 100%);
   min-height: 800px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -342,7 +385,7 @@ const goToLogin = () => {
 .form-row{
   display:grid;
   grid-template-columns: 1fr 1fr;
-  gap:16px;
+  gap:18px;
 }
 
 .red-sweep {
@@ -358,7 +401,7 @@ const goToLogin = () => {
 }
 
 
-.field{ position:relative; margin:18px 0; }
+.field{ position:relative; margin: 15px 0px; }
 
 .field input{
   width:100%;
@@ -366,7 +409,7 @@ const goToLogin = () => {
   border-radius:14px;
   border:none;
   outline:none;
-  padding:0 60px 0 18px;
+  padding:0 60px 0 15px;
   background:rgba(255,255,255,0.92);
   box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);
   font-size:13px;
@@ -407,7 +450,7 @@ const goToLogin = () => {
   display:grid;
   grid-template-columns: 1.3fr 1fr 1.2fr;
   gap:14px;
-  margin:18px 0;
+  margin:15px 0;
 }
 
 .date-input{

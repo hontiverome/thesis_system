@@ -1,6 +1,6 @@
 <template>
   <div class="login-page" :style="{ backgroundImage: `url(${bgImage})` }">
-    <div class="login-wrapper auth-stage" :class="{ switch: isRegistering }">
+    <div class="login-wrapper auth-stage" :class="{ switch: isRegistering, entering: isEntering }">
       <!-- LEFT PANEL -->
       <section class="login-left" aria-label="Welcome panel">
         <!-- Back icon (top-left) -->
@@ -162,7 +162,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 import { Icon as IconifyIcon } from '@iconify/vue'
@@ -192,6 +192,7 @@ const form = reactive({
 const isRegistering = ref(false)
 
 const goToRegister = () => {
+  isEntering.value = false
   isRegistering.value = true
 
   // wait for animation before routing
@@ -199,6 +200,14 @@ const goToRegister = () => {
     router.push({ name: 'register' })
   }, 900)
 }
+
+const isEntering = ref(false)
+
+onMounted(() => {
+  requestAnimationFrame(() => {
+    isEntering.value = true
+  })
+})
 
 
 
@@ -229,8 +238,21 @@ const handleLogin = async () => {
 }
 
 /* smooth movement */
+/* INITIAL (before mount) — NO transition */
 .login-left,
-.login-right,
+.login-right {
+  transform: translateX(0);
+}
+
+/* When NOT yet entered */
+.auth-stage:not(.entering) .login-left {
+  transform: translateX(-100%);
+}
+
+.auth-stage:not(.entering) .login-right {
+  transform: translateX(100%);
+}
+
 .red-sweep {
   transition: transform 0.9s cubic-bezier(.77,0,.18,1);
 }
@@ -418,7 +440,7 @@ const handleLogin = async () => {
 
 /* WHEN SWITCHING TO REGISTER */
 .auth-stage.switch .login-right {
-  transform: translateX(-100%);
+  transform: translateX(100%);
 }
 
 .auth-stage.switch .login-left {
@@ -437,6 +459,30 @@ const handleLogin = async () => {
 .auth-stage.switch .red-sweep {
   transform: translateX(100%);
 }
+/* EXIT (LOGIN → REGISTER) — animate OUT */
+.auth-stage.switch .login-left,
+.auth-stage.switch .login-right,
+.auth-stage.switch .red-sweep {
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+}
+
+
+/* INITIAL POSITIONS FOR ENTRANCE */
+.auth-stage.entering .login-left {
+  transform: translateX(-100%); /* left panel off-screen left */
+}
+
+.auth-stage.entering .login-right {
+  transform: translateX(100%); /* right panel off-screen right */
+}
+
+/* SLIDE IN TRANSITION */
+.auth-stage.entering .login-left,
+.auth-stage.entering .login-right {
+  transition: transform 0.9s cubic-bezier(.77,0,.18,1);
+  transform: translateX(0);
+}
+
 
 
 .right-inner { width: 100%; text-align: center; }
@@ -470,7 +516,7 @@ const handleLogin = async () => {
   gap: 16px;
 }
 
-.field { position: relative; margin: 18px 0; }
+.field { position: relative; margin: 15px 0; }
 
 .field input {
   width: 100%;
@@ -541,7 +587,7 @@ const handleLogin = async () => {
 
 .row {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 8px;
 }
 
@@ -550,6 +596,7 @@ const handleLogin = async () => {
   letter-spacing: 0.22em;
   color: #222;
   text-decoration: none;
+  
 }
 .forgot:hover { text-decoration: underline; }
 
