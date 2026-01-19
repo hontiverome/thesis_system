@@ -87,6 +87,7 @@ Route::get('/help', [PageController::class, 'help'])->name('help');
 Route::get('/dashboard', [PageController::class, 'dashboard'])->name('dashboard');
 Route::get('/profile', [PageController::class, 'profile'])->name('profile');
 Route::get('/settings', [PageController::class, 'settings'])->name('settings');
+Route::get('/{any}', function () {return view('app');})->where('any', '.*');
 
 // Authentication routes
 Route::get('/login', function () {

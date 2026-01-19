@@ -131,7 +131,7 @@ const authRoutes = [
     path: '/home',
     name: 'home',
     component: () => import('@/views/home_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Home', requiresAuth: true }
+    meta: { layout: 'AppLayoutDefault', title: 'Home', requiresAuth: true, hideSidebar: true }
   },
   {
     path: '/dashboard',
@@ -143,7 +143,7 @@ const authRoutes = [
     path: '/courses',
     name: 'courses',
     component: () => import('@/views/courses_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Courses', requiresAuth: false }
+    meta: { layout: 'AppLayoutDefault', title: 'Courses', requiresAuth: false, hideSidebar: true }
   },
   {
     path: '/profile',
@@ -169,6 +169,12 @@ const authRoutes = [
     component: () => import('@/views/notification_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
   },
+  {
+    path: '/:role/course/:course',
+    name: 'course-detail',
+    component: () => import('@/components/workspace/CourseDetail.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+  },
 ];
 
 // ==========================
@@ -178,31 +184,40 @@ const roleRoutes = Object.keys(roleCourses).map(role => ({
   path: `/${role}/courses`,
   component: () => import('@/components/workspace/RoleCourseOverview.vue'), // displays course cards with navigation
   meta: { layout: 'AppLayoutDefault', requiresAuth: true },
-  children: Object.keys(roleCourses[role]).map(parentTab => ({
-    path: parentTab, // e.g., mor, dp1, dp2
-    component: () => import('@/components/workspace/RoleWorkspace.vue'), // acts as container for child tabs
-    children: Object.keys(roleCourses[role][parentTab]).length > 0 
-      ? Object.keys(roleCourses[role][parentTab]).map(childTab => {
-          // Map to correct component path based on role and structure
-          let componentPath;
-          if (role === 'student') {
-            componentPath = `@/components/workspace/student/courses/${childTab}.vue`;
-          } else if (role === 'adviser') {
-            componentPath = `@/components/workspace/adviser/tab/${childTab}.vue`;
-          } else {
-            // For admin and faculty, use a generic path (components may need to be created)
-            componentPath = `@/components/workspace/${role}/${childTab}.vue`;
-          }
-          
-          return {
-            path: childTab, // e.g., title-proposals, chapters1-3
-            name: `${role}-${parentTab}-${childTab}`,
-            component: () => import(componentPath),
-            meta: { title: childTab.replace(/-/g, ' ').toUpperCase() },
-          };
-        })
-      : []
-  })),
+  children: [
+    // Course detail page for each course
+    {
+      path: ':course',
+      component: () => import('@/components/workspace/CourseDetail.vue'),
+      meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+    },
+    // Original nested routes (deprecated for now but keeping structure)
+    ...Object.keys(roleCourses[role]).map(parentTab => ({
+      path: parentTab, // e.g., mor, dp1, dp2
+      component: () => import('@/components/workspace/RoleWorkspace.vue'), // acts as container for child tabs
+      children: Object.keys(roleCourses[role][parentTab]).length > 0 
+        ? Object.keys(roleCourses[role][parentTab]).map(childTab => {
+            // Map to correct component path based on role and structure
+            let componentPath;
+            if (role === 'student') {
+              componentPath = `@/components/workspace/student/courses/${childTab}.vue`;
+            } else if (role === 'adviser') {
+              componentPath = `@/components/workspace/adviser/tab/${childTab}.vue`;
+            } else {
+              // For admin and faculty, use a generic path (components may need to be created)
+              componentPath = `@/components/workspace/${role}/${childTab}.vue`;
+            }
+            
+            return {
+              path: childTab, // e.g., title-proposals, chapters1-3
+              name: `${role}-${parentTab}-${childTab}`,
+              component: () => import(componentPath),
+              meta: { title: childTab.replace(/-/g, ' ').toUpperCase() },
+            };
+          })
+        : []
+    }))
+  ]
 }));
 
 // ==========================

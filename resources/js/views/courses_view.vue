@@ -4,12 +4,16 @@
     <BaseCard v-if="isAuthenticated && user" title="COURSE">
       <BaseCourseOverview :subTitle="displaySubTitle"> 
         
-        <div class="courses-grid">
+        <div v-if="staticCourses && staticCourses.length > 0" class="courses-grid">
           <CourseCard 
             v-for="course in staticCourses" 
             :key="course.id" 
             :title="course.title" 
           />
+        </div>
+
+        <div v-else class="empty-state">
+          <p>No courses available.</p>
         </div>
 
         <div class="interface-container">
@@ -75,6 +79,7 @@ const {
  * Chine-check kung ang kasalukuyang URL ay para sa aling role
  */
 const isAdminPath = computed(() => route.path.startsWith('/admin'));
+const isAdviserPath = computed(() => route.path.startsWith('/faculty'));
 const isFacultyPath = computed(() => route.path.startsWith('/faculty'));
 const isStudentPath = computed(() => route.path.startsWith('/student'));
 
@@ -82,9 +87,10 @@ const isStudentPath = computed(() => route.path.startsWith('/student'));
  * Dynamic Title Logic: Nagbabago base sa URL path
  */
 const displaySubTitle = computed(() => {
-  if (isAdminPath.value) return 'ALL COURSES - ADMIN VIEW';
-  if (isFacultyPath.value) return 'FACULTY: COURSE ASSIGNMENTS';
-  if (isStudentPath.value) return 'STUDENT: COURSE OVERVIEW';
+  if (isAdminPath.value) return 'COURSES OVERVIEW FOR ADMIN';
+  if (isAdviserPath.value) return 'COURSES OVERVIEW FOR ADVISER';
+  if (isFacultyPath.value) return 'COURSES OVERVIEW FOR FACULTY';
+  if (isStudentPath.value) return 'COURSES OVERVIEW FOR STUDENT';
   return 'COURSE OVERVIEW';
 });
 
@@ -156,6 +162,17 @@ const staticCourses = [
   text-align: center;
   padding: 40px;
   color: #666;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin: 20px 0;
 }
 
 /* Background colors para sa iba't ibang roles */
