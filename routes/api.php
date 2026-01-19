@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\V1\AdminRoleController;
 use App\Http\Controllers\Api\V1\GroupPageController;
 use App\Http\Controllers\Api\V1\AdminGroupController;
 use App\Http\Controllers\Api\V1\AdviserGroupController;
+use App\Http\Controllers\Api\V1\GroupPanelController;
+use App\Http\Controllers\Api\V1\AdviserAssignmentController;
 
 // Public routes
 Route::prefix('v1/auth')->group(function () {
@@ -108,4 +110,13 @@ Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/adviser/groups/{groupId}', [GroupPageController::class, 'getGroupPage'])
         ->middleware(['adviser'])
         ->name('adviser.groups.page');
+});
+
+// Assign adviser to blocks
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Dropdown for the "Add as Adviser" modal
+    Route::get('/blocks/available', [AdviserAssignmentController::class, 'getBlocksForDropdown']);
+    
+    // The "Save" button action
+    Route::post('/blocks/assign-adviser', [AdviserAssignmentController::class, 'assignAdviserToBlock']);
 });
