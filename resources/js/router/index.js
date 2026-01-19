@@ -53,6 +53,12 @@ const routes = [
     meta: { layout: 'AppLayoutDefault', title: 'Home', requiresAuth: true }
   },
   {
+    path: '/courses',
+    name: 'courses',
+    component: () => import('@/views/courses_view.vue'),
+    meta: { layout: 'AppLayoutDefault', title: 'Courses', requiresAuth: true }
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard_view.vue'),
