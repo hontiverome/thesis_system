@@ -24,9 +24,9 @@
             <div class="sub-cta-title">DON'T HAVE AN ACCOUNT?</div>
           </div>
 
-          <router-link :to="{ name: 'register' }" class="register-btn">
+           <button class="register-btn" @click="goToRegister">
             REGISTER
-          </router-link>
+          </button>
 
           <!-- Bottom "Back to Portal" -->
           <div class="left-bottom">
@@ -179,6 +179,17 @@ const form = reactive({
   password: ''
 })
 
+const isRegistering = ref(false)
+
+const goToRegister = () => {
+  isRegistering.value = true
+
+  // wait for animation before routing
+  setTimeout(() => {
+    router.push({ name: 'register' })
+  }, 900)
+}
+
 const handleLogin = async () => {
   loading.value = true
   error.value = ''
@@ -223,11 +234,12 @@ const handleLogin = async () => {
 
 .login-wrapper {
   position: relative;
-  width: min(1120px, 100%);
-  min-height: 620px;
+  width: 100%;
+  max-width: none;
+  min-height: 100vhpx;
   display: grid;
-  grid-template-columns: 1.02fr 1fr;
-  gap: 32px;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
   z-index: 1;
 }
 
@@ -235,8 +247,8 @@ const handleLogin = async () => {
 .login-left {
   position: relative;
   background: #7b0a0a;
-  border-radius: 52px;
-  padding: 44px 48px;
+  border-radius: 0 52px 52px 0;
+  padding: 40px 40px;
   color: #fff;
   overflow: hidden;
 }
@@ -338,7 +350,7 @@ const handleLogin = async () => {
 .left-bottom {
   position: absolute;
   bottom: 28px;
-  left: 48px;
+  left: 40px;
 }
 
 .back-portal {
@@ -351,8 +363,8 @@ const handleLogin = async () => {
 
 /* RIGHT */
 .login-right {
-  border-radius: 52px;
-  padding: 44px 52px;
+  border-radius: 52px 0 0 52px;
+  padding: 40px 40px;
   background: rgba(255,255,255,0.62);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
