@@ -149,6 +149,20 @@ const authRoutes = [
     component: () => import('@/components/workspace/CourseDetail.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true }
   },
+
+  // Faculty Sections Routes
+  {
+    path: '/faculty/course/:course/sections',
+    name: 'faculty-sections',
+    component: () => import('@/components/workspace/FacultySectionsOverview.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+  },
+  {
+    path: '/faculty/course/:course/section/:section',
+    name: 'faculty-section-detail',
+    component: () => import('@/components/workspace/CourseDetail.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+  },
 ];
 
 // ==========================
