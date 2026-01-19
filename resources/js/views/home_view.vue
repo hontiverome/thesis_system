@@ -97,7 +97,7 @@
   font-family: 'Sorts Mill Goudy', serif;
  
   font-size: 100px;
- 
+  color: #ffffff;
   font-weight: normal;
   letter-spacing: 5px;
   margin-bottom: 20px;
