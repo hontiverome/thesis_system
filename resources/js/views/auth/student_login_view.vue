@@ -47,6 +47,30 @@
           </div>
 
           <form class="login-form" @submit.prevent="handleLogin">
+            <!-- First Row: First Name and Surname -->
+            <div class="form-row">
+              <div class="field">
+                <input
+                  v-model.trim="form.firstName"
+                  type="text"
+                  placeholder="FIRST NAME"
+                  autocomplete="given-name"
+                  :disabled="loading"
+                  required
+                />
+              </div>
+              <div class="field">
+                <input
+                  v-model.trim="form.lastName"
+                  type="text"
+                  placeholder="SURNAME"
+                  autocomplete="family-name"
+                  :disabled="loading"
+                  required
+                />
+              </div>
+            </div>
+
             <!-- STUDENT NUMBER -->
             <div class="field">
               <input
@@ -146,6 +170,8 @@ const loading = ref(false)
 const error = ref('')
 
 const form = reactive({
+  firstName: '',
+  lastName: '',
   student_number: '',
   birth_month: '',
   birth_day: '',
@@ -358,6 +384,12 @@ const handleLogin = async () => {
   width: 100%;
   max-width: 520px;
   margin: 0 auto;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
 .field { position: relative; margin: 18px 0; }
