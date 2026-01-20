@@ -14,7 +14,19 @@
       </div>
     </div>
 
-    <div class="main-card">
+    <!-- Loading State -->
+    <div v-if="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-if="error" class="error-banner">
+      <p>{{ error }}</p>
+      <button @click="loadGroups" class="btn-retry">Retry</button>
+    </div>
+
+    <div v-if="!loading && !error" class="main-card">
       
       <div v-if="activeTab === 'groups'" class="group-manager-section">
         
@@ -60,7 +72,9 @@
               </div>
             </div>
 
-            <button class="btn-primary" @click="createGroup">CREATE</button>
+            <button class="btn-primary" @click="createGroup" :disabled="submitting">
+              {{ submitting ? 'Creating...' : 'CREATE' }}
+            </button>
           </div>
 
           <div class="table-wrapper">
@@ -241,11 +255,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { adviserApi } from '@/services';
 
 const props = defineProps({
   classSection: { type: String, default: 'BSIT 4-1' }
 });
+
+// --- STATE: LOADING & ERROR ---
+const loading = ref(false);
+const error = ref(null);
 
 // --- STATE: TABS & VIEWS ---
 const activeTab = ref('groups'); // 'groups' | 'enrollees'
@@ -254,40 +273,59 @@ const groupView = ref('list');   // 'list' | 'submission'
 // --- STATE: GROUPS ---
 const groupForm = ref({ code: '', leader: '', members: [] });
 const selectedMember = ref('');
-
-// Mock Data: Existing Groups with their Submissions mixed in
-const groups = ref([
-  { 
-    code: 'G-001', 
-    leader: 'Dela Cruz, Juan', 
-    members: ['Rizal, Jose', 'Bonifacio, Andres'],
-    researchItems: [
-      { id: 1, title: 'Automated Waste Management', status: 'Pending' },
-      { id: 2, title: 'Library Kiosk System', status: 'Rejected' }
-    ]
-  }
-]);
-
-// Mock Data: Students available to be assigned
-const availableStudents = ref([
-  'Garcia, Maria', 'Santos, Ana', 'Luna, Antonio', 'Mabini, Apolinario'
-]);
+const groups = ref([]);
+const availableStudents = ref([]);
+const submitting = ref(false);
 
 // --- STATE: ENROLLEES ---
 const enrolleeSearch = ref('');
-const enrollees = ref([
-  { studentNumber: '2020-0001-TG-0', name: 'Rizal, Jose P.', email: 'jose@pup.edu.ph' }
-]);
-const studentRegistry = [
-  { studentNumber: '2020-0002-TG-0', name: 'Bonifacio, Andres', email: 'andres@pup.edu.ph' },
-  { studentNumber: '2020-0003-TG-0', name: 'Garcia, Maria', email: 'maria@pup.edu.ph' }
-];
+const enrollees = ref([]);
 
 // --- STATE: MODAL ---
 const showModal = ref(false);
 const modalAction = ref(''); // 'accept' | 'reject'
 const selectedItem = ref(null);
 const commentText = ref('');
+
+// ==========================
+// LOAD DATA FROM API
+// ==========================
+const loadGroups = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+    const response = await adviserApi.getMyGroups();
+    groups.value = response.data || [];
+  } catch (err) {
+    console.error('Failed to load groups:', err);
+    error.value = 'Failed to load groups';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const loadAvailableStudents = async () => {
+  try {
+    const response = await adviserApi.getAvailableStudents();
+    availableStudents.value = response.data || [];
+  } catch (err) {
+    console.error('Failed to load available students:', err);
+  }
+};
+
+const loadProposals = async () => {
+  try {
+    const response = await adviserApi.getProposals();
+    const proposals = response.data || [];
+    
+    // Attach proposals to their respective groups
+    groups.value.forEach(group => {
+      group.researchItems = proposals.filter(p => p.groupId === group.id);
+    });
+  } catch (err) {
+    console.error('Failed to load proposals:', err);
+  }
+};
 
 // ==========================
 // METHODS: GROUPS
@@ -303,18 +341,31 @@ const removeMemberFromForm = (name) => {
   groupForm.value.members = groupForm.value.members.filter(m => m !== name);
 };
 
-const createGroup = () => {
-  if (groupForm.value.code && groupForm.value.leader) {
-    groups.value.push({
-      code: groupForm.value.code,
-      leader: groupForm.value.leader,
-      members: [...groupForm.value.members],
-      researchItems: []
-    });
-    // Reset Form
-    groupForm.value = { code: '', leader: '', members: [] };
-  } else {
+const createGroup = async () => {
+  if (!groupForm.value.code || !groupForm.value.leader) {
     alert("Please enter a group code and select a leader.");
+    return;
+  }
+
+  try {
+    submitting.value = true;
+    
+    await adviserApi.createGroup({
+      code: groupForm.value.code,
+      leaderId: groupForm.value.leader,
+      memberIds: groupForm.value.members
+    });
+
+    // Reset Form and Reload Groups
+    groupForm.value = { code: '', leader: '', members: [] };
+    await loadGroups();
+    
+    alert('Group created successfully!');
+  } catch (err) {
+    console.error('Failed to create group:', err);
+    alert(err.response?.data?.message || 'Failed to create group. Please try again.');
+  } finally {
+    submitting.value = false;
   }
 };
 
@@ -333,13 +384,31 @@ const closeModal = () => {
   selectedItem.value = null;
 };
 
-const confirmDecision = () => {
-  if (selectedItem.value) {
+const confirmDecision = async () => {
+  if (!selectedItem.value) return;
+
+  try {
+    submitting.value = true;
+    
+    const endpoint = modalAction.value === 'accept' 
+      ? adviserApi.approveProposal 
+      : adviserApi.rejectProposal;
+    
+    await endpoint(selectedItem.value.id, {
+      comments: commentText.value
+    });
+
+    // Update local state
     selectedItem.value.status = modalAction.value === 'accept' ? 'Accepted' : 'Rejected';
-    // Ideally, save commentText.value to backend here
-    console.log(`Decision: ${modalAction.value}, Reason: ${commentText.value}`);
+    
+    closeModal();
+    alert(`Proposal ${modalAction.value === 'accept' ? 'approved' : 'rejected'} successfully!`);
+  } catch (err) {
+    console.error('Failed to update proposal:', err);
+    alert(err.response?.data?.message || 'Failed to update proposal. Please try again.');
+  } finally {
+    submitting.value = false;
   }
-  closeModal();
 };
 
 // ==========================
@@ -347,26 +416,25 @@ const confirmDecision = () => {
 // ==========================
 const enrollStudent = () => {
   if (!enrolleeSearch.value) return;
+  
+  // In a real implementation, this would call an API endpoint
+  // For now, keeping the mock search functionality
   const query = enrolleeSearch.value.toLowerCase();
   
-  // Mock Search
-  const found = studentRegistry.find(s => 
-    s.name.toLowerCase().includes(query) || 
-    s.studentNumber.toLowerCase().includes(query)
-  );
-
-  if (found) {
-    const exists = enrollees.value.some(s => s.studentNumber === found.studentNumber);
-    if (!exists) {
-      enrollees.value.push(found);
-      enrolleeSearch.value = '';
-    } else {
-      alert("Student already enrolled.");
-    }
-  } else {
-    alert("Student not found in registry.");
-  }
+  alert("Enrollment feature requires backend implementation.");
+  enrolleeSearch.value = '';
 };
+
+// ==========================
+// INITIALIZE
+// ==========================
+onMounted(async () => {
+  await Promise.all([
+    loadGroups(),
+    loadAvailableStudents(),
+    loadProposals()
+  ]);
+});
 </script>
 
 <style scoped>
@@ -553,6 +621,50 @@ const enrollStudent = () => {
 .badge.pending { background: #fff7ed; color: #9a3412; }
 .badge.accepted { background: #dcfce7; color: #166534; }
 .badge.rejected { background: #fee2e2; color: #991b1b; }
+
+/* LOADING STATE */
+.loading-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f4f6;
+  border-top-color: #E8B931;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ERROR STATE */
+.error-banner {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.btn-retry {
+  background: #991b1b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .btn-accept, .btn-reject {
   border: none; padding: 6px 12px; border-radius: 4px; color: white;
