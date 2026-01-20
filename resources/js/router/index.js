@@ -99,6 +99,24 @@ const authRoutes = [
     meta: { layout: 'AppLayoutDefault', title: 'Courses', requiresAuth: false, hideSidebar: true }
   },
   {
+    path: '/student/dashboard',
+    name: 'student.dashboard',
+    component: () => import('@/views/student/StudentDashboard.vue'),
+    meta: { layout: 'AppLayoutDefault', title: 'Student Dashboard', requiresAuth: true, roles: ['student'] }
+  },
+  {
+    path: '/faculty/proposals',
+    name: 'faculty.proposals',
+    component: () => import('@/views/faculty/FacultyProposals.vue'),
+    meta: { layout: 'AppLayoutDefault', title: 'Proposals Review', requiresAuth: true, roles: ['faculty', 'adviser'] }
+  },
+  {
+    path: '/admin/users',
+    name: 'admin.users',
+    component: () => import('@/views/admin/UserManagement.vue'),
+    meta: { layout: 'AppLayoutDefault', title: 'User Management', requiresAuth: true, roles: ['admin'] }
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/profile_view.vue'),
