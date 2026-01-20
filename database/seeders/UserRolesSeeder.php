@@ -26,12 +26,13 @@ class UserRolesSeeder extends Seeder
             ['UserID' => 110, 'RoleID' => 1],
             ['UserID' => 111, 'RoleID' => 1],
             ['UserID' => 112, 'RoleID' => 1],
-            ['UserID' => 113, 'RoleID' => 2],
-            ['UserID' => 113, 'RoleID' => 3],
-            ['UserID' => 114, 'RoleID' => 2],
-            ['UserID' => 115, 'RoleID' => 2],
-            ['UserID' => 116, 'RoleID' => 2],
-            ['UserID' => 117, 'RoleID' => 4],
+            ['UserID' => 113, 'RoleID' => 4], // Faculty
+            ['UserID' => 113, 'RoleID' => 3], // Adviser
+            ['UserID' => 114, 'RoleID' => 4], // Faculty
+            ['UserID' => 114, 'RoleID' => 3], // Adviser
+            ['UserID' => 115, 'RoleID' => 4], // Faculty
+            ['UserID' => 116, 'RoleID' => 4], // Faculty
+            ['UserID' => 117, 'RoleID' => 6], // Administrator
         ]);
     }
 }
