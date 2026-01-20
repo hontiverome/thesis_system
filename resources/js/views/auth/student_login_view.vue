@@ -208,7 +208,7 @@ const handleLogin = async () => {
     userStore.setUser(response.data.user)
     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`
 
-    router.push('/dashboard')
+    router.push('/home')
   } catch (err) {
     error.value =
       err?.response?.data?.message ||
