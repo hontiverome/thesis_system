@@ -127,6 +127,27 @@ const toggleSection = (courseId) => {
     openSections.value = openSections.value.filter(id => id !== courseId);
   } else {
     openSections.value = [courseId]; // Replace all with just this one
+    
+    // Navigate to the first item of the newly opened course
+    const course = courses.value.find(c => c.id === courseId);
+    if (course && course.items.length > 0) {
+      const firstItem = course.items[0];
+      activeSubItem.value = firstItem.text;
+      
+      // Navigate to the first item's route
+      if (firstItem.courseCode) {
+        const tabName = firstItem.text.toLowerCase().replace(/\s+/g, '-');
+        const role = route.params.role || 'student';
+        
+        router.push({
+          name: `${role}-${firstItem.courseCode}-${tabName}`,
+          params: { 
+            role: role,
+            0: tabName
+          }
+        });
+      }
+    }
   }
 };
 

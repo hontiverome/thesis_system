@@ -53,22 +53,23 @@ const courses = ref([
     id: 'MOR',
     title: 'MOR',
     items: [
-      { type: 'link', text: 'Submission', courseCode: 'mor' },
-      { type: 'link', text: 'Feedback', courseCode: 'mor' }
+      { type: 'link', text: 'Title Proposals', courseCode: 'mor' },
+      { type: 'link', text: 'Chapters 1-3', courseCode: 'mor' }
     ]
   },
   {
     id: 'DP1',
     title: 'DP1',
     items: [
-      { type: 'link', text: 'Submission', courseCode: 'dp1' },
-      { type: 'link', text: 'Feedback', courseCode: 'dp1' }
+      { type: 'link', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
+      { type: 'link', text: 'Evaluation', courseCode: 'dp1' }
     ]
   },
   {
     id: 'DP2',
     title: 'DP2',
     items: [
+      { type: 'link', text: 'Research/Thesis', courseCode: 'dp2' },
       { type: 'link', text: 'Documents', courseCode: 'dp2' },
       { type: 'link', text: 'Evaluation', courseCode: 'dp2' }
     ]
@@ -122,6 +123,27 @@ const toggleSection = (courseId) => {
     openSections.value = openSections.value.filter(id => id !== courseId);
   } else {
     openSections.value = [courseId];
+    
+    // Navigate to the first item of the newly opened course
+    const course = courses.value.find(c => c.id === courseId);
+    if (course && course.items.length > 0) {
+      const firstItem = course.items[0];
+      activeSubItem.value = firstItem.text;
+      
+      // Navigate to the first item's route
+      if (firstItem.courseCode) {
+        const tabName = firstItem.text.toLowerCase().replace(/\s+/g, '-');
+        const role = route.params.role || 'student';
+        
+        router.push({
+          name: `${role}-${firstItem.courseCode}-${tabName}`,
+          params: { 
+            role: role,
+            0: tabName
+          }
+        });
+      }
+    }
   }
 };
 
