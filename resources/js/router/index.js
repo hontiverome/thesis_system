@@ -160,7 +160,7 @@ const authRoutes = [
   {
     path: '/faculty/course/:course/section/:section',
     name: 'faculty-section-detail',
-    component: () => import('@/components/workspace/CourseDetail.vue'),
+    component: () => import('@/components/workspace/FacultySectionDetail.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true }
   },
 ];
