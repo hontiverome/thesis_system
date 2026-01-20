@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             FacultyDetailsSeeder::class,
             PasswordResetsSeeder::class,
             CoursesSeeder::class,
+            GroupsSeeder::class,
+            GroupMembersSeeder::class,
+            GroupAdvisersSeeder::class,
+            ProposalsSeeder::class,
         ]);
     }
 }

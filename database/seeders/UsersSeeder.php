@@ -26,11 +26,11 @@ class UsersSeeder extends Seeder
             ['UserID' => 110, 'SchoolID' => '2022-03002-MN-0', 'FullName' => 'Member G3-A', 'Email' => 's10@gmail.com', 'BirthDate' => '2003-03-02', 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
             ['UserID' => 111, 'SchoolID' => '2022-03003-MN-0', 'FullName' => 'Member G3-B', 'Email' => 's11@gmail.com', 'BirthDate' => '2003-03-03', 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
             ['UserID' => 112, 'SchoolID' => '2022-03004-MN-0', 'FullName' => 'Member G3-C', 'Email' => 's12@gmail.com', 'BirthDate' => '2003-03-04', 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
-            ['UserID' => 113, 'SchoolID' => '2010-00001-FA-0', 'FullName' => 'Prof. Tokyo Athena', 'Email' => 'tokyo@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$dummyhash'],
-            ['UserID' => 114, 'SchoolID' => '2010-00002-FA-0', 'FullName' => 'Prof. Jose Rizal', 'Email' => 'jose@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$dummyhash'],
-            ['UserID' => 115, 'SchoolID' => '2010-00003-FA-0', 'FullName' => 'Prof. Clara Oswald', 'Email' => 'clara@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$dummyhash'],
-            ['UserID' => 116, 'SchoolID' => '2010-00004-FA-0', 'FullName' => 'Prof. Sherlock', 'Email' => 'sherlock@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$dummyhash'],
-            ['UserID' => 117, 'SchoolID' => '2000-00000-AD-0', 'FullName' => 'Admin User', 'Email' => 'admin@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$dummyhash'],
+            ['UserID' => 113, 'SchoolID' => '2010-00001-FA-0', 'FullName' => 'Prof. Tokyo Athena', 'Email' => 'tokyo@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
+            ['UserID' => 114, 'SchoolID' => '2010-00002-FA-0', 'FullName' => 'Prof. Jose Rizal', 'Email' => 'jose@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
+            ['UserID' => 115, 'SchoolID' => '2010-00003-FA-0', 'FullName' => 'Prof. Clara Oswald', 'Email' => 'clara@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
+            ['UserID' => 116, 'SchoolID' => '2010-00004-FA-0', 'FullName' => 'Prof. Sherlock', 'Email' => 'sherlock@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
+            ['UserID' => 117, 'SchoolID' => '2000-00000-AD-0', 'FullName' => 'Admin User', 'Email' => 'admin@gmail.com', 'BirthDate' => null, 'PasswordHash' => '$2y$10$vI8aWBnW3fID.ZQ4/zo1G.q1lRps.9cGLcZEiGDMVr5yUP1KUOYTa'],
         ]);
     }
 }
