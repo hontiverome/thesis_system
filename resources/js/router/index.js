@@ -155,13 +155,13 @@ const authRoutes = [
     path: '/faculty/course/:course/sections',
     name: 'faculty-sections',
     component: () => import('@/components/workspace/faculty/SectionsOverview.vue'),
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: false }
   },
   {
     path: '/faculty/course/:course/section/:section',
     name: 'faculty-section-detail',
     component: () => import('@/components/workspace/faculty/SectionDetail.vue'),
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true }
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: false }
   },
 ];
 
@@ -194,6 +194,7 @@ const roleRoutes = Object.keys(roleCourses).map(role => {
       dynamicChildren.push({
         path: courseKey, 
         component: () => import('@/components/workspace/RoleWorkspace.vue'),
+        meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: false },
         children: tabRoutes
       });
     }

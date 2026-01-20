@@ -38,35 +38,80 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import { Icon as IconifyIcon } from '@iconify/vue';
 
-// --- DATA ---
+// --- IMPORTS ---
+const route = useRoute();
 const courses = ref([
   {
     id: 'MOR',
     title: 'MOR',
     items: [
-      { type: 'label', text: 'Title Proposals' },
-      { type: 'label', text: 'Chapters 1-3' },
-      { type: 'link', text: 'DP1' },
-      { type: 'link', text: 'DP2' }
+      { type: 'link', text: 'Title Proposals', courseCode: 'mor' },
+      { type: 'link', text: 'Panel Status', courseCode: 'mor' },
+      { type: 'link', text: 'Faculty', courseCode: 'mor' }
+    ]
+  },
+  {
+    id: 'DP1',
+    title: 'DP1',
+    items: [
+      { type: 'link', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
+      { type: 'link', text: 'Panel Status', courseCode: 'dp1' },
+      { type: 'link', text: 'Faculty', courseCode: 'dp1' }
+    ]
+  },
+  {
+    id: 'DP2',
+    title: 'DP2',
+    items: [
+      { type: 'link', text: 'Research/Thesis', courseCode: 'dp2' },
+      { type: 'link', text: 'Panel Status', courseCode: 'dp2' },
+      { type: 'link', text: 'Faculty', courseCode: 'dp2' }
     ]
   }
 ]);
 
 // --- STATE ---
-const openSections = ref(['MOR']); 
-const activeCourseId = ref('MOR'); 
-const activeSubItem = ref('DP1'); 
+// Map route courses to sidebar course IDs
+const courseRouteMap = {
+  'mor': 'MOR',
+  'dp1': 'DP1',
+  'dp2': 'DP2'
+};
+
+// Get the current course from the route
+const getCurrentActiveCourse = () => {
+  const coursePath = route.params.course;
+  return courseRouteMap[coursePath] || 'MOR';
+};
+
+const openSections = ref([]);
+const activeCourseId = ref('MOR');
+const activeSubItem = ref('');
+
+onMounted(() => {
+  const activeCourse = getCurrentActiveCourse();
+  activeCourseId.value = activeCourse;
+  openSections.value = [activeCourse]; // Only open the active course
+  
+  // Set the first item as default for the active course
+  const course = courses.value.find(c => c.id === activeCourse);
+  if (course && course.items.length > 0) {
+    activeSubItem.value = course.items[0].text;
+  }
+}); 
 
 // --- ACTIONS ---
 const toggleSection = (courseId) => {
   activeCourseId.value = courseId;
+  // Only allow one section open at a time
   if (openSections.value.includes(courseId)) {
     openSections.value = openSections.value.filter(id => id !== courseId);
   } else {
-    openSections.value.push(courseId);
+    openSections.value = [courseId]; // Replace all with just this one
   }
 };
 
@@ -74,8 +119,12 @@ const setActiveItem = (courseId, item) => {
   if (item.type === 'label') return; 
   activeCourseId.value = courseId;
   activeSubItem.value = item.text;
-  // Emit event if parent needs to know (optional)
-  // emit('navigate', item); 
+  // Navigate to the course detail page
+  if (item.courseCode) {
+    // Navigate to the first tab of the course
+    const tabName = item.text.toLowerCase().replace(/\s+/g, '-');
+    // This can be handled by emitting or by importing router
+  }
 };
 </script>
 
@@ -160,24 +209,26 @@ const setActiveItem = (courseId, item) => {
 .nav-btn {
   border: none;
   background: transparent;
-  padding: 12px 0;
-  font-weight: 700;
-  font-size: 1.4rem;
+  padding: 8px 0;
+  font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
   width: 100%;
   transition: all 0.2s ease;
   text-align: center;
   font-family: inherit;
   color: #444;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .btn-active {
-  color: #000;
+  color: #FFA500;
   transform: scale(1.05);
+  border-bottom: 2px solid #FFA500;
+  padding-bottom: 6px;
 }
 
 .nav-btn:hover {
-  color: #000;
+  color: #FFA500;
 }
 </style>
