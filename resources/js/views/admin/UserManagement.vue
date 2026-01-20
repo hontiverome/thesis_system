@@ -263,10 +263,49 @@ const loadUsers = async () => {
   try {
     loading.value = true;
     const response = await adminApi.listUsers();
-    users.value = response.data || [];
+    console.log('Admin Users API Response:', response);
+    
+    // The API returns: { data: { users: [...], pagination: {...} } }
+    if (response.data && response.data.data && response.data.data.users) {
+      const apiUsers = response.data.data.users;
+      
+      // Transform API response to match component expectations
+      users.value = apiUsers.map(user => ({
+        id: user.UserID,
+        userNumber: user.SchoolID,
+        fullName: user.FullName,
+        firstName: user.FullName?.split(' ')[0] || '',
+        lastName: user.FullName?.split(' ').slice(1).join(' ') || '',
+        email: user.Email,
+        role: user.Roles && user.Roles.length > 0 ? user.Roles[0] : 'Student',
+        roles: user.Roles || [],
+        status: user.Status || 'Active',
+        facultyType: user.FacultyType
+      }));
+      
+      console.log('Transformed users:', users.value);
+    } else {
+      console.warn('Unexpected response structure:', response.data);
+      users.value = [];
+    }
+    
+    console.log('Loaded users:', users.value.length);
   } catch (err) {
     console.error('Failed to load users:', err);
-    alert('Failed to load users. Please try again.');
+    console.error('Error response:', err.response);
+    
+    // Show more helpful error message
+    let errorMsg = 'Failed to load users.';
+    if (err.response?.status === 403) {
+      errorMsg = 'Access denied. Administrator privileges required.';
+    } else if (err.response?.data?.message) {
+      errorMsg = err.response.data.message;
+    } else if (err.message) {
+      errorMsg = err.message;
+    }
+    
+    alert(errorMsg);
+    users.value = [];
   } finally {
     loading.value = false;
   }
@@ -390,6 +429,8 @@ onMounted(() => {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .page-header {

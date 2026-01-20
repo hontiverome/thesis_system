@@ -10,9 +10,24 @@ export const adminApi = {
         return api.post('/admin/users', userData);
     },
 
-    // List Users
+    // List Users (alias for getUsers for compatibility)
     listUsers(params = {}) {
         return api.get('/admin/users/list', { params });
+    },
+
+    // Get Users (alias for listUsers)
+    getUsers(params = {}) {
+        return api.get('/admin/users/list', { params });
+    },
+
+    // Update User
+    updateUser(userId, userData) {
+        return api.put(`/admin/users/${userId}`, userData);
+    },
+
+    // Delete User
+    deleteUser(userId) {
+        return api.delete(`/admin/users/${userId}`);
     },
 
     // Change User Role
@@ -23,6 +38,26 @@ export const adminApi = {
     // Get Available Roles
     getAvailableRoles() {
         return api.get('/admin/roles/available');
+    },
+
+    // Get Proposals
+    getProposals(params = {}) {
+        return api.get('/admin/proposals', { params });
+    },
+
+    // Update Proposal Status
+    updateProposalStatus(proposalId, status) {
+        return api.put(`/admin/proposals/${proposalId}/status`, { status });
+    },
+
+    // Get Defense Panels
+    getDefensePanels(params = {}) {
+        return api.get('/admin/defenses', { params });
+    },
+
+    // Get Submissions
+    getSubmissions(params = {}) {
+        return api.get('/admin/submissions', { params });
     },
 
     // F-017: Get Groups with Courses

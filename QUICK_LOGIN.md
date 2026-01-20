@@ -1,6 +1,6 @@
 # 🚀 QUICK LOGIN GUIDE
 
-**All passwords are:** `password`
+**All passwords are:** `password123`
 
 ---
 
@@ -10,10 +10,10 @@ Login at: http://127.0.0.1:8000/login/faculty
 
 | Name | School ID (use this) | Password | Groups Assigned |
 |------|---------------------|----------|-----------------|
-| Prof. Tokyo Athena | `2010-00001-FA-0` | `password` | G001, G003 (2 groups) |
-| Prof. Jose Rizal | `2010-00002-FA-0` | `password` | G002 (1 group) |
-| Prof. Clara Oswald | `2010-00003-FA-0` | `password` | None yet |
-| Prof. Sherlock | `2010-00004-FA-0` | `password` | None yet |
+| Prof. Tokyo Athena | `2010-00001-FA-0` | `password123` | G001, G003 (2 groups) |
+| Prof. Jose Rizal | `2010-00002-FA-0` | `password123` | G002 (1 group) |
+| Prof. Clara Oswald | `2010-00003-FA-0` | `password123` | None yet |
+| Prof. Sherlock | `2010-00004-FA-0` | `password123` | None yet |
 
 ---
 
@@ -30,25 +30,25 @@ Login at: http://127.0.0.1:8000/login/student
 
 | Student | Student Number | Birthday | Password | Group | Role |
 |---------|----------------|----------|----------|-------|------|
-| Leader G1 | `2022-01001-MN-0` | 01/01/2003 | `password` | G001 | Leader |
-| Member G1-A | `2022-01002-MN-0` | 01/02/2003 | `password` | G001 | Member |
-| Member G1-B | `2022-01003-MN-0` | 01/03/2003 | `password` | G001 | Member |
-| Member G1-C | `2022-01004-MN-0` | 01/04/2003 | `password` | G001 | Member |
-| Leader G2 | `2022-02001-MN-0` | 02/01/2003 | `password` | G002 | Leader |
-| Member G2-A | `2022-02002-MN-0` | 02/02/2003 | `password` | G002 | Member |
-| Member G2-B | `2022-02003-MN-0` | 02/03/2003 | `password` | G002 | Member |
-| Member G2-C | `2022-02004-MN-0` | 02/04/2003 | `password` | G002 | Member |
-| Leader G3 | `2022-03001-MN-0` | 03/01/2003 | `password` | G003 | Leader |
-| Member G3-A | `2022-03002-MN-0` | 03/02/2003 | `password` | G003 | Member |
-| Member G3-B | `2022-03003-MN-0` | 03/03/2003 | `password` | G003 | Member |
-| Member G3-C | `2022-03004-MN-0` | 03/04/2003 | `password` | G003 | Member |
+| Leader G1 | `2022-01001-MN-0` | 01/01/2003 | `password123` | G001 | Leader |
+| Member G1-A | `2022-01002-MN-0` | 01/02/2003 | `password123` | G001 | Member |
+| Member G1-B | `2022-01003-MN-0` | 01/03/2003 | `password123` | G001 | Member |
+| Member G1-C | `2022-01004-MN-0` | 01/04/2003 | `password123` | G001 | Member |
+| Leader G2 | `2022-02001-MN-0` | 02/01/2003 | `password123` | G002 | Leader |
+| Member G2-A | `2022-02002-MN-0` | 02/02/2003 | `password123` | G002 | Member |
+| Member G2-B | `2022-02003-MN-0` | 02/03/2003 | `password123` | G002 | Member |
+| Member G2-C | `2022-02004-MN-0` | 02/04/2003 | `password123` | G002 | Member |
+| Leader G3 | `2022-03001-MN-0` | 03/01/2003 | `password123` | G003 | Leader |
+| Member G3-A | `2022-03002-MN-0` | 03/02/2003 | `password123` | G003 | Member |
+| Member G3-B | `2022-03003-MN-0` | 03/03/2003 | `password123` | G003 | Member |
+| Member G3-C | `2022-03004-MN-0` | 03/04/2003 | `password123` | G003 | Member |
 
 ---
 
 ## 👨‍💼 ADMIN LOGIN
 
-School ID: `2000-00000-AD-0`
-Password: `password`
+School ID: `2000-00000-AD-0`  
+Password: `password123`
 
 ---
 
