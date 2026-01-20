@@ -104,7 +104,7 @@ class SubmitFileService
 
         $roleName = Role::where('RoleID', 3)->value('RoleName') ?? 'Adviser';
         foreach ($approvers as $approverId) {
-            $approvalId = (ProposalApproval::max('ProposalID') ?? 0) + 1;
+            $approvalId = (ProposalApproval::max('ApprovalID') ?? 0) + 1;
             DB::table('ProposalApprovals')->insert([
                 'ApprovalID' => $approvalId,
                 'ProposalID' => $proposalId,

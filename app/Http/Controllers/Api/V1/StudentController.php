@@ -27,9 +27,9 @@ class StudentController extends Controller
             $group = $user->groups->first();
             $groupRole = $group->pivot->GroupRole ?? 'Member';
             if (in_array($groupRole, ['Leader', 'GroupLeader'])) {
-                return view('student.leader_dashboard') ?? 'Leader Dashboard'; 
+                return /*view('student.leader_dashboard')*/ 'Leader Dashboard'; 
             } elseif ($groupRole === 'Member') {
-                return view('student.member_dashboard') ?? 'Member Dashboard'; 
+                return /*view('student.member_dashboard')*/ 'Member Dashboard'; 
             }
         }
         return view('common.dashboard') ?? 'Common Dashboard'; 

@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ProposalApproval extends Model
 {
     use HasFactory;
-    
-    protected $table = 'ProposalApprovals'; 
 
     protected $table = 'ProposalApprovals';
 
