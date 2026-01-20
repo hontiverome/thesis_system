@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -73,11 +74,66 @@ class LoginController extends Controller
         $token = $user->createToken($deviceName)->plainTextToken;
         $user->load('roles');
 
+        // F-018: Add redirection logic for students
+        $redirectPath = $this->getStudentRedirectPath($user);
+
         return response()->json([
             'user' => $user,
             'token' => $token,
             'token_type' => 'Bearer',
+            'redirect_to' => $redirectPath,
         ]);
+    }
+
+    /**
+     * Get redirection path for student based on group course (F-018).
+     *
+     * @param  \App\Models\User  $user
+     * @return string
+     */
+    private function getStudentRedirectPath(User $user): string
+    {
+        // Only apply redirection logic to students
+        if (!$user->hasRole('Student')) {
+            return '/dashboard';
+        }
+
+        // Find student's group membership
+        $groupMembership = DB::table('GroupMembers')
+            ->where('StudentUserID', $user->UserID)
+            ->first();
+
+        if (!$groupMembership) {
+            // Student has no group - redirect to generic landing page
+            return '/dashboard';
+        }
+
+        $groupId = $groupMembership->GroupID;
+
+        // Get course assignment for the group
+        $enrollment = DB::table('Enrollments')
+            ->join('Courses', 'Enrollments.CourseID', '=', 'Courses.CourseID')
+            ->where('Enrollments.GroupID', $groupId)
+            ->select('Courses.CourseID', 'Courses.CourseName')
+            ->first();
+
+        if (!$enrollment) {
+            // Group has no course assigned - redirect to generic landing page
+            return '/dashboard';
+        }
+
+        // Redirect based on course
+        switch ($enrollment->CourseID) {
+            case 'C1': // Methods of Research
+                return '/dashboard/mor';
+            case 'C2': // Design Project 1
+                return '/dashboard/dp1';
+            case 'C3': // Design Project 2
+                return '/dashboard/dp2';
+            default:
+                // Unknown course - redirect to generic landing page
+                return '/dashboard';
+        }
     }
 
     /**
