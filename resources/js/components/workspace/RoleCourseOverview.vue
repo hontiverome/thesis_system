@@ -86,11 +86,18 @@ const roleCourses = [
 ];
 
 const navigateToCourse = (coursePath) => {
-  // Navigate to standalone course detail page
-  router.push({
-    name: 'course-detail',
-    params: { role: role.value, course: coursePath }
-  });
+  // Faculty navigates to sections page, others go to course detail
+  if (role.value === 'faculty') {
+    router.push({
+      name: 'faculty-sections',
+      params: { role: role.value, course: coursePath }
+    });
+  } else {
+    router.push({
+      name: 'course-detail',
+      params: { role: role.value, course: coursePath }
+    });
+  }
 };
 </script>
 

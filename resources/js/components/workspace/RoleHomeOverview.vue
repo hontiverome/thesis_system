@@ -251,8 +251,9 @@ const handleItemClick = (item) => {
 
 .main-title {
   font-family: 'Sorts Mill Goudy', serif;
-  font-size: 100px;
-  font-weight: bold;
+  font-size: 65px;
+  font-style: italic;
+  color: #fbfbfb;
   margin: 0 0 20px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -264,7 +265,7 @@ const handleItemClick = (item) => {
 }
 
 .tagline {
-  font-size: 24px;
+  font-size: 16px;
   margin: 0;
   font-weight: 300;
   letter-spacing: 1px;

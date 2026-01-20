@@ -1,22 +1,40 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useLayoutStore } from '@/stores/layout';
 import { useUserStore } from '@/stores/user';
 import { useThemeStore } from '@/stores/theme';
 import { Icon as IconifyIcon } from '@iconify/vue';
 import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
 
-// IMPORT THE NEW COMPONENT
-import StudSidebar from './stud_sidebar.vue'; 
+// IMPORT ROLE-SPECIFIC SIDEBARS
+import AdminSidebar from './admin_sidebar.vue'; 
+import StudentSidebar from './student_sidebar.vue'; 
+import AdviserSidebar from './adviser_sidebar.vue'; 
+import FacultySidebar from './faculty_sidebar.vue'; 
 
 const router = useRouter();
+const route = useRoute();
 const layoutStore = useLayoutStore();
 const userStore = useUserStore();
 const themeStore = useThemeStore();
 const userButtonRef = ref(null);
 const layoutMode = computed(() => layoutStore.layoutPreference);
 const isUserMenuOpen = ref(false);
+
+// Get current role from route
+const currentRole = computed(() => route.params.role || 'student');
+
+// Select sidebar component based on role
+const sidebarComponent = computed(() => {
+  const roleComponentMap = {
+    admin: AdminSidebar,
+    student: StudentSidebar,
+    adviser: AdviserSidebar,
+    faculty: FacultySidebar
+  };
+  return roleComponentMap[currentRole.value] || StudentSidebar;
+}); 
 
 const isCollapsed = computed(() => layoutStore.isSidebarCollapsed && !layoutStore.isMobileSidebarOpen);
 const themeButtonText = computed(() => {
@@ -75,7 +93,7 @@ onUnmounted(() => {
     
     <div class="sidebar-content">
       
-      <StudSidebar v-if="!isCollapsed" />
+      <component v-if="!isCollapsed" :is="sidebarComponent" />
 
     </div>
 
