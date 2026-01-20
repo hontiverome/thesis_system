@@ -3,15 +3,23 @@
     <BaseCard :title="pageTitle">
       <!-- Header Section -->
       <div class="section-header">
-        <h1 class="main-title">TITLE PROPOSALS</h1>
+        <h1 class="main-title">{{ courseTitle }}</h1>
         <div class="section-info">
-          <p class="class-name">{{ courseTitle }}</p>
+          <p class="class-name">Section {{ sectionNumber }}</p>
           <p class="adviser-name">Professor {{ sectionNumber }}</p>
         </div>
       </div>
 
-      <!-- Search and Filter Section -->
-      <div class="controls-section">
+      <!-- SubNavbar Tabs -->
+      <SubNavbar 
+        v-model="activeTab" 
+        :tabs="tabsList"
+      />
+
+      <!-- Tab Content: Title Proposals -->
+      <div v-if="activeTab === 'title-proposals'" class="tab-content">
+        <!-- Search and Filter Section -->
+        <div class="controls-section">
         <div class="search-container">
           <input 
             v-model="searchQuery"
@@ -62,6 +70,23 @@
           </tbody>
         </table>
       </div>
+      </div>
+
+      <!-- Tab Content: Panel Status -->
+      <div v-if="activeTab === 'panel-status'" class="tab-content">
+        <div class="placeholder-content">
+          <h3>Panel Status</h3>
+          <p>Panel evaluation status and tracking information will be displayed here.</p>
+        </div>
+      </div>
+
+      <!-- Tab Content: Faculty -->
+      <div v-if="activeTab === 'faculty'" class="tab-content">
+        <div class="placeholder-content">
+          <h3>Faculty Information</h3>
+          <p>Faculty information and contact details will be displayed here.</p>
+        </div>
+      </div>
 
       <!-- Back button -->
       <div class="action-buttons">
@@ -75,11 +100,15 @@
 import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BaseCard from '@/components/ui/core/BaseCard.vue';
+import SubNavbar from '@/components/ui/core/SubNavbar.vue';
 
 const route = useRoute();
 const router = useRouter();
 const searchQuery = ref('');
 const statusFilter = ref('');
+const activeTab = ref('title-proposals');
+
+const tabsList = ['title-proposals', 'panel-status', 'faculty'];
 
 const role = computed(() => route.params.role);
 const courseName = computed(() => route.params.course);
@@ -174,7 +203,7 @@ const goBack = () => {
 }
 
 .section-header {
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   border-bottom: 3px solid #800000;
   padding-bottom: 20px;
 }
@@ -204,6 +233,38 @@ const goBack = () => {
   color: #666;
   font-size: 1rem;
   margin: 0;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.placeholder-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 4px;
+  text-align: center;
+  color: #999;
+}
+
+.placeholder-content h3 {
+  color: #800000;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.placeholder-content p {
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .controls-section {
