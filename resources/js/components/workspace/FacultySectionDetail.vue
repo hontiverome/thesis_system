@@ -44,29 +44,28 @@
           <thead>
             <tr>
               <th>Group Code</th>
-              <th>Research Titles</th>
-              <th>Status (Accepted)</th>
+              <th>Research Title</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="group in filteredGroups" :key="group.id" class="group-row">
-              <td class="group-code">{{ group.code }}</td>
-              <td class="research-titles">
-                <div v-for="(title, index) in group.titles" :key="index" class="title-item">
-                  {{ index + 1 }}. {{ title }}
-                </div>
-              </td>
-              <td class="status-cell">
-                <span class="status-badge" :class="group.statusClass">
-                  {{ group.acceptedCount }}/9
-                </span>
-              </td>
-              <td class="actions-cell">
-                <button class="accept-btn" @click="acceptProposal(group.id)">Accept</button>
-                <button class="reject-btn" @click="rejectProposal(group.id)">Reject</button>
-              </td>
-            </tr>
+            <template v-for="group in groupedProposals" :key="group.groupCode">
+              <tr v-for="(proposal, index) in group.items" :key="`${proposal.groupCode}-${index}`" class="proposal-row" :class="{ 'group-first': index === 0 }">
+                <td v-if="index === 0" class="group-code" :rowspan="group.items.length">{{ group.groupCode }}</td>
+                <td class="research-title">{{ proposal.title }}</td>
+                <td class="status-cell">
+                  <span class="status-badge" :class="proposal.status">
+                    {{ formatStatus(proposal.status) }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="accept-btn" @click="acceptProposalItem(proposal.groupCode, index)">Accept</button>
+                  <button class="reject-btn" @click="rejectProposalItem(proposal.groupCode, index)">Reject</button>
+                </td>
+              </tr>
+              <tr v-if="index === group.items.length - 1" class="group-separator"></tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -134,58 +133,80 @@ const generateGroupsForSection = () => {
   const [major, minor] = sectionNumber.value.split('-');
   const prefix = major + minor; // "31" for section 3-1
 
-  const groupStatuses = [
-    { status: 'pending', class: 'pending' },
-    { status: 'pending', class: 'pending' },
-    { status: 'accepted', class: 'accepted' },
-    { status: 'rejected', class: 'rejected' }
+  const groupTitles = [
+    `AI-Based Student Performance Prediction in ${courseTitle.value}`,
+    `Machine Learning Models for Thesis Evaluation System`,
+    `Deep Learning Approach to Academic Text Classification`,
+    `Natural Language Processing for Research Proposal Analysis`
   ];
 
-  return groupStatuses.map((item, index) => ({
-    id: `${prefix}${String(index + 1).padStart(2, '0')}`,
-    code: `${prefix}${String(index + 1).padStart(2, '0')}`,
-    titles: [
-      `AI-Based Student Performance Prediction in ${courseTitle.value}`,
-      `Machine Learning Models for Thesis Evaluation System`,
-      `Deep Learning Approach to Academic Text Classification`,
-      `Natural Language Processing for Research Proposal Analysis`
-    ],
-    acceptedCount: item.status === 'accepted' ? 7 : item.status === 'rejected' ? 2 : 4,
-    statusClass: item.status
-  }));
+  const proposals = [];
+  const statuses = ['pending', 'pending', 'accepted', 'rejected'];
+
+  statuses.forEach((groupStatus, groupIndex) => {
+    const groupCode = `${prefix}${String(groupIndex + 1).padStart(2, '0')}`;
+    groupTitles.forEach((title, titleIndex) => {
+      proposals.push({
+        id: `${groupCode}-${titleIndex}`,
+        groupId: groupCode,
+        groupCode: groupCode,
+        title: title,
+        status: groupStatus
+      });
+    });
+  });
+
+  return proposals;
 };
 
-const groups = ref(generateGroupsForSection());
+const proposals = ref(generateGroupsForSection());
 
-const filteredGroups = computed(() => {
-  return groups.value.filter(group => {
+const filteredProposals = computed(() => {
+  return proposals.value.filter(proposal => {
     const matchesSearch = searchQuery.value === '' || 
-      group.titles.some(title => 
-        title.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
+      proposal.title.toLowerCase().includes(searchQuery.value.toLowerCase());
     
     const matchesFilter = statusFilter.value === '' ||
-      (statusFilter.value === 'accepted' && group.statusClass === 'accepted') ||
-      (statusFilter.value === 'rejected' && group.statusClass === 'rejected') ||
-      (statusFilter.value === 'pending' && group.statusClass === 'pending');
+      proposal.status === statusFilter.value;
     
     return matchesSearch && matchesFilter;
   });
 });
 
-const acceptProposal = (groupId) => {
-  const group = groups.value.find(g => g.id === groupId);
-  if (group) {
-    group.statusClass = 'accepted';
-    group.acceptedCount = 7;
+const groupedProposals = computed(() => {
+  const groups = {};
+  filteredProposals.value.forEach(proposal => {
+    if (!groups[proposal.groupCode]) {
+      groups[proposal.groupCode] = [];
+    }
+    groups[proposal.groupCode].push(proposal);
+  });
+  return Object.entries(groups).map(([groupCode, items]) => ({
+    groupCode,
+    items
+  }));
+});
+
+const formatStatus = (status) => {
+  const statusMap = {
+    pending: 'Pending',
+    accepted: 'Accepted',
+    rejected: 'Rejected'
+  };
+  return statusMap[status] || status;
+};
+
+const acceptProposalItem = (groupCode, titleIndex) => {
+  const proposal = proposals.value.find(p => p.groupCode === groupCode && p.title === proposals.value.find(pp => pp.groupCode === groupCode).title);
+  if (proposal) {
+    proposal.status = 'accepted';
   }
 };
 
-const rejectProposal = (groupId) => {
-  const group = groups.value.find(g => g.id === groupId);
-  if (group) {
-    group.statusClass = 'rejected';
-    group.acceptedCount = 2;
+const rejectProposalItem = (groupCode, titleIndex) => {
+  const proposal = proposals.value.find(p => p.groupCode === groupCode && p.title === proposals.value.find(pp => pp.groupCode === groupCode).title);
+  if (proposal) {
+    proposal.status = 'rejected';
   }
 };
 
@@ -349,33 +370,35 @@ const goBack = () => {
   background-color: #f9f9f9;
 }
 
-.group-row td {
+.proposal-row td {
   padding: 16px;
-  vertical-align: top;
+  vertical-align: middle;
+}
+
+.proposal-row.group-first td {
+  border-top: 2px solid #800000;
+}
+
+.group-separator {
+  height: 8px;
+  background-color: #f9f9f9;
 }
 
 .group-code {
   font-weight: 600;
   color: #800000;
-  font-size: 1.1rem;
+  font-size: 1rem;
   width: 100px;
   flex-shrink: 0;
+  text-align: center;
 }
 
-.research-titles {
+.research-title {
   flex: 1;
-  min-width: 300px;
-}
-
-.title-item {
-  margin-bottom: 8px;
-  line-height: 1.4;
+  min-width: 350px;
+  line-height: 1.5;
   color: #333;
   font-size: 0.95rem;
-}
-
-.title-item:last-child {
-  margin-bottom: 0;
 }
 
 .status-cell {
