@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use App\Models\GroupMember;
 
 class GroupLeaderMiddleware
 {
@@ -30,7 +31,7 @@ class GroupLeaderMiddleware
         }
 
         // Check if user is a student
-        if (!$user->hasRole('Student')) {
+        if (!$user->hasRole('Student') && !$user->hasRole('GroupLeader')) {
             return response()->json([
                 'message' => 'Forbidden.',
                 'error' => 'Group leader access is restricted to students.'
@@ -40,24 +41,44 @@ class GroupLeaderMiddleware
         // Get the group ID from the request
         $groupId = $this->getGroupIdFromRequest($request);
         
-        if (!$groupId) {
-            return response()->json([
-                'message' => 'Bad Request.',
-                'error' => 'Group ID is required.'
-            ], 400);
+        // Check if user is a member of the requested group
+        $member = null;
+        if ($groupId && $groupId !== '{groupId}') {
+            $member = DB::table('GroupMembers')
+                ->where('GroupID', $groupId)
+                ->where('StudentUserID', $user->UserID)
+                ->first();
         }
 
-        // Check if user is the group leader
-        $isGroupLeader = DB::table('GroupMembers')
-            ->where('GroupID', $groupId)
-            ->where('StudentUserID', $user->UserID)
-            ->where('GroupRole', 'GroupLeader')
-            ->exists();
+        // Fallback: If not found (or invalid ID), try to find the user's actual group
+        if (!$member) {
+            $userGroup = $user->groups()->first();
+            if ($userGroup) {
+                $groupId = $userGroup->GroupID;
+                $request->route()->setParameter('groupId', $groupId);
+                
+                $member = DB::table('GroupMembers')
+                    ->where('GroupID', $groupId)
+                    ->where('StudentUserID', $user->UserID)
+                    ->first();
+            }
+        }
 
-        if (!$isGroupLeader) {
+        if (!$member) {
             return response()->json([
                 'message' => 'Forbidden.',
-                'error' => 'Only group leaders can perform this action.'
+                'error' => 'You are not a member of this group.',
+                'debug' => [
+                    'received_group_id' => $groupId,
+                    'user_id' => $user->UserID
+                ]
+            ], 403);
+        }
+
+        if (!in_array($member->GroupRole, ['GroupLeader', 'Leader'])) {
+            return response()->json([
+                'message' => 'Forbidden.',
+                'error' => 'Only group leaders can perform this action. Your role is: ' . $member->GroupRole
             ], 403);
         }
 
@@ -75,8 +96,12 @@ class GroupLeaderMiddleware
         // Try to get GroupID from route parameters
         $groupId = $request->route('groupId');
         
+        if ($groupId instanceof \Illuminate\Database\Eloquent\Model) {
+            return $groupId->getKey();
+        }
+
         if ($groupId) {
-            return $groupId;
+            return is_string($groupId) ? trim($groupId) : $groupId;
         }
 
         // Try to get GroupID from request body (for POST/PUT requests)

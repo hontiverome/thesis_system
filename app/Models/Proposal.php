@@ -13,7 +13,16 @@ class Proposal extends Model
 
     protected $table = 'Proposals';
 
+    protected $primaryKey = 'ProposalID';
+    
+    public $incrementing = false;
+    
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
     protected $fillable = [
+        'ProposalID',
         'EnrollmentID',
         'ResearchTitle',
         'SubmissionDate',
@@ -36,6 +45,11 @@ class Proposal extends Model
         return $this->hasMany(Defense::class, 'ProposalID');
     }
 
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(Submission::class, 'ProposalID');
+    }
+
     public function group()
     {
         return $this->belongsTo(Enrollment::class, 'EnrollmentID')->withDefault(function () {
@@ -46,5 +60,22 @@ class Proposal extends Model
     public function actualGroup()
     {
         return $this->belongsTo(Group::class, 'EnrollmentID', 'GroupID');
+    }
+
+    public function approvedProposal()
+    {
+        $totalVoters = $this->approvals()->count();
+
+        if ($totalVoters === 0) {
+            return false;
+        }
+
+        $approvedCount = $this->approvals()
+                                ->where('status', 'Approved')
+                                ->count();
+
+        $threshold = floor($totalVoters / 2) + 1;
+
+        return $approvedCount >= $threshold;
     }
 }
