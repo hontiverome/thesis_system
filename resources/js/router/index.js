@@ -154,13 +154,13 @@ const authRoutes = [
   {
     path: '/faculty/course/:course/sections',
     name: 'faculty-sections',
-    component: () => import('@/components/workspace/FacultySectionsOverview.vue'),
+    component: () => import('@/components/workspace/faculty/SectionsOverview.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true }
   },
   {
     path: '/faculty/course/:course/section/:section',
     name: 'faculty-section-detail',
-    component: () => import('@/components/workspace/FacultySectionDetail.vue'),
+    component: () => import('@/components/workspace/faculty/SectionDetail.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true }
   },
 ];
