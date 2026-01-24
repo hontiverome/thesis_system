@@ -8,8 +8,7 @@
       class="block w-full pl-4 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring h-full rounded-md"
       :style="{
         backgroundColor: '#F4F6F9',
-        border: '1px solid #F4F6F9', // Add camouflaged border for consistent behavior
-        // 💡 MODIFIED: Adjusted padding to remove space reserved for the icon/divider
+        border: '1px solid #F4F6F9',
         paddingLeft: '10px',
         paddingRight: '10px' 
       }"

@@ -86,18 +86,14 @@ const roleCourses = [
 ];
 
 const navigateToCourse = (coursePath) => {
-  // Faculty navigates to sections page, others go to course detail
-  if (role.value === 'faculty') {
-    router.push({
-      name: 'faculty-sections',
-      params: { role: role.value, course: coursePath }
-    });
-  } else {
-    router.push({
-      name: 'course-detail',
-      params: { role: role.value, course: coursePath }
-    });
-  }
+  router.push({
+    name: `${role.value}-workspace-tab`, 
+    params: { 
+      role: role.value,
+      course: coursePath,
+      tab: 'overview'
+    }
+  });
 };
 </script>
 
