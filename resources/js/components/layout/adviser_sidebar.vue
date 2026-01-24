@@ -1,253 +1,201 @@
 <template>
-  <aside class="sidebar-container">
-    <div class="sidebar-label">{{ label }}</div>
-
-    <div class="course-section">
-      <div class="course-header" @click="navigateToDashboard">
-        <h2 
-          class="course-title" 
-          :class="{ 'is-active-course': isDashboardActive }"
-        >
-          Dashboard
-        </h2>
-      </div>
-    </div>
-
+  <div class="stud-sidebar-container">
     <div v-for="course in courses" :key="course.id" class="course-section">
-      <div class="course-header" @click="handleHeaderClick(course)">
-        <span 
-          v-if="course.groups && course.groups.length" 
-          class="chevron-left" 
-          :class="{ rotated: openSections.includes(course.id) }"
-        >
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-          </svg>
+      
+      <div class="course-header" @click="toggleSection(course.id)">
+        <span class="chevron" :class="{ rotated: openSections.includes(course.id) }">
+          <IconifyIcon icon="mdi:chevron-right" width="20" height="20" />
         </span>
-
-        <h2 class="course-title" :class="{ 'is-active-course': modelValue === course.id && !isDashboardActive }">
+        <h2 class="course-title" :class="{ 'title-active': activeCourseId === course.id }">
           {{ course.title }}
         </h2>
-        
-        <div class="header-controls">
-          <div 
-            class="vertical-divider" 
-            :class="{ active: modelValue === course.id && !isDashboardActive }"
-          ></div>
-        </div>
       </div>
 
-      <nav 
-        v-if="course.groups" 
-        v-show="openSections.includes(course.id)" 
-        class="course-nav"
-      >
-        <div v-for="group in course.groups" :key="group.heading" class="nav-group">
-          <button 
-            class="nav-item heading" 
-            :class="{ 'is-active': activeSubItem === group.heading && modelValue === course.id && !isDashboardActive }"
-            @click.stop="setActiveItem(course.id, group.heading)"
-          >
-            {{ group.heading }}
-          </button>
+      <transition name="slide-fade">
+        <nav v-show="openSections.includes(course.id)" class="course-nav">
+          <template v-for="item in course.items" :key="item.id">
+            
+            <div class="nav-item-container">
+              <div v-if="item.isSubItem" class="guide-line"></div>
 
-          <div v-if="group.subItems && group.subItems.length" class="sub-items-container">
-            <button 
-              v-for="sub in group.subItems" 
-              :key="sub"
-              class="nav-item sub-subheading"
-              :class="{ 'is-active': activeSubItem === sub && modelValue === course.id && !isDashboardActive }"
-              @click.stop="setActiveItem(course.id, sub)"
-            >
-              {{ sub }}
-            </button>
-          </div>
-        </div>
-      </nav>
+              <button
+                class="nav-btn"
+                :class="[
+                  isItemActive(item) && activeCourseId === course.id ? 'btn-active' : 'btn-inactive',
+                  item.isSubItem ? 'sub-item' : 'parent-item'
+                ]"
+                @click.stop="setActiveItem(course.id, item)"
+              >
+                {{ item.text }}
+              </button>
+            </div>
+
+          </template>
+        </nav>
+      </transition>
     </div>
-  </aside>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { Icon as IconifyIcon } from '@iconify/vue';
 
-const props = defineProps({
-  courses: { type: Array, required: true },
-  label: { type: String, default: 'Courses' },
-  modelValue: { type: String, default: 'MOR' },
-  activeSubItem: { type: String, default: 'Title Proposals' }
-});
-
-const emit = defineEmits(['update:modelValue', 'update:activeSubItem', 'item-click']);
-
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
 
-// Check if we are currently on the Dashboard page
-const isDashboardActive = computed(() => route.name === 'adviser.class.dashboard');
-
-const navigateToDashboard = () => {
-  // Navigate to the dashboard route
-  router.push({ name: 'adviser.class.dashboard' });
-};
-
-// Accordion state
-const openSections = ref([props.modelValue]);
-
-const handleHeaderClick = (course) => {
-  // Transfer Red color to the new clicked course
-  emit('update:modelValue', course.id);
-  
-  // Toggle Accordion
-  const index = openSections.value.indexOf(course.id);
-  if (index > -1) {
-    openSections.value.splice(index, 1);
-  } else {
-    openSections.value.push(course.id);
+// --- DATA: Adviser-specific mapping ---
+const courses = ref([
+  {
+    id: 'MOR',
+    title: 'MOR',
+    items: [
+      { id: 'adv-mor-prop', text: 'Title Proposals', courseCode: 'mor' },
+      { id: 'adv-mor-chap', text: 'Chapters 1-3', courseCode: 'mor' },
+      { id: 'adv-mor-paper', text: 'See Paper', courseCode: 'mor', isSubItem: true, parentId: 'adv-mor-chap' },
+      { id: 'adv-mor-eval', text: 'Evaluation', courseCode: 'mor', isSubItem: true, parentId: 'adv-mor-chap' },
+      { id: 'adv-mor-status', text: 'Panel Status', courseCode: 'mor' }
+    ]
+  },
+  {
+    id: 'DP1',
+    title: 'DP1',
+    items: [
+      { id: 'adv-dp1-chap', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
+      { id: 'adv-dp1-paper', text: 'See Paper', courseCode: 'dp1', isSubItem: true, parentId: 'adv-dp1-chap' },
+      { id: 'adv-dp1-eval', text: 'Evaluation', courseCode: 'dp1', isSubItem: true, parentId: 'adv-dp1-chap' }
+    ]
+  },
+  {
+    id: 'DP2',
+    title: 'DP2',
+    items: [
+      { id: 'adv-dp2-thesis', text: 'Research/Thesis', courseCode: 'dp2' },
+      { id: 'adv-dp2-paper', text: 'See Paper', courseCode: 'dp2', isSubItem: true, parentId: 'adv-dp2-thesis' },
+      { id: 'adv-dp2-eval', text: 'Evaluation', courseCode: 'dp2', isSubItem: true, parentId: 'adv-dp2-thesis' }
+    ]
   }
-  
-  emit('item-click', { type: 'course', id: course.id });
+]);
+
+const openSections = ref([]);
+const activeCourseId = ref('MOR');
+const activeItemId = ref('');
+
+// --- LOGIC: Hierarchy-aware active state ---
+const isItemActive = (item) => {
+  if (activeItemId.value === item.id) return true;
+  const activeItemData = courses.value.flatMap(c => c.items).find(i => i.id === activeItemId.value);
+  return activeItemData?.parentId === item.id;
 };
 
-const setActiveItem = (courseId, val) => {
-  // Transfer Red color to the course containing this item
-  emit('update:modelValue', courseId);
-  // Transfer Orange color/Underline to this specific item
-  emit('update:activeSubItem', val);
-  
-  emit('item-click', { type: 'item', courseId, val });
+const syncState = () => {
+  const coursePath = route.params.course;
+  const tabPath = route.params[0];
+  if (coursePath) {
+    const courseId = coursePath.toUpperCase();
+    activeCourseId.value = courseId;
+    if (!openSections.value.includes(courseId)) openSections.value = [courseId];
+    const course = courses.value.find(c => c.id === courseId);
+    if (course && tabPath) {
+       const match = course.items.find(item => item.text.toLowerCase().replace(/\s+/g, '-') === tabPath);
+       if (match) activeItemId.value = match.id;
+    }
+  }
+};
+
+onMounted(syncState);
+watch(() => route.path, syncState);
+
+const toggleSection = (courseId) => {
+  activeCourseId.value = courseId;
+  openSections.value = openSections.value.includes(courseId) ? openSections.value.filter(id => id !== courseId) : [courseId];
+};
+
+const setActiveItem = (courseId, item) => {
+  activeCourseId.value = courseId;
+  activeItemId.value = item.id;
+  const tabSlug = item.text.toLowerCase().replace(/\s+/g, '-');
+  const role = route.params.role || 'adviser';
+  router.push({ name: `${role}-${item.courseCode}-${tabSlug}`, params: { role, 0: tabSlug } });
 };
 </script>
 
 <style scoped>
-/* ALL ORIGINAL STYLES PRESERVED BELOW */
-.sidebar-container {
-  width: 280px;
-  height: 100vh;
-  background-color: #fff;
-  padding: 20px;
-  position: fixed;
-  top: 80px; 
-  left: 0;
-  z-index: 100;
-  box-sizing: border-box;
+.stud-sidebar-container {
   font-family: 'Courier New', Courier, monospace;
-  overflow-y: auto;
-  border-right: 1px solid #eee;
-}
-
-.sidebar-label {
-  text-align: left;
-  font-size: 1.1rem;
-  font-style: italic;
-  margin-bottom: 25px;
-  color: #333;
-}
-
-.course-section {
-  margin-bottom: 30px;
-}
-
-.course-header {
-  position: relative;
-  display: flex;
-  align-items: center;
   width: 100%;
-  cursor: pointer;
-  margin-bottom: 15px;
+  padding: 10px;
 }
 
+.course-section { margin-bottom: 5px; }
+.course-header { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; }
+
+/* Course Titles (MOR, DP1, DP2) */
 .course-title {
-  margin: 0 0 0 30px;
-  color: #999; 
-  font-size: 2.2rem;
+  margin: 0;
+  color: #999;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 2px;
-  user-select: none;
-  transition: color 0.3s ease;
+  transition: color 0.3s;
 }
+.course-title.title-active { color: #800000; } /* */
 
-.course-title.is-active-course {
-  color: #800000;
-}
+.chevron { margin-right: 8px; color: #666; transition: transform 0.3s ease; display: flex; }
+.chevron.rotated { transform: rotate(90deg); }
 
-.chevron-left {
+/* Tree Navigation */
+.course-nav { display: flex; flex-direction: column; padding-left: 15px; }
+.nav-item-container { position: relative; width: 100%; }
+
+.guide-line {
   position: absolute;
-  left: 0;
-  transition: transform 0.3s ease;
-  color: #000;
+  left: 12px;
+  top: -10px;
+  bottom: 20px;
+  width: 1px;
+  background-color: #ddd;
 }
 
-.chevron-left.rotated {
-  transform: rotate(90deg);
-}
-
-.header-controls {
-  position: absolute;
-  right: 0;
-}
-
-.vertical-divider {
-  width: 4px;
-  height: 35px;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
-}
-
-.vertical-divider.active {
-  background-color: #800000;
-}
-
-.course-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-left: 30px;
-}
-
-.nav-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.sub-items-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  padding-left: 20px;
-}
-
-.nav-item {
-  background: none;
+.nav-btn {
   border: none;
-  font-family: inherit;
-  font-size: 1.1rem;
-  color: #999;
+  background: transparent;
+  padding: 10px 16px;
+  margin: 2px 0;
   cursor: pointer;
-  transition: color 0.2s ease;
+  font-family: inherit;
+  width: 100%;
   text-align: left;
-  padding: 0;
+  transition: all 0.2s;
+  border-radius: 6px;
 }
 
-.nav-item.sub-subheading {
-  font-size: 1rem;
+/* Base Styles */
+.parent-item { font-weight: 700; font-size: 1rem; color: #555; }
+.sub-item {
+  padding-left: 35px;
+  font-size: 0.9rem;
+  color: #777;
+  font-style: italic;
 }
 
-.nav-item.is-active {
-  color: #E48217; 
-  font-weight: bold;
+/* UNIFIED ORANGE ACTIVE STATE */
+.btn-active {
+  color: #FFA500 !important; 
 }
 
-.nav-item.heading.is-active {
+.parent-item.btn-active { font-weight: 800; }
+
+.sub-item.btn-active {
+  font-weight: 800;
   text-decoration: underline;
   text-underline-offset: 4px;
+  background-color: #fff9f0; /* */
 }
 
-.nav-item:hover {
-  opacity: 0.8;
-}
+.nav-btn:hover:not(.btn-active) { background-color: #f5f5f5; }
+
+.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.25s ease; }
+.slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-5px); opacity: 0; }
 </style>

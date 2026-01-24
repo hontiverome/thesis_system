@@ -51,3 +51,5 @@ Desktop.ini
 # Logs (Don't commit error logs)
 *.log
 !/storage/logs/.gitignore
+*storybook.log
+storybook-static

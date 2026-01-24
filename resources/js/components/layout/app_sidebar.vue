@@ -1,3 +1,5 @@
+// resources/js/components/layout/app_sidebar.vue
+
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -9,9 +11,9 @@ import UserDropdownPopover from '@/components/ui/user_dropdown_popover.vue';
 
 // IMPORT ROLE-SPECIFIC SIDEBARS
 import AdminSidebar from './admin_sidebar.vue'; 
-import StudentSidebar from './student_sidebar.vue'; 
 import AdviserSidebar from './adviser_sidebar.vue'; 
-import FacultySidebar from './faculty_sidebar.vue'; 
+import FacultySidebar from './faculty_sidebar.vue';
+import StudentSidebar from './student_sidebar.vue';
 
 const router = useRouter();
 const route = useRoute();

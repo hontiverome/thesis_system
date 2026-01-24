@@ -7,7 +7,9 @@
         "dev": "vite",
         "format": "prettier --write assets/",
         "format:check": "prettier --check assets/",
-        "lint": "eslint . --fix"
+        "lint": "eslint . --fix",
+        "storybook": "storybook dev -p 6006",
+        "build-storybook": "storybook build"
     },
     "devDependencies": {
         "@eslint/js": "^9.19.0",
@@ -23,7 +25,19 @@
         "prettier-plugin-organize-imports": "^4.1.0",
         "prettier-plugin-tailwindcss": "^0.6.11",
         "typescript-eslint": "^8.23.0",
-        "vue-tsc": "^2.2.4"
+        "vue-tsc": "^2.2.4",
+        "storybook": "^10.2.0",
+        "@storybook/vue3-vite": "^10.2.0",
+        "@chromatic-com/storybook": "^5.0.0",
+        "@storybook/addon-vitest": "^10.2.0",
+        "@storybook/addon-a11y": "^10.2.0",
+        "@storybook/addon-docs": "^10.2.0",
+        "@storybook/addon-onboarding": "^10.2.0",
+        "eslint-plugin-storybook": "^10.2.0",
+        "vitest": "^4.0.18",
+        "playwright": "^1.58.0",
+        "@vitest/browser-playwright": "^4.0.18",
+        "@vitest/coverage-v8": "^4.0.18"
     },
     "dependencies": {
         "@iconify/json": "^2.2.364",

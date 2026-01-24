@@ -4,175 +4,120 @@
       
       <div class="course-header" @click="toggleSection(course.id)">
         <span class="chevron" :class="{ rotated: openSections.includes(course.id) }">
-          <IconifyIcon icon="mdi:play" width="10" height="10" />
+          <IconifyIcon icon="mdi:chevron-right" width="20" height="20" />
         </span>
-
-        <h2 class="course-title">{{ course.title }}</h2>
-        
-        <div class="vertical-bar" :class="{ active: openSections.includes(course.id) }"></div>
+        <h2 class="course-title" :class="{ 'title-active': activeCourseId === course.id }">
+          {{ course.title }}
+        </h2>
       </div>
 
       <transition name="slide-fade">
         <nav v-show="openSections.includes(course.id)" class="course-nav">
-          <template v-for="(item, index) in course.items" :key="index">
+          <template v-for="item in course.items" :key="item.id">
             
-            <div v-if="item.type === 'label'" class="nav-label">
-              {{ item.text }}
-            </div>
+            <div class="nav-item-container">
+              <div v-if="item.isSubItem" class="guide-line"></div>
 
-            <button
-              v-else
-              class="nav-btn"
-              :class="(activeSubItem === item.text || currentRouteTab === item.text) && activeCourseId === course.id ? 'btn-active' : 'btn-inactive'"
-              @click.stop="setActiveItem(course.id, item)"
-            >
-              {{ item.text }}
-            </button>
+              <button
+                class="nav-btn"
+                :class="[
+                  isItemActive(item) && activeCourseId === course.id ? 'btn-active' : 'btn-inactive',
+                  item.isSubItem ? 'sub-item' : 'parent-item'
+                ]"
+                @click.stop="setActiveItem(course.id, item)"
+              >
+                {{ item.text }}
+              </button>
+            </div>
 
           </template>
         </nav>
       </transition>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { Icon as IconifyIcon } from '@iconify/vue';
 
-// --- IMPORTS ---
 const route = useRoute();
-import { useRouter } from 'vue-router';
 const router = useRouter();
 
-// --- COMPUTED ---
-// Update activeSubItem based on current route
-const currentRouteTab = computed(() => {
-  // Get the tab from route params
-  const tabPath = route.params[0];
-  if (!tabPath) return '';
-  // Convert path to text format (e.g., "title-proposals" -> "Title Proposals")
-  return tabPath
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-});
+// --- DATA: Unique IDs for distinct navigation ---
 const courses = ref([
   {
     id: 'MOR',
     title: 'MOR',
     items: [
-      { type: 'link', text: 'Title Proposals', courseCode: 'mor' },
-      { type: 'link', text: 'Panel Status', courseCode: 'mor' },
-      { type: 'link', text: 'Faculty', courseCode: 'mor' }
+      { id: 'mor-prop', text: 'Title Proposals', courseCode: 'mor' },
+      { id: 'mor-prop-sec', text: 'Sections', courseCode: 'mor', isSubItem: true, parentId: 'mor-prop' },
+      { id: 'mor-chap', text: 'Chapters 1-3', courseCode: 'mor' },
+      { id: 'mor-chap-sec', text: 'Sections', courseCode: 'mor', isSubItem: true, parentId: 'mor-chap' },
+      { id: 'mor-status', text: 'Panel Status', courseCode: 'mor' },
+      { id: 'mor-faculty', text: 'Faculty', courseCode: 'mor' }
     ]
   },
   {
     id: 'DP1',
     title: 'DP1',
     items: [
-      { type: 'link', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
-      { type: 'link', text: 'Panel Status', courseCode: 'dp1' },
-      { type: 'link', text: 'Faculty', courseCode: 'dp1' }
+      { id: 'dp1-revised', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
+      { id: 'dp1-revised-sec', text: 'Sections', courseCode: 'dp1', isSubItem: true, parentId: 'dp1-revised' }
     ]
   },
   {
     id: 'DP2',
     title: 'DP2',
     items: [
-      { type: 'link', text: 'Research/Thesis', courseCode: 'dp2' },
-      { type: 'link', text: 'Panel Status', courseCode: 'dp2' },
-      { type: 'link', text: 'Faculty', courseCode: 'dp2' }
+      { id: 'dp2-thesis', text: 'Research/Thesis', courseCode: 'dp2' },
+      { id: 'dp2-thesis-sec', text: 'Sections', courseCode: 'dp2', isSubItem: true, parentId: 'dp2-thesis' },
+      { id: 'dp2-faculty', text: 'Faculty', courseCode: 'dp2' }
     ]
   }
 ]);
 
-// --- STATE ---
-// Map route courses to sidebar course IDs
-const courseRouteMap = {
-  'mor': 'MOR',
-  'dp1': 'DP1',
-  'dp2': 'DP2'
-};
-
-// Get the current course from the route
-const getCurrentActiveCourse = () => {
-  const coursePath = route.params.course;
-  return courseRouteMap[coursePath] || 'MOR';
-};
-
 const openSections = ref([]);
 const activeCourseId = ref('MOR');
-const activeSubItem = ref('');
+const activeItemId = ref('');
 
-onMounted(() => {
-  const activeCourse = getCurrentActiveCourse();
-  activeCourseId.value = activeCourse;
-  openSections.value = [activeCourse]; // Only open the active course
-  
-  // Set the first item as default for the active course
-  const course = courses.value.find(c => c.id === activeCourse);
-  if (course && course.items.length > 0) {
-    activeSubItem.value = course.items[0].text;
-  }
-}); 
+// --- LOGIC: Checks if item itself or its child is active ---
+const isItemActive = (item) => {
+  if (activeItemId.value === item.id) return true;
+  const activeItemData = courses.value.flatMap(c => c.items).find(i => i.id === activeItemId.value);
+  return activeItemData?.parentId === item.id;
+};
 
-// --- ACTIONS ---
-const toggleSection = (courseId) => {
-  activeCourseId.value = courseId;
-  // Only allow one section open at a time
-  if (openSections.value.includes(courseId)) {
-    openSections.value = openSections.value.filter(id => id !== courseId);
-  } else {
-    openSections.value = [courseId]; // Replace all with just this one
-    
-    // Navigate to the first item of the newly opened course
+const syncState = () => {
+  const coursePath = route.params.course;
+  const tabPath = route.params[0];
+  if (coursePath) {
+    const courseId = coursePath.toUpperCase();
+    activeCourseId.value = courseId;
+    if (!openSections.value.includes(courseId)) openSections.value = [courseId];
     const course = courses.value.find(c => c.id === courseId);
-    if (course && course.items.length > 0) {
-      const firstItem = course.items[0];
-      activeSubItem.value = firstItem.text;
-      
-      // Navigate to the first item's route
-      if (firstItem.courseCode) {
-        const tabName = firstItem.text.toLowerCase().replace(/\s+/g, '-');
-        const role = route.params.role || 'student';
-        
-        router.push({
-          name: `${role}-${firstItem.courseCode}-${tabName}`,
-          params: { 
-            role: role,
-            0: tabName
-          }
-        });
-      }
+    if (course && tabPath) {
+       const match = course.items.find(item => item.text.toLowerCase().replace(/\s+/g, '-') === tabPath);
+       if (match) activeItemId.value = match.id;
     }
   }
 };
 
-const setActiveItem = (courseId, item) => {
-  if (item.type === 'label') return; 
+onMounted(syncState);
+watch(() => route.path, syncState);
+
+const toggleSection = (courseId) => {
   activeCourseId.value = courseId;
-  activeSubItem.value = item.text;
-  
-  // Navigate to the course tab page
-  if (item.courseCode) {
-    // Convert item text to tab path (e.g., "Title Proposals" -> "title-proposals")
-    const tabName = item.text.toLowerCase().replace(/\s+/g, '-');
-    
-    // Get the current role from the route
-    const role = route.params.role || 'student';
-    
-    // Navigate to the course detail with the specific tab
-    router.push({
-      name: `${role}-${item.courseCode}-${tabName}`,
-      params: { 
-        role: role,
-        0: tabName  // This is for the nested route parameter
-      }
-    });
-  }
+  openSections.value = openSections.value.includes(courseId) ? openSections.value.filter(id => id !== courseId) : [courseId];
+};
+
+const setActiveItem = (courseId, item) => {
+  activeCourseId.value = courseId;
+  activeItemId.value = item.id;
+  const tabSlug = item.text.toLowerCase().replace(/\s+/g, '-');
+  const role = route.params.role || 'admin';
+  router.push({ name: `${role}-${item.courseCode}-${tabSlug}`, params: { role, 0: tabSlug } });
 };
 </script>
 
@@ -180,103 +125,83 @@ const setActiveItem = (courseId, item) => {
 .stud-sidebar-container {
   font-family: 'Courier New', Courier, monospace;
   width: 100%;
+  padding: 10px;
 }
 
-.course-section {
-  margin-bottom: 20px;
-}
+.course-section { margin-bottom: 5px; }
+.course-header { display: flex; align-items: center; padding: 8px 12px; cursor: pointer; }
 
-/* Header */
-.course-header {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  cursor: pointer;
-  padding: 10px 0;
-}
-
+/* Top-level Header (MOR, DP1, DP2) remains Red */
 .course-title {
   margin: 0;
-  color: #800000;
-  font-size: 1.8rem;
+  color: #999;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: 2px;
-  line-height: 1;
-  text-align: center;
-  user-select: none;
+  transition: color 0.3s;
 }
+.course-title.title-active { color: #800000; }
 
-/* Indicators */
-.chevron {
+.chevron { margin-right: 8px; color: #666; transition: transform 0.3s ease; display: flex; }
+.chevron.rotated { transform: rotate(90deg); }
+
+/* Tree Navigation Styling */
+.course-nav { display: flex; flex-direction: column; padding-left: 15px; }
+.nav-item-container { position: relative; width: 100%; }
+
+.guide-line {
   position: absolute;
-  left: 25px;
-  color: #333;
-  transition: transform 0.3s ease;
-  display: flex;
-  align-items: center;
-}
-
-.chevron.rotated {
-  transform: rotate(90deg);
-}
-
-.vertical-bar {
-  position: absolute;
-  right: 25px;
-  width: 3px;
-  height: 28px;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
-}
-
-.vertical-bar.active {
-  background-color: #800000;
-}
-
-/* Navigation Items */
-.course-nav {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 0;
-}
-
-.nav-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #800000;
-  background-color: #fcfcfc;
-  padding: 6px 16px;
-  border-radius: 12px;
-  margin: 8px 0;
-  letter-spacing: 0.5px;
+  left: 12px;
+  top: -10px;
+  bottom: 20px;
+  width: 1px;
+  background-color: #ddd;
 }
 
 .nav-btn {
   border: none;
   background: transparent;
-  padding: 8px 0;
-  font-weight: 600;
-  font-size: 0.95rem;
+  padding: 10px 16px;
+  margin: 2px 0;
   cursor: pointer;
-  width: 100%;
-  transition: all 0.2s ease;
-  text-align: center;
   font-family: inherit;
-  color: #444;
-  letter-spacing: 0.5px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s;
+  border-radius: 6px;
 }
 
+/* Base Styles */
+.parent-item { font-weight: 700; font-size: 1rem; color: #555; }
+.sub-item {
+  padding-left: 35px;
+  font-size: 0.9rem;
+  color: #777;
+  font-style: italic;
+}
+
+/* UNIFIED ORANGE ACTIVE STATE */
 .btn-active {
-  color: #FFA500;
-  transform: scale(1.05);
-  border-bottom: 2px solid #FFA500;
-  padding-bottom: 6px;
+  color: #FFA500 !important; /* All nav items turn orange when active */
 }
 
-.nav-btn:hover {
-  color: #FFA500;
+/* Specific styling for parent active state */
+.parent-item.btn-active {
+  font-weight: 800;
 }
+
+/* Specific styling for sub-item active state */
+.sub-item.btn-active {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  background-color: #fff9f0; /* Soft highlight for sub-item */
+}
+
+.nav-btn:hover:not(.btn-active) {
+  background-color: #f5f5f5;
+}
+
+.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.25s ease; }
+.slide-fade-enter-from, .slide-fade-leave-to { transform: translateY(-5px); opacity: 0; }
 </style>

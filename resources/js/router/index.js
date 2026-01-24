@@ -1,15 +1,8 @@
 /*
  * Router Configuration
- * Fixed: Imports the Adviser Dashboard from the VIEWS folder
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
-
-// 1. IMPORT FROM THE CORRECT LOCATION
-// You confirmed the file is in: resources/js/views/adviser/AdviserClassDashboard.vue
-import AdviserClassDashboard from '@/views/adviser/AdviserClassDashboard.vue';
-
-// ... other imports ...
 
 // ==========================
 // Role-based courses and tabs
@@ -121,17 +114,6 @@ const authRoutes = [
     name: 'notification',
     component: () => import('@/views/notification_view.vue'),
     meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
-  },
-
-  // -----------------------------------------------------------------------
-  // [CRITICAL FIX] SPECIFIC ADVISER ROUTE - NOW POINTS TO CORRECT VIEW FILE
-  // -----------------------------------------------------------------------
-  {
-    path: '/adviser/course/:courseCode',
-    name: 'AdviserClassDashboard',
-    component: AdviserClassDashboard,
-    props: true, 
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true, title: 'Class Dashboard' }
   },
 
   // Generic Role Home
