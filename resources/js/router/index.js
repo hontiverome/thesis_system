@@ -7,12 +7,11 @@ import { createRouter, createWebHistory } from 'vue-router';
 // ==========================
 // Role-based courses and tabs
 // ==========================
-// Citing config logic: Centralized metadata for Student, Adviser, Faculty, and Admin
 const roleCourses = {
   student: {
-    mor: { 'overview': {}, 'tasks': {}, 'submissions': {}, 'grades': {} },
-    dp1: { 'overview': {} },
-    dp2: { 'overview': {}, 'documents': {}, 'evaluation': {} }
+    mor: { 'overview': {}, 'title-proposals': {}, 'chapters1-3': {}, 'panel-status': {} },
+    dp1: { 'overview': {}, 'revised-chapters1-3': {}, 'panel-status': {} },
+    dp2: { 'overview': {}, 'research-thesis': {}, 'evaluation': {} }
   },
   admin: {
     mor: { 'overview': {}, 'settings': {}, 'logs': {} },
@@ -117,7 +116,6 @@ const authRoutes = [
     meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
   },
 
-  // Generic Role Home (Uses the brightened PUP aerial background)
   {
     path: '/:role/home',
     name: 'role-home',
@@ -125,21 +123,17 @@ const authRoutes = [
     meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
   },
   
-  // Generic Course Detail Shell
   {
     path: '/:role/course/:course',
     component: () => import('@/components/workspace/CourseDetail.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true },
-    children: [
-       // Dynamic tabs will be injected here
-    ]
+    children: [] 
   },
 ];
 
 // ==========================
 // Dynamic Role Routes (Nested Tabs)
 // ==========================
-// This handles the automatic route generation based on roleConfig
 const roleRoutes = Object.keys(roleCourses).map(role => {
   const courses = roleCourses[role];
   const dynamicChildren = [];
@@ -148,19 +142,24 @@ const roleRoutes = Object.keys(roleCourses).map(role => {
     const tabs = courses[courseKey];
     const tabNames = Object.keys(tabs);
     
-    // Create sub-routes for each tab (Overview, Tasks, etc.)
-    const tabRoutes = tabNames.map(tabKey => ({
-      path: tabKey,
-      name: `${role}-${courseKey}-${tabKey}`,
-      // Flat folder structure: resources/js/components/workspace/[role]/[tabKey].vue
-      component: () => import(`@/components/workspace/${role}/${tabKey}.vue`),
-      meta: { title: tabKey.replace(/-/g, ' ').toUpperCase() }
-    }));
+    const tabRoutes = tabNames.map(tabKey => {
+      // Logic to convert kebab-case (title-proposals) to PascalCase (TitleProposals)
+      const fileName = tabKey.split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('');
+
+      return {
+        path: tabKey,
+        name: `${role}-${courseKey}-${tabKey}`,
+        // Imports directly from the flat folder structure
+        component: () => import(`@/components/workspace/${role}/${fileName}.vue`),
+        meta: { title: tabKey.replace(/-/g, ' ').toUpperCase() }
+      };
+    });
 
     dynamicChildren.push({
       path: courseKey, 
       name: `${role}-${courseKey}-base`,
-      // Redirect to the first tab (usually 'overview') so the page isn't blank
       redirect: tabNames.length > 0 ? { name: `${role}-${courseKey}-${tabNames[0]}` } : undefined,
       component: () => import('@/components/workspace/RoleWorkspace.vue'),
       meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: false },
@@ -198,9 +197,7 @@ const router = createRouter({
   }
 });
 
-// Navigation Guards
 router.beforeEach((to, from, next) => {
-  // Developer token logic for testing
   if (!localStorage.getItem('token')) {
     localStorage.setItem('token', 'dev-token-' + Date.now());
   }
