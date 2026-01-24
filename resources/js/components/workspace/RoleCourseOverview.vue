@@ -1,3 +1,5 @@
+// RoleCourseOverview.vue - Overview of courses for different user roles (student, admin, adviser, faculty)
+
 <template>
   <div class="courses page-view" role="main">
     <BaseCard title="COURSES">

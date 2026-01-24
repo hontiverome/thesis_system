@@ -1,3 +1,5 @@
+// RoleHomeOverview.vue - Dynamic role-based home overview page with dashboard and scroll features
+
 <template>
   <div class="role-home-page">
     <div class="hero-section">

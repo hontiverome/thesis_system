@@ -1,3 +1,5 @@
+// RoleWorkspace.vue - Workspace layout for different user roles (student, admin, adviser, faculty)
+
 <template>
   <div class="workspace-container">
     <header class="workspace-header">

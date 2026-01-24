@@ -1,3 +1,5 @@
+// CourseDetail.vue - Main course detail page with dynamic tabs based on user role
+
 <template>
   <div class="course-detail-page">
     <BaseCard :title="courseTitle">

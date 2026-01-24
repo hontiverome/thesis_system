@@ -1,3 +1,5 @@
+// AdviserAdvisees.vue - Adviser workspace for managing advisees and groups/enrollees
+
 <template>
   <div class="adviser-workspace-container">
     <h1 class="page-title">LIST OF CLASS ENROLLEES</h1>
