@@ -1,31 +1,9 @@
 /*
- * Router Configuration
+ * Router Configuration - Scalable Dynamic Version
  */
 
 import { createRouter, createWebHistory } from 'vue-router';
-
-// ==========================
-// Role-based courses and tabs
-// ==========================
-const roleCourses = {
-  student: {
-    mor: { 'overview': {}, 'title-proposals': {}, 'chapters1-3': {}, 'panel-status': {} },
-    dp1: { 'overview': {}, 'revised-chapters1-3': {}, 'panel-status': {} },
-    dp2: { 'overview': {}, 'research-thesis': {}, 'evaluation': {} }
-  },
-  admin: {
-    mor: { 'overview': {}, 'settings': {}, 'logs': {} },
-    dp1: { 'overview': {} },
-    dp2: { 'overview': {}, 'documents': {}, 'evaluation': {} }
-  },
-  adviser: {
-    mor: { 'overview': {}, 'advisees': {}, 'reviews': {}, 'grades': {} },
-    dp2: { 'overview': {}, 'documents': {}, 'evaluation': {} }
-  },
-  faculty: {
-    mor: { 'overview': {}, 'sections': {}, 'materials': {}, 'grading': {} }
-  }
-};
+import { ROLE_METADATA } from '@/config/roleConfig';
 
 // ==========================
 // Guest Routes
@@ -38,39 +16,16 @@ const guestRoutes = [
     meta: { layout: 'blank', title: 'Welcome', guestOnly: true }
   },
   {
-    path: '/portal',
-    name: 'access-portal',
-    component: () => import('@/views/auth/access_portal_view.vue'),
-    meta: { layout: 'blank', title: 'Select Access Level', guestOnly: true }
-  },
-  {
-    path: '/login/student',
-    name: 'login.student',
-    component: () => import('@/views/auth/student_login_view.vue'),
-    meta: { layout: 'blank', title: 'Student Login', guestOnly: true }
-  },
-  {
-    path: '/login/faculty',
-    name: 'login.faculty',
-    component: () => import('@/views/auth/faculty_login_view.vue'),
-    meta: { layout: 'blank', title: 'Faculty Login', guestOnly: true }
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: () => import('@/views/auth/register_view.vue'),
-    meta: { layout: 'blank', title: 'Register', guestOnly: true }
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/login_view.vue'),
     meta: { layout: 'blank', title: 'Login', guestOnly: true }
   },
+  // ... (Add other guest routes like /portal or /register here)
 ];
 
 // ==========================
-// Authenticated Routes
+// Authenticated Static Routes
 // ==========================
 const authRoutes = [
   {
@@ -80,104 +35,47 @@ const authRoutes = [
     meta: { layout: 'AppLayoutDefault', title: 'Home', requiresAuth: true, hideSidebar: true }
   },
   {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('@/views/dashboard_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Dashboard', requiresAuth: true }
-  },
-  {
-    path: '/courses',
-    name: 'courses',
-    component: () => import('@/views/courses_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Courses', requiresAuth: false, hideSidebar: true }
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: () => import('@/views/profile_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Profile', requiresAuth: true }
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/views/settings_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Settings', requiresAuth: true }
-  },
-  {
-    path: '/help',
-    name: 'help',
-    component: () => import('@/views/help_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Help & Support' }
-  },
-  {
-    path: '/notif',
-    name: 'notification',
-    component: () => import('@/views/notification_view.vue'),
-    meta: { layout: 'AppLayoutDefault', title: 'Notification', requiresAuth: true }
-  },
-
-  {
     path: '/:role/home',
     name: 'role-home',
     component: () => import('@/components/workspace/RoleHomeOverview.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
   },
-  
   {
-    path: '/:role/course/:course',
-    component: () => import('@/components/workspace/CourseDetail.vue'),
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true },
-    children: [] 
-  },
+    path: '/:role/courses',
+    name: 'role-courses-overview',
+    component: () => import('@/components/workspace/RoleCourseOverview.vue'),
+    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
+  }
 ];
 
 // ==========================
-// Dynamic Role Routes (Nested Tabs)
+// Dynamic Workspace Routes (The Scalable Part)
 // ==========================
-const roleRoutes = Object.keys(roleCourses).map(role => {
-  const courses = roleCourses[role];
-  const dynamicChildren = [];
 
-  Object.keys(courses).forEach(courseKey => {
-    const tabs = courses[courseKey];
-    const tabNames = Object.keys(tabs);
-    
-    const tabRoutes = tabNames.map(tabKey => {
-      // Logic to convert kebab-case (title-proposals) to PascalCase (TitleProposals)
-      const fileName = tabKey.split('-')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join('');
-
-      return {
-        path: tabKey,
-        name: `${role}-${courseKey}-${tabKey}`,
-        // Imports directly from the flat folder structure
-        component: () => import(`@/components/workspace/${role}/${fileName}.vue`),
-        meta: { title: tabKey.replace(/-/g, ' ').toUpperCase() }
-      };
-    });
-
-    dynamicChildren.push({
-      path: courseKey, 
-      name: `${role}-${courseKey}-base`,
-      redirect: tabNames.length > 0 ? { name: `${role}-${courseKey}-${tabNames[0]}` } : undefined,
-      component: () => import('@/components/workspace/RoleWorkspace.vue'),
-      meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: false },
-      children: tabRoutes
-    });
-  });
-
+const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
   return {
-    path: `/${role}/courses`,
-    name: `${role}-courses-overview`,
-    component: () => import('@/components/workspace/RoleCourseOverview.vue'),
-    meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true },
-    children: dynamicChildren
+    // We use :role so the router recognizes 'role' as a valid parameter
+    path: `/:role/course/:course`, 
+    component: () => import('@/components/workspace/RoleWorkspace.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: ':tab', 
+        // This generates 'student-workspace-tab', 'adviser-workspace-tab', etc.
+        name: `${role}-workspace-tab`, 
+        component: () => import('@/components/workspace/TabHandler.vue'),
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '', 
+        redirect: to => ({ path: `${to.path}/overview` })
+      }
+    ]
   };
 });
 
 // ==========================
-// Combine Routes
+// Combine and Setup
 // ==========================
 const routes = [
   ...guestRoutes,
@@ -185,9 +83,6 @@ const routes = [
   ...roleRoutes,
 ];
 
-// ==========================
-// Router Setup
-// ==========================
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
@@ -198,6 +93,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // Simple dev-token check
   if (!localStorage.getItem('token')) {
     localStorage.setItem('token', 'dev-token-' + Date.now());
   }
@@ -205,9 +101,12 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-  if (to.meta.title) {
-    document.title = `${to.meta.title} | PUP System`;
-  }
+  // Set the browser tab title dynamically from the route meta or tab param
+  const pageTitle = to.params.tab 
+    ? to.params.tab.replace(/-/g, ' ').toUpperCase() 
+    : (to.meta.title || 'System');
+    
+  document.title = `${pageTitle} | PUP T-SIS`;
 });
 
 export default router;
