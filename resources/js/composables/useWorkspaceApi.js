@@ -1,7 +1,7 @@
 // resources/js/composables/useWorkspaceApi.js
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { ROLE_METADATA } from '@/config/roleConfig'; // Import your new config
+import { ROLE_METADATA } from '@/config/roleConfig';
 
 export function useWorkspaceApi() {
   const route = useRoute();
