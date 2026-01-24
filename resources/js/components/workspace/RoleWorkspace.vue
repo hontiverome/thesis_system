@@ -1,31 +1,62 @@
 <template>
-  <div>
-    <div class="tabs-row">
-      <div v-for="tab in tabs" :key="tab.path" 
-           :class="{ active: isActiveTab(tab) }" 
-           @click="goToTab(tab)">
-        {{ formatTab(tab.path) }}
+  <div class="workspace-container">
+    <header class="workspace-header">
+      <div class="title-meta">
+        <h1 class="university-red">{{ courseTitle?.toUpperCase() }}</h1>
+        <h2 class="tab-title">{{ tab?.replace(/-/g, ' ').toUpperCase() }}</h2>
       </div>
-    </div>
-    <router-view />
+      <div class="header-actions">
+        <slot name="actions"></slot>
+      </div>
+    </header>
+
+    <main class="workspace-content">
+      <slot></slot> 
+      
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
+    </main>
   </div>
 </template>
-  
+
 <script setup>
-import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-
-const route = useRoute();
-const router = useRouter();
-
-const tabs = computed(() => route.matched[route.matched.length - 1].children || []);
-const isActiveTab = (tab) => route.path.endsWith(tab.path);
-const goToTab = (tab) => {
-  // If tab path is already in current route, don't duplicate
-  if (route.path.endsWith(tab.path)) {
-    return;
-  }
-  router.push({ path: `${route.path}/${tab.path}` });
-};
-const formatTab = (path) => path.replace(/-/g,' ').toUpperCase();
+import { useWorkspaceApi } from '@/composables/useWorkspaceApi';
+// Pulling inherited context and the pretty title from our configuration
+const { course, tab, courseTitle } = useWorkspaceApi(); 
 </script>
+
+<style scoped>
+.university-red { 
+  color: #800000; 
+  margin: 0; 
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+.tab-title {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 5px;
+}
+.workspace-header { 
+  border-bottom: 2px solid #FFA500; 
+  padding-bottom: 15px; 
+  margin-bottom: 20px;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: flex-end;
+}
+.workspace-content {
+  min-height: 300px;
+}
+
+/* Smooth transition between tabs */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>

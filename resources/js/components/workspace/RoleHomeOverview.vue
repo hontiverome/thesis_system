@@ -4,15 +4,18 @@
       <div class="overlay"></div>
       <div class="content-container">
         <h1 class="main-title">WELCOME TO <span class="t-red">T</span>-SIS</h1>
-        <p class="tagline">{{ currentRoleConfig.tagline }}</p>
+        <p class="tagline">
+          your dedicated space for organized research planning, thesis development, and academic growth.
+        </p>
       </div>
+      
       <div class="scroll-arrow" @click="scrollToDashboard">
         <IconifyIcon icon="mdi:chevron-down" width="55" height="55" />
       </div>
     </div>
 
     <div ref="dashboardRef" class="dashboard-section">
-      <BaseCard :title="`${currentRoleConfig.label} Dashboard`">
+      <BaseCard :title="`${roleLabel} Dashboard` || 'Dashboard'">
         <div class="dashboard-grid">
           <div 
             v-for="item in fullDashboardItems" 
@@ -39,17 +42,17 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { Icon as IconifyIcon } from '@iconify/vue';
 import BaseCard from '@/components/ui/core/BaseCard.vue';
+import { useWorkspaceApi } from '@/composables/useWorkspaceApi';
 import { ROLE_METADATA, COMMON_ITEMS } from '@/config/roleConfig';
 
-const route = useRoute();
 const router = useRouter();
+const { role, roleLabel } = useWorkspaceApi();
 const dashboardRef = ref(null);
 const showBackToTop = ref(false);
 
-const role = computed(() => route.params.role);
 const currentRoleConfig = computed(() => ROLE_METADATA[role.value] || ROLE_METADATA.student);
 
 const fullDashboardItems = computed(() => {
@@ -68,119 +71,46 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 
 <style scoped>
 .role-home-page {
-  width: 100%;
-  min-height: 100vh;
-  /* Unified background across the whole page */
+  width: 100%; min-height: 100vh;
+  /* Fixed background image with 0.35 brightness overlay */
   background: linear-gradient(rgba(17, 22, 28, 0.35), rgba(17, 22, 28, 0.35)),
               url('/assets/aerial_pup.jpg') center/cover no-repeat fixed;
 }
-
-.hero-section {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-/* Matching overlay for the hero to ensure consistency */
-.overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(17, 22, 28, 0.35);
-  z-index: 1;
-}
-
-.content-container {
-  z-index: 2;
-  color: #ffffff;
-  max-width: 1200px;
-  padding: 20px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-}
-
-.main-title {
-  font-family: 'Sorts Mill Goudy', serif;
-  font-size: 65px;
-  font-style: italic;
-  color: #fbfbfb;
-  letter-spacing: 2px;
-}
+.hero-section { height: 100vh; position: relative; display: flex; justify-content: center; align-items: center; text-align: center; }
+.overlay { position: absolute; inset: 0; background-color: rgba(17, 22, 28, 0.35); z-index: 1; }
+.content-container { z-index: 2; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
+.main-title { font-family: 'Sorts Mill Goudy', serif; font-size: 65px; font-style: italic; color: #ffffff; letter-spacing: 2px; }
 .t-red { color: #800000; }
-
-.tagline {
-  font-size: 18px;
-  font-weight: 300;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* Dashboard section now transparent to show the main page background */
-.dashboard-section {
-  padding: 40px;
-  min-height: 100vh;
-  background: transparent;
-}
-
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.dashboard-card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 180px;
-}
-
-.dashboard-card:hover {
-  transform: translateY(-5px);
-  background-color: #f9f9f9;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-.card-icon { font-size: 32px; margin-bottom: 10px; }
-.dashboard-card h3 { color: #333; font-size: 14px; font-weight: bold; text-transform: uppercase; }
-.dashboard-card p { color: #666; font-size: 11px; }
-
-.back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #800000;
-  color: white;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 10;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-15px); }
-}
+.tagline { font-size: 18px; font-weight: 300; max-width: 800px; margin: 0 auto; line-height: 1.5; color: #ffffff; }
 
 .scroll-arrow {
   position: absolute;
-  bottom: 80px;
+  bottom: 90px; /* Moved up slightly */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   cursor: pointer;
+  color: #ffffff;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
   animation: bounce 2s infinite;
-  z-index: 5;
-  color: white;
 }
+
+.dashboard-section { padding: 40px; min-height: 100vh; background: transparent; }
+.dashboard-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; }
+.dashboard-card { background: white; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; min-height: 180px; display: flex; flex-direction: column; justify-content: center; }
+.dashboard-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+
+.back-to-top {
+  position: fixed; bottom: 30px; right: 30px; background-color: #800000;
+  color: white; width: 50px; height: 50px; border-radius: 50%;
+  display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 100;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+  40% { transform: translate(-50%, -15px); }
+  60% { transform: translate(-50%, -7px); }
+}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
