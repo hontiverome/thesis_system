@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="stud-sidebar-container">
     <div v-for="course in courses" :key="course.id" class="course-section">
       
@@ -258,4 +258,4 @@ const setActiveItem = (courseId, item) => {
 .nav-btn:hover {
   color: #FFA500;
 }
-</style>
+</style> -->

@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div class="stud-sidebar-container">
     <div v-for="course in courses" :key="course.id" class="course-section">
       
@@ -285,4 +285,4 @@ const setActiveItem = (courseId, item) => {
   transform: translateX(10px);
   opacity: 0;
 }
-</style> -->
+</style>

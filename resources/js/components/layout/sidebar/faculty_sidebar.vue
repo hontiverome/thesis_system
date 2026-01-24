@@ -1,4 +1,4 @@
-<!-- <template>
+<template>
   <div class="stud-sidebar-container">
     <div v-for="course in courses" :key="course.id" class="course-section">
       
@@ -47,37 +47,38 @@ import { Icon as IconifyIcon } from '@iconify/vue';
 const route = useRoute();
 const router = useRouter();
 
-// --- DATA - STUDENT COURSES ---
+// --- DATA - FACULTY COURSES ---
 const courses = ref([
   {
     id: 'MOR',
     title: 'MOR',
     items: [
       { type: 'link', text: 'Title Proposals', courseCode: 'mor' },
-      { type: 'link', text: 'Chapters 1-3', courseCode: 'mor' }
+      { type: 'link', text: 'Panel Status', courseCode: 'mor' },
+      { type: 'link', text: 'Faculty', courseCode: 'mor' }
     ]
   },
   {
     id: 'DP1',
     title: 'DP1',
     items: [
-      { type: 'link', text: 'Revised Chapters 1-3', courseCode: 'dp1' },
-      { type: 'link', text: 'Evaluation', courseCode: 'dp1' }
+      { type: 'link', text: 'Submission', courseCode: 'dp1' },
+      { type: 'link', text: 'Panel Status', courseCode: 'dp1' },
+      { type: 'link', text: 'Faculty', courseCode: 'dp1' }
     ]
   },
   {
     id: 'DP2',
     title: 'DP2',
     items: [
-      { type: 'link', text: 'Research/Thesis', courseCode: 'dp2' },
-      { type: 'link', text: 'Documents', courseCode: 'dp2' },
-      { type: 'link', text: 'Evaluation', courseCode: 'dp2' }
+      { type: 'link', text: 'Submission', courseCode: 'dp2' },
+      { type: 'link', text: 'Panel Status', courseCode: 'dp2' },
+      { type: 'link', text: 'Faculty', courseCode: 'dp2' }
     ]
   }
 ]);
 
 // --- COMPUTED ---
-// Update activeSubItem based on current route
 const currentRouteTab = computed(() => {
   const tabPath = route.params[0];
   if (!tabPath) return '';
@@ -87,14 +88,12 @@ const currentRouteTab = computed(() => {
     .join(' ');
 });
 
-// Map route courses to sidebar course IDs
 const courseRouteMap = {
   'mor': 'MOR',
   'dp1': 'DP1',
   'dp2': 'DP2'
 };
 
-// Get the current course from the route
 const getCurrentActiveCourse = () => {
   const coursePath = route.params.course;
   return courseRouteMap[coursePath] || 'MOR';
@@ -133,7 +132,7 @@ const toggleSection = (courseId) => {
       // Navigate to the first item's route
       if (firstItem.courseCode) {
         const tabName = firstItem.text.toLowerCase().replace(/\s+/g, '-');
-        const role = route.params.role || 'student';
+        const role = route.params.role || 'faculty';
         
         router.push({
           name: `${role}-${firstItem.courseCode}-${tabName}`,
@@ -154,7 +153,7 @@ const setActiveItem = (courseId, item) => {
   
   if (item.courseCode) {
     const tabName = item.text.toLowerCase().replace(/\s+/g, '-');
-    const role = route.params.role || 'student';
+    const role = route.params.role || 'faculty';
     
     router.push({
       name: `${role}-${item.courseCode}-${tabName}`,
@@ -285,4 +284,4 @@ const setActiveItem = (courseId, item) => {
   transform: translateX(10px);
   opacity: 0;
 }
-</style> -->
+</style>
