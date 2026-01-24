@@ -10,10 +10,10 @@
         <p class="tagline">
           {{ roleTagline }}
         </p>
-        
-        <div class="scroll-arrow" @click="scrollToDashboard">
-          <IconifyIcon icon="mdi:chevron-down" width="50" height="50" />
-        </div>
+      </div>
+
+      <div class="scroll-arrow" @click="scrollToDashboard">
+        <IconifyIcon icon="mdi:chevron-down" width="55" height="55" />
       </div>
     </div>
 
@@ -52,7 +52,7 @@ import BaseCard from '@/components/ui/core/BaseCard.vue';
 const route = useRoute();
 const router = useRouter();
 
-// --- NAVIGATION LOGIC ---
+// --- Navigation Logic ---
 const dashboardRef = ref(null);
 const showBackToTop = ref(false);
 
@@ -65,17 +65,16 @@ const scrollToTop = () => {
 };
 
 const handleScroll = () => {
-  // Show button after scrolling 400px
   showBackToTop.value = window.scrollY > 400;
 };
 
 onMounted(() => window.addEventListener('scroll', handleScroll));
 onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 
-// --- ROLE & CONTENT LOGIC ---
+// --- Role Context ---
 const role = computed(() => route.params.role);
 
-const roleName = computed(() => {
+const roleLabel = computed(() => {
   const names = {
     student: 'Student',
     admin: 'Administrator',
@@ -85,51 +84,59 @@ const roleName = computed(() => {
   return names[role.value] || 'User';
 });
 
-const roleLabel = computed(() => roleName.value);
+const roleTagline = computed(() => 'your dedicated space for organized research planning, thesis development, and academic growth.');
 
-const roleTagline = computed(() => {
-  return 'your dedicated space for organized research planning, thesis development, and academic growth.';
-});
-
+// --- Dashboard Logic (5 items per role) ---
 const dashboardItems = computed(() => {
+  const archiveCard = { 
+    id: 5, 
+    title: 'Thesis Archive', 
+    description: 'CpE Abstract Library', 
+    icon: '📁', 
+    class: 'archive-card', 
+    action: () => router.push(`/${role.value}/archive`) 
+  };
+
   const items = {
     student: [
-      { id: 1, title: 'My Courses', description: 'View and manage your enrolled courses', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
-      { id: 2, title: 'Submissions', description: 'Track your course submissions and deadlines', icon: '📝', class: 'submissions-card', action: () => {} },
-      { id: 3, title: 'Feedback', description: 'Review feedback from your adviser', icon: '💬', class: 'feedback-card', action: () => {} },
-      { id: 4, title: 'Progress', description: 'Monitor your thesis progress', icon: '📊', class: 'progress-card', action: () => {} }
+      { id: 1, title: 'My Courses', description: 'Manage enrolled courses', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
+      { id: 2, title: 'Submissions', description: 'Track deadlines', icon: '📝', class: 'submissions-card', action: () => {} },
+      { id: 3, title: 'Feedback', description: 'Review adviser comments', icon: '💬', class: 'feedback-card', action: () => {} },
+      { id: 4, title: 'Progress', description: 'Monitor thesis status', icon: '📊', class: 'progress-card', action: () => {} },
+      archiveCard
     ],
     admin: [
-      { id: 1, title: 'Manage Users', description: 'Add, edit, or remove system users', icon: '👥', class: 'users-card', action: () => {} },
-      { id: 2, title: 'Courses', description: 'Manage curriculum and courses', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
-      { id: 3, title: 'System Logs', description: 'View system activity and logs', icon: '📋', class: 'logs-card', action: () => {} },
-      { id: 4, title: 'Analytics', description: 'View system analytics and reports', icon: '📊', class: 'analytics-card', action: () => {} }
+      { id: 1, title: 'Manage Users', description: 'User management', icon: '👥', class: 'users-card', action: () => {} },
+      { id: 2, title: 'Courses', description: 'Curriculum settings', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
+      { id: 3, title: 'System Logs', description: 'Activity monitoring', icon: '📋', class: 'logs-card', action: () => {} },
+      { id: 4, title: 'Analytics', description: 'System reports', icon: '📊', class: 'analytics-card', action: () => {} },
+      archiveCard
     ],
     adviser: [
-      { id: 1, title: 'My Advisees', description: 'View and manage your advisee groups', icon: '👨‍🎓', class: 'advisees-card', action: () => {} },
-      { id: 2, title: 'Courses', description: 'View your advising courses', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
-      { id: 3, title: 'Submissions', description: 'Review student submissions', icon: '📝', class: 'submissions-card', action: () => {} },
-      { id: 4, title: 'Panel Status', description: 'Track panel review status', icon: '📊', class: 'status-card', action: () => {} }
+      { id: 1, title: 'My Advisees', description: 'Advisee groups', icon: '👨‍🎓', class: 'advisees-card', action: () => {} },
+      { id: 2, title: 'Courses', description: 'Advising courses', icon: '📚', class: 'courses-card', action: () => router.push(`/${role.value}/courses`) },
+      { id: 3, title: 'Submissions', description: 'Student work reviews', icon: '📝', class: 'submissions-card', action: () => {} },
+      { id: 4, title: 'Panel Status', description: 'Review tracking', icon: '📊', class: 'status-card', action: () => {} },
+      archiveCard
     ],
     faculty: [
-      { id: 1, title: 'My Classes', description: 'View your assigned classes', icon: '📚', class: 'classes-card', action: () => router.push(`/${role.value}/courses`) },
-      { id: 2, title: 'Submissions', description: 'Review student submissions', icon: '📝', class: 'submissions-card', action: () => {} },
-      { id: 3, title: 'Grading', description: 'Grade submissions and provide feedback', icon: '✅', class: 'grading-card', action: () => {} },
-      { id: 4, title: 'Class Materials', description: 'Manage course materials and resources', icon: '📚', class: 'materials-card', action: () => {} }
+      { id: 1, title: 'My Classes', description: 'Assigned classes', icon: '📚', class: 'classes-card', action: () => router.push(`/${role.value}/courses`) },
+      { id: 2, title: 'Submissions', description: 'Review student work', icon: '📝', class: 'submissions-card', action: () => {} },
+      { id: 3, title: 'Grading', description: 'Grade & feedback', icon: '✅', class: 'grading-card', action: () => {} },
+      { id: 4, title: 'Materials', description: 'Class resources', icon: '📚', class: 'materials-card', action: () => {} },
+      archiveCard
     ]
   };
   return items[role.value] || [];
 });
 
 const handleItemClick = (item) => {
-  if (item.action) {
-    item.action();
-  }
+  if (item.action) item.action();
 };
 </script>
 
 <style scoped>
-/* STYLES PRESERVED FROM ORIGINAL */
+/* Styles Kept from Original */
 .role-home-page {
   width: 100%;
   min-height: 100vh;
@@ -139,12 +146,11 @@ const handleItemClick = (item) => {
 
 .hero-section {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   position: relative;
   background-image: url('/assets/aerial_pup.jpg');
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
   background-attachment: fixed;
   display: flex;
   justify-content: center;
@@ -154,10 +160,7 @@ const handleItemClick = (item) => {
 
 .overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(17, 22, 28, 0.68);
   z-index: 1;
 }
@@ -182,10 +185,7 @@ const handleItemClick = (item) => {
   text-transform: uppercase;
 }
 
-.t-red {
-  color: #800000;
-  font-style: italic;
-}
+.t-red { color: #800000; font-style: italic; }
 
 .tagline {
   font-size: 16px;
@@ -194,56 +194,20 @@ const handleItemClick = (item) => {
   letter-spacing: 1px;
 }
 
-/* SCROLL ARROW & BACK-TO-TOP STYLES */
 .scroll-arrow {
-  margin-top: 50px;
+  position: absolute;
+  bottom: 80px;
   cursor: pointer;
   animation: bounce 2s infinite;
   transition: color 0.3s;
+  z-index: 5;
 }
 
-.scroll-arrow:hover {
-  color: #800000;
-}
+.scroll-arrow:hover { color: #800000; }
 
-.back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #800000;
-  color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  z-index: 99;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  transition: background-color 0.3s ease;
-}
-
-.back-to-top:hover {
-  background-color: #FFA500;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-  40% { transform: translateY(-15px); }
-  60% { transform: translateY(-7px); }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
-}
-
-/* DASHBOARD STYLES */
+/* Dashboard Grid with 5 Columns */
 .dashboard-section {
-  padding: 50px;
+  padding: 40px;
   background: linear-gradient(rgba(17, 22, 28, 0.85), rgba(17, 22, 28, 0.85)),
               url('/assets/aerial_pup.jpg') center/cover fixed;
   min-height: 100vh;
@@ -252,8 +216,8 @@ const handleItemClick = (item) => {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
   margin-top: 20px;
 }
 
@@ -261,50 +225,86 @@ const handleItemClick = (item) => {
   background-color: white;
   border: 2px solid #ddd;
   border-radius: 8px;
-  padding: 30px;
+  padding: 20px 10px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
   border-color: #800000;
+  background-color: #f5f5f5; /* Light gray effect */
 }
 
-.card-icon {
-  font-size: 48px;
-  margin-bottom: 15px;
-}
+.card-icon { font-size: 32px; margin-bottom: 10px; }
 
 .dashboard-card h3 {
   color: #800000;
-  font-size: 18px;
-  margin: 15px 0;
+  font-size: 14px;
+  margin: 10px 0;
   font-weight: bold;
   text-transform: uppercase;
 }
 
 .dashboard-card p {
   color: #666;
-  font-size: 14px;
+  font-size: 11px;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.3;
 }
 
-/* CARD BORDER ACCENTS */
-.courses-card { border-left: 4px solid #4CAF50; }
-.submissions-card { border-left: 4px solid #2196F3; }
-.feedback-card { border-left: 4px solid #FF9800; }
-.progress-card { border-left: 4px solid #9C27B0; }
-.users-card { border-left: 4px solid #00BCD4; }
-.logs-card { border-left: 4px solid #795548; }
-.analytics-card { border-left: 4px solid #E91E63; }
-.advisees-card { border-left: 4px solid #3F51B5; }
-.status-card { border-left: 4px solid #607D8B; }
-.classes-card { border-left: 4px solid #4CAF50; }
-.grading-card { border-left: 4px solid #8BC34A; }
-.materials-card { border-left: 4px solid #FFC107; }
+/* Back to Top Styling */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #800000;
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 99;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-15px); }
+  60% { transform: translateY(-7px); }
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.5s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+/* Card Accent Borders */
+.courses-card { border-left: 3px solid #4CAF50; }
+.submissions-card { border-left: 3px solid #2196F3; }
+.feedback-card { border-left: 3px solid #FF9800; }
+.progress-card { border-left: 3px solid #9C27B0; }
+.archive-card { border-left: 3px solid #607D8B; }
+.archive-card h3 { color: #607D8B; }
+.users-card { border-left: 3px solid #00BCD4; }
+.logs-card { border-left: 3px solid #795548; }
+.analytics-card { border-left: 3px solid #E91E63; }
+.advisees-card { border-left: 3px solid #3F51B5; }
+.status-card { border-left: 3px solid #607D8B; }
+.classes-card { border-left: 3px solid #4CAF50; }
+.grading-card { border-left: 3px solid #8BC34A; }
+.materials-card { border-left: 3px solid #FFC107; }
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
 </style>
