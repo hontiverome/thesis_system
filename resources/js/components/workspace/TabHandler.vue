@@ -21,13 +21,16 @@ const activeTemplate = computed(() => {
   const r = role.value;
 
   // 1. DISTINCT TEMPLATES (Role-Specific Logic)
+  if (t === 'sections') {
+    return defineAsyncComponent(() => import('@/components/workspace/templates/shared/SectionsOverview.vue'));
+    }
   if (t === 'evaluation') {
     return r === 'adviser' 
       ? defineAsyncComponent(() => import('@/components/workspace/templates/distinct/AdviserEvaluation.vue'))
       : defineAsyncComponent(() => import('@/components/workspace/templates/distinct/StudentEvaluation.vue'));
   }
 
-  if (tab.value === 'advisees') {
+  if (t === 'advisees') {
   return defineAsyncComponent(() => import('@/components/workspace/templates/distinct/AdviserAdvisees.vue'));
     }
     

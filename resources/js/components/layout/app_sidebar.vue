@@ -64,9 +64,9 @@ const currentRole = computed(() => route.params.role || 'student');
 const sidebarComponent = computed(() => {
   const roleComponentMap = {
     admin: AdminSidebar,
-    student: StudentSidebar,
     adviser: AdviserSidebar,
-    faculty: FacultySidebar
+    faculty: FacultySidebar,
+    student: StudentSidebar
   };
   return roleComponentMap[currentRole.value] || StudentSidebar;
 }); 

@@ -54,21 +54,27 @@ const authRoutes = [
 
 const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
   return {
-    // We use :role so the router recognizes 'role' as a valid parameter
     path: `/:role/course/:course`, 
     component: () => import('@/components/workspace/RoleWorkspace.vue'),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, hideSidebar: false }, 
     children: [
       {
-        path: ':tab', 
-        // This generates 'student-workspace-tab', 'adviser-workspace-tab', etc.
-        name: `${role}-workspace-tab`, 
-        component: () => import('@/components/workspace/TabHandler.vue'),
-        meta: { requiresAuth: true }
+        path: 'overview',
+        name: `${role}-overview`,
+        component: () => import('@/components/workspace/templates/shared/OverviewTemplate.vue'),
+        meta: { title: 'Overview', hideSidebar: false }
       },
       {
-        path: '', 
-        redirect: to => ({ path: `${to.path}/overview` })
+        path: 'sections',
+        name: `${role}-sections-overview`,
+        component: () => import('@/components/workspace/templates/shared/SectionsOverview.vue'),
+        meta: { title: 'Sections', hideSidebar: false }
+      },
+      {
+        path: ':tab', 
+        name: `${role}-workspace-tab`, 
+        component: () => import('@/components/workspace/TabHandler.vue'),
+        meta: { hideSidebar: false }
       }
     ]
   };
