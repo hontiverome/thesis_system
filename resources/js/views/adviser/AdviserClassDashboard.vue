@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="dashboard-container">
     
     <div class="dashboard-header">
@@ -621,4 +621,4 @@ textarea {
 .btn-cancel { background: #e2e8f0; color: #475569; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 .btn-confirm-accept { background: #065f27; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
 .btn-confirm-reject { background: #7f0000; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-</style>
+</style> -->
