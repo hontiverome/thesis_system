@@ -1,13 +1,7 @@
-/**
- * T-SIS Role Configuration
- * Centralized metadata, permissions, and navigation.
- */
-
+/** resources/js/config/roleConfig.js **/
 export const ROLE_METADATA = {
   student: {
     label: 'Student',
-    // Kept exactly as requested
-    tagline: 'your dedicated space for organized research planning, thesis development, and academic growth.',
     permissions: { canEdit: false, canEvaluate: false, canSubmit: true },
     dashboard: [
       { id: 1, title: 'My Courses', desc: 'Manage enrolled courses', icon: '📚', color: '#4CAF50', path: '/student/courses' },
@@ -18,7 +12,6 @@ export const ROLE_METADATA = {
   },
   adviser: {
     label: 'Adviser',
-    tagline: 'your dedicated space for organized research planning, thesis development, and academic growth.',
     permissions: { canEdit: true, canEvaluate: true, canSubmit: false },
     dashboard: [
       { id: 1, title: 'My Advisees', desc: 'Advisee groups', icon: '👨‍🎓', color: '#3F51B5', path: '/adviser/advisees' },
@@ -29,7 +22,6 @@ export const ROLE_METADATA = {
   },
   faculty: {
     label: 'Faculty',
-    tagline: 'your dedicated space for organized research planning, thesis development, and academic growth.',
     permissions: { canEdit: false, canEvaluate: true, canSubmit: false },
     dashboard: [
       { id: 1, title: 'My Classes', desc: 'Assigned classes', icon: '📚', color: '#4CAF50', path: '/faculty/courses' },
@@ -40,7 +32,6 @@ export const ROLE_METADATA = {
   },
   admin: {
     label: 'Administrator',
-    tagline: 'your dedicated space for organized research planning, thesis development, and academic growth.',
     permissions: { canEdit: true, canEvaluate: true, canSubmit: false },
     dashboard: [
       { id: 1, title: 'Manage Users', desc: 'User management', icon: '👥', color: '#00BCD4', path: '/admin/users' },
@@ -58,17 +49,12 @@ export const COURSE_TABS = {
   admin:   ['overview', 'settings', 'logs']
 };
 
-export const COMMON_ITEMS = (role) => ({
-  id: 99,
-  title: 'Thesis Archive',
-  desc: 'CpE Abstract Library',
-  icon: '📁',
-  color: '#607D8B',
-  path: `/${role}/archive`
-});
-
 export const COURSE_MAP = {
   mor: 'Methods of Research',
   dp1: 'Project Design 1',
   dp2: 'Project Design 2'
 };
+
+export const COMMON_ITEMS = (role) => ({
+  id: 99, title: 'Thesis Archive', desc: 'CpE Abstract Library', icon: '📁', color: '#607D8B', path: `/${role}/archive`
+});
