@@ -3,9 +3,17 @@
 
 <template>
   <div class="overview-template">
-    <BaseCard :title="`${courseTitleComputed} Overview`">
-      <p>Welcome to the dashboard for {{ courseTitleComputed }}.</p>
+    <BaseCard :title="` ${courseTitleComputed} Overview`">
+      <p>Welcome to the dashboard (coming soon) for {{ courseTitleComputed }}.</p>
       <p>You are viewing this as a {{ roleLabelComputed }}.</p>
+  <div class="inline-flex items-center bg-maroon-50 border border-maroon-200 rounded-xl p-12 shadow-sm">
+    <div class="text-left">
+      <p class="text-sm text-maroon-800 leading-relaxed">
+        In the meantime, you can access all features and tasks <br />
+        by navigating through the <strong>Sidebar Menu</strong> on the left.
+      </p>
+    </div>
+  </div>
     </BaseCard>
   </div>
 </template>
@@ -55,4 +63,19 @@ const roleLabelComputed = computed(() => {
   font-size: 1rem;
   margin: 10px 0;
 }
+
+.bg-maroon-50 {
+  background-color: #fffafb;
+}
+.text-maroon-900 {
+  color: #500000;
+}
+.text-maroon-800 {
+  color: #800000;
+}
+.border-maroon-200 {
+  border-color: #f5e6e6;
+  padding: 0.5%;
+}
+
 </style>
