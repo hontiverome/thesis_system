@@ -37,13 +37,13 @@ const authRoutes = [
   {
     path: '/:role/home',
     name: 'role-home',
-    component: () => import('@/components/workspace/RoleHomeOverview.vue'),
+    component: () => import('@/views/workspace/RoleHomeOverview.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
   },
   {
     path: '/:role/courses',
     name: 'role-courses-overview',
-    component: () => import('@/components/workspace/RoleCourseOverview.vue'),
+    component: () => import('@/views/workspace/RoleCourseOverview.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
   }
 ];
@@ -55,32 +55,27 @@ const authRoutes = [
 const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
   return {
     path: '/:role/course/:course',
-    component: () => import('@/components/workspace/RoleWorkspace.vue'),
+    component: () => import('@/views/workspace/RoleWorkspace.vue'),
     meta: { requiresAuth: true, hideSidebar: false },
     children: [
       {
         path: 'overview',
         name: `${role}-overview`,
-        component: () => import('@/components/workspace/templates/shared/OverviewTemplate.vue'),
+        component: () => import('@/views/workspace/templates/shared/OverviewTemplate.vue'),
         meta: { title: 'Overview' }
       },
       {
         path: 'sections',
         name: `${role}-sections-overview`,
-        component: () => import('@/components/workspace/templates/shared/SectionsOverview.vue'),
+        component: () => import('@/views/workspace/templates/shared/SectionsOverview.vue'),
         meta: { title: 'Sections' }
       },
       {
         path: 'sections/:section',
         name: `${role}-section-detail`,
-        component: () => import('@/components/workspace/templates/shared/SectionsDetail.vue'),
+        component: () => import('@/views/workspace/templates/shared/SectionsDetail.vue'),
         props: true,
         meta: { title: 'Section Detail' }
-      },
-      {
-        path: ':tab',
-        name: `${role}-workspace-tab`,
-        component: () => import('@/components/workspace/TabHandler.vue')
       }
     ]
   };
