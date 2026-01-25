@@ -61,19 +61,19 @@ const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
       {
         path: 'overview',
         name: `${role}-overview`,
-        component: () => import('@/views/workspace/templates/shared/OverviewTemplate.vue'),
+        component: () => import('@/views/workspace/shared/OverviewTemplate.vue'),
         meta: { title: 'Overview' }
       },
       {
         path: 'sections',
         name: `${role}-sections-overview`,
-        component: () => import('@/views/workspace/templates/shared/SectionsOverview.vue'),
+        component: () => import('@/views/workspace/shared/SectionsOverview.vue'),
         meta: { title: 'Sections' }
       },
       {
         path: 'sections/:section',
         name: `${role}-section-detail`,
-        component: () => import('@/views/workspace/templates/shared/SectionsDetail.vue'),
+        component: () => import('@/views/workspace/shared/SectionsDetail.vue'),
         props: true,
         meta: { title: 'Section Detail' }
       }
