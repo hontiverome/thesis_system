@@ -49,36 +49,43 @@ const authRoutes = [
 ];
 
 // ==========================
-// Dynamic Workspace Routes (The Scalable Part)
+// Dynamic Workspace Routes
 // ==========================
 
 const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
   return {
-    path: `/:role/course/:course`, 
+    path: '/:role/course/:course',
     component: () => import('@/components/workspace/RoleWorkspace.vue'),
-    meta: { requiresAuth: true, hideSidebar: false }, 
+    meta: { requiresAuth: true, hideSidebar: false },
     children: [
       {
         path: 'overview',
         name: `${role}-overview`,
         component: () => import('@/components/workspace/templates/shared/OverviewTemplate.vue'),
-        meta: { title: 'Overview', hideSidebar: false }
+        meta: { title: 'Overview' }
       },
       {
         path: 'sections',
         name: `${role}-sections-overview`,
         component: () => import('@/components/workspace/templates/shared/SectionsOverview.vue'),
-        meta: { title: 'Sections', hideSidebar: false }
+        meta: { title: 'Sections' }
       },
       {
-        path: ':tab', 
-        name: `${role}-workspace-tab`, 
-        component: () => import('@/components/workspace/TabHandler.vue'),
-        meta: { hideSidebar: false }
+        path: 'sections/:section',
+        name: `${role}-section-detail`,
+        component: () => import('@/components/workspace/templates/shared/SectionsDetail.vue'),
+        props: true,
+        meta: { title: 'Section Detail' }
+      },
+      {
+        path: ':tab',
+        name: `${role}-workspace-tab`,
+        component: () => import('@/components/workspace/TabHandler.vue')
       }
     ]
   };
 });
+
 
 // ==========================
 // Combine and Setup

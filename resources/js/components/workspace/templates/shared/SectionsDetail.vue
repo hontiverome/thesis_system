@@ -1,3 +1,5 @@
+// SectionsDetail.vue is a shared template used for displaying different class sections
+
 <template>
   <div class="section-detail-page">
     <BaseCard :title="pageTitle">
@@ -101,6 +103,12 @@ import { useRoute, useRouter } from 'vue-router';
 import BaseCard from '@/components/ui/core/BaseCard.vue';
 import SubNavbar from '@/components/ui/core/SubNavbar.vue';
 
+const props = defineProps({
+  role: String,
+  course: String,
+  section: String
+});
+
 const route = useRoute();
 const router = useRouter();
 const searchQuery = ref('');
@@ -109,39 +117,34 @@ const activeTab = ref('title-proposals');
 
 const tabsList = ['title-proposals', 'panel-status', 'faculty'];
 
-const role = computed(() => route.params.role);
-const courseName = computed(() => route.params.course);
-const sectionParam = computed(() => route.params.section);
+// Computed values with props fallback
+const roleComputed = computed(() => props.role || route.params.role || 'student');
+const courseNameComputed = computed(() => props.course || route.params.course || 'mor');
+const sectionNumberComputed = computed(() => props.section || route.params.section || '3-1');
 
-// Map course codes to titles
 const courseMap = {
   mor: 'Methods of Research',
   dp1: 'Project Design 1',
   dp2: 'Project Design 2'
 };
 
-const courseTitle = computed(() => courseMap[courseName.value] || 'Course');
+const courseTitleComputed = computed(() => courseMap[courseNameComputed.value] || 'Course');
+const pageTitleComputed = computed(() => `${courseTitleComputed.value} - Section ${sectionNumberComputed.value}`);
 
-// Extract section number from section param (e.g., "3-1" -> "3-1")
-const sectionNumber = computed(() => sectionParam.value);
-
-const pageTitle = computed(() => `${courseTitle.value} - Section ${sectionNumber.value}`);
-
-// Generate mock group data based on section number
+// Mock proposals for the section
 const generateGroupsForSection = () => {
-  // Extract section number for group code prefix (e.g., "3-1" -> "31")
-  const [major, minor] = sectionNumber.value.split('-');
-  const prefix = major + minor; // "31" for section 3-1
+  const [major, minor] = sectionNumberComputed.value.split('-');
+  const prefix = major + minor;
 
   const groupTitles = [
-    `AI-Based Student Performance Prediction in ${courseTitle.value}`,
+    `AI-Based Student Performance Prediction in ${courseTitleComputed.value}`,
     `Machine Learning Models for Thesis Evaluation System`,
     `Deep Learning Approach to Academic Text Classification`,
     `Natural Language Processing for Research Proposal Analysis`
   ];
 
-  const proposals = [];
   const statuses = ['pending', 'pending', 'accepted', 'rejected'];
+  const proposals = [];
 
   statuses.forEach((groupStatus, groupIndex) => {
     const groupCode = `${prefix}${String(groupIndex + 1).padStart(2, '0')}`;
@@ -150,7 +153,7 @@ const generateGroupsForSection = () => {
         id: `${groupCode}-${titleIndex}`,
         groupId: groupCode,
         groupCode: groupCode,
-        title: title,
+        title,
         status: groupStatus
       });
     });
@@ -161,57 +164,46 @@ const generateGroupsForSection = () => {
 
 const proposals = ref(generateGroupsForSection());
 
-const filteredProposals = computed(() => {
-  return proposals.value.filter(proposal => {
-    const matchesSearch = searchQuery.value === '' || 
+const filteredProposals = computed(() =>
+  proposals.value.filter(proposal => {
+    const matchesSearch =
+      searchQuery.value === '' ||
       proposal.title.toLowerCase().includes(searchQuery.value.toLowerCase());
-    
-    const matchesFilter = statusFilter.value === '' ||
-      proposal.status === statusFilter.value;
-    
+    const matchesFilter =
+      statusFilter.value === '' || proposal.status === statusFilter.value;
     return matchesSearch && matchesFilter;
-  });
-});
+  })
+);
 
 const groupedProposals = computed(() => {
   const groups = {};
   filteredProposals.value.forEach(proposal => {
-    if (!groups[proposal.groupCode]) {
-      groups[proposal.groupCode] = [];
-    }
+    if (!groups[proposal.groupCode]) groups[proposal.groupCode] = [];
     groups[proposal.groupCode].push(proposal);
   });
-  return Object.entries(groups).map(([groupCode, items]) => ({
-    groupCode,
-    items
-  }));
+  return Object.entries(groups).map(([groupCode, items]) => ({ groupCode, items }));
 });
 
-const formatStatus = (status) => {
-  const statusMap = {
-    pending: 'Pending',
-    accepted: 'Accepted',
-    rejected: 'Rejected'
-  };
-  return statusMap[status] || status;
+const formatStatus = status => {
+  const map = { pending: 'Pending', accepted: 'Accepted', rejected: 'Rejected' };
+  return map[status] || status;
 };
 
-const acceptProposalItem = (groupCode, titleIndex) => {
-  const proposal = proposals.value.find(p => p.groupCode === groupCode && p.title === proposals.value.find(pp => pp.groupCode === groupCode).title);
-  if (proposal) {
-    proposal.status = 'accepted';
-  }
+const acceptProposalItem = (groupCode) => {
+  proposals.value.forEach(p => {
+    if (p.groupCode === groupCode) p.status = 'accepted';
+  });
 };
 
-const rejectProposalItem = (groupCode, titleIndex) => {
-  const proposal = proposals.value.find(p => p.groupCode === groupCode && p.title === proposals.value.find(pp => pp.groupCode === groupCode).title);
-  if (proposal) {
-    proposal.status = 'rejected';
-  }
+const rejectProposalItem = (groupCode) => {
+  proposals.value.forEach(p => {
+    if (p.groupCode === groupCode) p.status = 'rejected';
+  });
 };
 
+// Back to sections overview (refresh-proof)
 const goBack = () => {
-  router.back();
+  router.push(`/${roleComputed.value}/courses/${courseNameComputed.value}/sections`);
 };
 </script>
 

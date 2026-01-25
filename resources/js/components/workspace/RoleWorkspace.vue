@@ -31,34 +31,29 @@ const { course, tab, courseTitle } = useWorkspaceApi();
 </script>
 
 <style scoped>
-.university-red { 
-  color: #800000; 
-  margin: 0; 
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-.tab-title {
-  font-size: 1.1rem;
-  color: #555;
-  margin-top: 5px;
-}
-.workspace-header { 
-  border-bottom: 2px solid #FFA500; 
-  padding-bottom: 15px; 
-  margin-bottom: 20px;
-  display: flex; 
-  justify-content: space-between; 
-  align-items: flex-end;
-}
-.workspace-content {
-  min-height: 300px;
+.workspace-container {
+  background-color: var(--bg-color); 
+  color: var(--text-color);
+  min-height: 100vh;
 }
 
-/* Smooth transition between tabs */
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.2s ease;
+.workspace-header {
+  border-bottom: 2px solid var(--border-color); 
+  padding: 1.5rem;
+  background: var(--header-bg);
 }
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+
+.university-red {
+  color: var(--primary-color); 
+}
+.overview-template {
+  padding: 2rem;
+  background-color: var(--bg-color);
+}
+
+:deep(.base-card) {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
 }
 </style>
