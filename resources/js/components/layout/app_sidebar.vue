@@ -59,7 +59,18 @@ const isUserMenuOpen = ref(false);
 
 const layoutMode = computed(() => layoutStore.layoutPreference);
 const isCollapsed = computed(() => layoutStore.isSidebarCollapsed && !layoutStore.isMobileSidebarOpen);
-const currentRole = computed(() => route.params.role || 'student');
+const currentRole = computed(() => {
+  if (route.params.role) return route.params.role;
+  const pathParts = route.path.split('/');
+  const roleInUrl = pathParts[1];
+  const validRoles = ['admin', 'faculty', 'adviser', 'student'];
+  if (validRoles.includes(roleInUrl)) {
+    return roleInUrl;
+  }
+
+  // 3. Last resort fallback
+  return 'student';
+});
 
 const sidebarComponent = computed(() => {
   const roleComponentMap = {
