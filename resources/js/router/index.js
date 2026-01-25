@@ -16,6 +16,12 @@ const guestRoutes = [
     meta: { layout: 'blank', title: 'Welcome', guestOnly: true }
   },
   {
+    path: '/portal',
+    name: 'access-portal',
+    component: () => import('@/views/auth/access_portal_view.vue'),
+    meta: { layout: 'blank', title: 'Select Access Level', guestOnly: true }
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/login_view.vue'),
