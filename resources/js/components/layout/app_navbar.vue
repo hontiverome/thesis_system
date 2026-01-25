@@ -167,12 +167,21 @@ const currentRole = computed(() => {
 // Check if a link is active
 const isActiveLink = (linkType) => {
   if (linkType === 'home') {
-    return route.path.includes('/home');
-  } else if (linkType === 'courses') {
-    return route.path.includes('/courses');
+    return route.matched.some(r =>
+      r.path === '/:role/home' || r.path === '/home'
+    );
   }
+
+  if (linkType === 'courses') {
+    return route.matched.some(r =>
+      r.path === '/:role/courses' ||       // course list
+      r.path === '/:role/course/:course'   // course workspace
+    );
+  }
+
   return false;
 };
+
 
 const toggleUserMenu = () => {
   isUserMenuOpen.value = !isUserMenuOpen.value;
