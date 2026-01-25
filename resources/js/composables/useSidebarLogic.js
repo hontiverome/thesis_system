@@ -40,11 +40,17 @@ export function useSidebarLogic(courses, defaultRole = 'student') {
   const setActiveItem = (courseId, item) => {
     activeCourseId.value = courseId;
     activeItemId.value = item.id;
+    
     const tabSlug = item.text.toLowerCase().replace(/\s+/g, '-');
-    const role = route.params.role || defaultRole;
+    const role = route.params.role || 'student';
+
+    // ONLY pass params that exist in index.js paths
     router.push({ 
-      name: `${role}-${item.courseCode}-${tabSlug}`, 
-      params: { role, 0: tabSlug } 
+      name: `${role}-${tabSlug}`, 
+      params: { 
+        role: role, 
+        course: courseId 
+      } 
     });
   };
 

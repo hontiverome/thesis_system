@@ -52,7 +52,7 @@ const authRoutes = [
     component: () => import('@/views/workspace/RoleCourseOverview.vue'),
     meta: { layout: 'AppLayoutDefault', requiresAuth: true, hideSidebar: true }
   }
-];
+]
 
 // ==========================
 // Dynamic Workspace Routes
@@ -64,6 +64,12 @@ const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
     component: () => import('@/views/workspace/RoleWorkspace.vue'),
     meta: { requiresAuth: true, hideSidebar: false },
     children: [
+      {
+        path: '',
+        name: `${role}-workspace-root`,
+        component: () => import('@/views/workspace/shared/OverviewTemplate.vue'),
+        meta: { title: 'Overview' }
+      },
       {
         path: 'overview',
         name: `${role}-overview`,
@@ -77,18 +83,65 @@ const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
         meta: { title: 'Sections' }
       },
       {
-        path: 'sections/:section',
-        name: `${role}-section-detail`,
-        component: () => import('@/views/workspace/shared/SectionsDetail.vue'),
-        props: true,
-        meta: { title: 'Section Detail' }
-      },
-      {
         path: 'title-proposals',
         name: `${role}-title-proposals`,
-        component: () => import('@/views/workspace/student/StudProposals.vue'),
+        component: () => {
+          // Use the 'role' from the map loop scope directly for stability
+          const roleToProposalComponentMap = {
+            student: () => import("@/views/workspace/student/StudProposals.vue"),
+            faculty: () => import("@/views/workspace/shared/ProposalsTemplate.vue"),
+            adviser: () => import("@/views/workspace/shared/ProposalsTemplate.vue"),
+            admin: () => import("@/views/workspace/shared/ProposalsTemplate.vue")
+          };
+          const loader = roleToProposalComponentMap[role] || (() => import("@/views/workspace/shared/OverviewTemplate.vue"));
+          return loader(); // Execute the loader to return the Promise
+        },
         meta: { title: 'Title Proposals' }
       },
+      {
+        path: 'chapters-1-3',
+        name: `${role}-chapters-1-3`,
+        component: () => {
+          const roleToChapterComponentMap = {
+            student: () => import("@/views/workspace/student/StudChapters.vue"),
+            faculty: () => import("@/views/workspace/shared/ChaptersTemplate.vue"),
+            adviser: () => import("@/views/workspace/shared/ChaptersTemplate.vue"),
+            admin: () => import("@/views/workspace/shared/ChaptersTemplate.vue")
+          };
+          const loader = roleToChapterComponentMap[role] || (() => import("@/views/workspace/shared/OverviewTemplate.vue"));
+          return loader();
+        },
+        meta: { title: 'Chapters 1-3' }
+      },
+      {
+        path: 'panel-status',
+        name: `${role}-panel-status`,
+        component: () => {
+          const roleToPanelComponent = {
+            student: () => import("@/views/workspace/student/StudPanel.vue"),
+            faculty: () => import("@/views/workspace/shared/PanelTemplate.vue"),
+            adviser: () => import("@/views/workspace/shared/PanelTemplate.vue"),
+            admin: () => import("@/views/workspace/shared/PanelTemplate.vue")
+          };
+          const loader = roleToPanelComponent[role] || (() => import("@/views/workspace/shared/OverviewTemplate.vue"));
+          return loader();
+        },
+        meta: { title: 'Panel Status' }
+      },
+      {
+        path: 'faculty',
+        name: `${role}-faculty`,
+        component: () => {
+          const roleToPanelComponent = {
+            faculty: () => import("@/views/workspace/shared/FacultyTemplate.vue"),
+            adviser: () => import("@/views/workspace/shared/FacultyTemplate.vue"),
+            admin: () => import("@/views/workspace/shared/FacultyTemplate.vue")
+          };
+          const loader = roleToPanelComponent[role] || (() => import("@/views/workspace/shared/OverviewTemplate.vue"));
+          return loader();
+        },
+        meta: { title: 'Faculty' }
+      }
     ]
   };
 });
@@ -121,12 +174,18 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to) => {
-  // Set the browser tab title dynamically from the route meta or tab param
-  const pageTitle = to.params.tab 
-    ? to.params.tab.replace(/-/g, ' ').toUpperCase() 
-    : (to.meta.title || 'System');
-    
-  document.title = `${pageTitle} | PUP T-SIS`;
+  // 1. Prioritize the meta title defined in roleRoutes
+  // 2. Fallback to the route name 
+  // 3. Last resort fallback to 'System'
+  let pageTitle = to.meta.title;
+  if (!pageTitle && to.name) {
+    pageTitle = String(to.name)
+      .split('-')
+      .slice(1) // Remove the role prefix
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+  document.title = `${pageTitle || 'Dashboard'} | PUP T-SIS`;
 });
 
 export default router;
