@@ -89,7 +89,7 @@ const roleCourses = [
 
 const navigateToCourse = (coursePath) => {
   router.push({
-    name: `${role.value}-workspace-tab`, 
+    name: `${role.value}-overview`, 
     params: { 
       role: role.value,
       course: coursePath,

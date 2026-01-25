@@ -76,7 +76,13 @@ const roleRoutes = Object.keys(ROLE_METADATA).map(role => {
         component: () => import('@/views/workspace/shared/SectionsDetail.vue'),
         props: true,
         meta: { title: 'Section Detail' }
-      }
+      },
+      {
+        path: 'title-proposals',
+        name: `${role}-title-proposals`,
+        component: () => import('@/views/workspace/student/StudProposals.vue'),
+        meta: { title: 'Title Proposals' }
+      },
     ]
   };
 });
