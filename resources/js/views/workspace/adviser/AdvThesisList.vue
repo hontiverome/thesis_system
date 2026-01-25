@@ -1,0 +1,1 @@
+// AdviserThesis Template is used for the adviser's view of thesis management

@@ -1,3 +1,5 @@
+// AdviserEvaluation Template is used for the adviser's view/UPLOAD of student evaluation
+
 <template>
   <div class="adviser-evaluation">
     <BaseCard title="Adviser Evaluation Panel">

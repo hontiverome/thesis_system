@@ -72,18 +72,19 @@ const courses = ref([
   }
 ]);
 
-const handleHeaderClick = (courseId) => {
-  // 1. Open/Close the accordion
+const handleCourseHeaderClick = (courseId) => {
+  // Toggle section open/close state
   toggleSection(courseId);
 
-  // 2. Navigate to the overview for that specific course
+  // Navigate to course overview page
   const role = route.params.role || 'student';
+  const routeParams = {
+    role,
+    course: courseId,
+  };
   router.push({
     name: `${role}-overview`,
-    params: { 
-      role: role, 
-      course: courseId // e.g., 'MOR'
-    }
+    params: routeParams,
   });
 };
 

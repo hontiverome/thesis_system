@@ -1,0 +1,1 @@
+// FacultyProposals Template is used for the faculty's view of proposal management
