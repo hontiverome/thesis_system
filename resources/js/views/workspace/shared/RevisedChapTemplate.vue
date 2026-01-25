@@ -1,5 +1,4 @@
-// ProposalsTemplate.vue is a shared template used for displaying proposal-related information 
-// and actions in various views for faculty, admin and advisers.
+// RevisedChaptersTemplate.vue is a shared template used for displaying revised chapters 1-3 related information.
 
 <template>
   <div class="proposals-wrapper">

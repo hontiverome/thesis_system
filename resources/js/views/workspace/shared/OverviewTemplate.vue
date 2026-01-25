@@ -40,7 +40,8 @@ const courseMap = {
 };
 
 const courseTitleComputed = computed(() => {
-  return props.courseTitle || courseMap[route.params.course] || 'Course';
+  const courseKey = route.params.course?.toLowerCase(); 
+  return props.courseTitle || courseMap[courseKey] || 'Course';
 });
 
 const roleLabelComputed = computed(() => {
